@@ -6,9 +6,11 @@
 // 以下をプロジェクトのリンカーに追加する
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "d3dcompiler.lib")
 
 //Direct3Dの型・クラス・関数を呼べるようにする
 #include <d3d11.h>
+#include <d3dcompiler.h>
 //DirectXMath(数学ライブラリ)を使用できるようにする
 #include <DirectXMath.h>
 //ComPtr（スマートポインタ）を使用できるようにする
@@ -16,9 +18,10 @@
 using Microsoft::WRL::ComPtr;
 
 //=========================================
-// Direct3Dクラス
+// Direct3DManagerクラス
+// DirectXまわりの設定
 //=========================================
-class Direct3D {
+class Direct3DManager {
 	//============================================
 	// メソッド
 	//============================================
@@ -30,7 +33,7 @@ public:
 	{
 		DeleteInstance();
 
-		mInstance = new Direct3D();
+		mInstance = new Direct3DManager();
 	}
 
 	/// <summary>
@@ -49,7 +52,7 @@ public:
 	/// インスタンスの取得
 	/// </summary>
 	/// <returns></returns>
-	static Direct3D& GetInstance()
+	static Direct3DManager& GetInstance()
 	{
 		return *mInstance;
 	}
@@ -76,12 +79,17 @@ public:
 	/// <returns></returns>
 	bool Initialize(HWND hWnd, int width, int height);
 
+	// 2D描画用シェーダ―
+	ComPtr<ID3D11VertexShader> mSpriteVS = nullptr; // 頂点シェーダー
+	ComPtr<ID3D11PixelShader> mSpritePS = nullptr; // ピクセルシェーダー
+	ComPtr<ID3D11InputLayout> mSpriteInputLayout = nullptr; // 入力レイアウト
+
 private:
-	static Direct3D* mInstance;
-	Direct3D() {
+	static Direct3DManager* mInstance;
+	Direct3DManager() {
 	};
 
 
 	// Direct3Dの唯一のインスタンスを簡単に取得するためのマクロ
-#define D3D Direct3D::GetInstance()
+#define D3D Direct3DManager::GetInstance()
 };

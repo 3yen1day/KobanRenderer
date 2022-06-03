@@ -13,3 +13,8 @@
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
+
+//C++のSTL
+#include <string>
+#include <vector>
+#include <list>

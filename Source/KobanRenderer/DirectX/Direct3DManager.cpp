@@ -1,9 +1,11 @@
-#include "Direct3D.h"
+#include "Direct3DManager.h"
 #include <windows.h>
+#include <fstream>
+#include "../framework.h"
 
-Direct3D* Direct3D::mInstance = nullptr;
+Direct3DManager* Direct3DManager::mInstance = nullptr;
 
-bool Direct3D::Initialize(HWND hWnd, int width, int height) {
+bool Direct3DManager::Initialize(HWND hWnd, int width, int height) {
 	//=====================================================
 	// ファクトリー作成(ビデオ グラフィックの設定の列挙や指定に使用されるオブジェクト)
 	//=====================================================
@@ -104,6 +106,56 @@ bool Direct3D::Initialize(HWND hWnd, int width, int height) {
 	// ビューポートの設定
 	D3D11_VIEWPORT vp = { 0.0f, 0.0f, (float)width, (float)height, 0.0f, 1.0f };
 	mDeviceContext->RSSetViewports(1, &vp);
+
+	//=====================================================
+	// シェーダーの作成
+	//=====================================================
+	
+	std::ifstream ifs(L"Shader/SpriteShader.hlsl");
+	if (!ifs.is_open()) {
+		return false;
+	}
+
+	//頂点シェーダーの読み込み・コンパイル
+	ComPtr<ID3DBlob> compiledVS;
+	ComPtr<ID3DBlob> pErrorBlob = NULL;
+	D3DCompileFromFile(L"Shader/SpriteShader.hlsl", nullptr, nullptr, "VS", "vs_5_0", 0, 0, &compiledVS, &pErrorBlob);
+	//OutputDebugStringA(static_cast<char*>(pErrorBlob->GetBufferPointer()));
+	//printf((char*)pErrorBlob->GetBufferPointer());
+	//MessageBox(NULL, (char*)pErrorBlob->GetBufferPointer(), TEXT(""), 0);
+	if (FAILED(D3DCompileFromFile(L"Shader/SpriteShader.hlsl", nullptr, nullptr, "VS", "vs_5_0", 0, 0, &compiledVS, nullptr))) {
+		return false; //shader読めてないじゃんー！
+	}
+	
+	//ピクセルシェーダーの読み込み・コンパイル
+	ComPtr<ID3DBlob> compiledPS;
+	if (FAILED(D3DCompileFromFile(L"Shader/SpriteShader.hlsl", nullptr, nullptr, "PS", "ps_5_0", 0, 0, &compiledPS, nullptr)))
+	{
+		return false;
+	}
+
+	//頂点シェーダー作成
+	if (FAILED(mDevice->CreateVertexShader(compiledVS->GetBufferPointer(), compiledVS->GetBufferSize(), nullptr, &mSpriteVS)))
+	{
+		return false;
+	}
+
+	//ピクセルシェーダー作成
+	if (FAILED(mDevice->CreatePixelShader(compiledPS->GetBufferPointer(), compiledPS->GetBufferSize(), nullptr, &mSpritePS)))
+	{
+		return false;
+	}
+
+	//1頂点の情報
+	std::vector<D3D11_INPUT_ELEMENT_DESC> layout = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+
+	//頂点インプットレイアウト作成
+	if (FAILED(mDevice->CreateInputLayout(&layout[0], layout.size(), compiledVS->GetBufferPointer(), compiledVS->GetBufferSize(), &mSpriteInputLayout)))
+	{
+		return false;
+	}
 
 	return true;
 }
