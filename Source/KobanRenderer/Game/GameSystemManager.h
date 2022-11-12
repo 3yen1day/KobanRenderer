@@ -1,4 +1,5 @@
 #pragma once
+#include "DirectX/Texture.h"
 
 //=========================================
 // GameSystemクラス
@@ -12,10 +13,6 @@ public:
 	//処理の実行
 	void Execute();
 
-private:
-	static GameSystemManager* mInstance;
-	GameSystemManager(){}
-public:
 	// インスタンス作成
 	static void CreateInstance()
 	{
@@ -37,6 +34,14 @@ public:
 	{
 		return *mInstance;
 	}
+
+private:
+	GameSystemManager(){}
+	static GameSystemManager* mInstance;
+
+	//メンバ変数
+public:
+	Texture mTexture;
 	// GameSystemの唯一のインスタンスを簡単に取得するためのマクロ
 #define GAMESYS GameSystemManager::GetInstance()
 };

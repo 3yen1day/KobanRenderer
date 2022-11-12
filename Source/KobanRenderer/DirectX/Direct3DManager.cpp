@@ -146,9 +146,11 @@ bool Direct3DManager::Initialize(HWND hWnd, int width, int height) {
 		return false;
 	}
 
+	//頂点レイアウト
 	//1頂点の情報
 	std::vector<D3D11_INPUT_ELEMENT_DESC> layout = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
 	//頂点インプットレイアウト作成

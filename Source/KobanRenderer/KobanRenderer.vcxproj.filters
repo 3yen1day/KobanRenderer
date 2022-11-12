@@ -33,6 +33,9 @@
       <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="EntryPoint.cpp" />
+    <ClCompile Include="DirectX\Texture.cpp">
+      <Filter>DirectX</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectX\Direct3DManager.h">
@@ -45,5 +48,11 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="DirectX\DirectX.h">
+      <Filter>DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX\Texture.h">
+      <Filter>DirectX</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

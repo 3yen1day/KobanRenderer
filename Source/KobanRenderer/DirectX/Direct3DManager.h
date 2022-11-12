@@ -1,21 +1,5 @@
 #pragma once
-//=========================================
-// Direct3Dクラスの初期化
-//=========================================
-// Direct3Dのライブラリを使用できるようにする
-// 以下をプロジェクトのリンカーに追加する
-#pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "dxgi.lib")
-#pragma comment(lib, "d3dcompiler.lib")
-
-//Direct3Dの型・クラス・関数を呼べるようにする
-#include <d3d11.h>
-#include <d3dcompiler.h>
-//DirectXMath(数学ライブラリ)を使用できるようにする
-#include <DirectXMath.h>
-//ComPtr（スマートポインタ）を使用できるようにする
-#include <winrt\wrl\client.h>
-using Microsoft::WRL::ComPtr;
+#include "DirectX/DirectX.h"
 
 //=========================================
 // Direct3DManagerクラス
