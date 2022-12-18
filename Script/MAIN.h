@@ -9,7 +9,7 @@ using namespace std;
 #include <d3dx11.h>
 #include <d3dCompiler.h>
 
-#include "MESH.h"
+#include"Render.h"
 
 //必要なライブラリファイルのロード
 #pragma comment(lib,"winmm.lib")
@@ -21,33 +21,23 @@ using namespace std;
 //定数定義
 #define WINDOW_WIDTH 640 //ウィンドウ幅
 #define WINDOW_HEIGHT 480 //ウィンドウ高さ
-#define APP_NAME L"OBJからスタティックメッシュ 完全版"
+#define APP_NAME L"KOBAN_RENDERER"
 
-//
-//
-//
+
 class MAIN
 {
 public:
 	HRESULT InitWindow(HINSTANCE,INT,INT,INT,INT,LPCWSTR);
-	HRESULT InitD3D();
 	LRESULT MsgProc(HWND,UINT,WPARAM,LPARAM);
+	void Awake();
+	void Start();
 	void Loop();
-	void App();
-	void Render();
-	void DestroyD3D();
+	void Update();
+	void Draw();
+	void Destroy();
 
-	HWND m_hWnd;
-	ID3D11Device* m_pDevice;
-	ID3D11DeviceContext *m_pDeviceContext;
-	IDXGISwapChain* m_pSwapChain;
-	ID3D11RenderTargetView* m_pBackBuffer_TexRTV;
-	ID3D11DepthStencilView* m_pBackBuffer_DSTexDSV;
-	ID3D11Texture2D* m_pBackBuffer_DSTex;
-
-	MESH* m_pMesh;
+	HWND mHwnd;
 
 private:
-	//モデルのリソースパス
-	LPCSTR MODEL_PATH = "Resource/Chips.obj"; //LPSTRのconst版
+	Render* mpRender;
 };

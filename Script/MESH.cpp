@@ -7,6 +7,7 @@ MESH::MESH()
 {
 	ZeroMemory(this,sizeof(MESH));
 	m_fScale=1.0f;
+	MODEL_PATH = L"Resource/Chips.obj";
 }
 
 //
@@ -29,7 +30,7 @@ MESH::~MESH()
 //
 //
 //
-HRESULT MESH::Init(ID3D11Device* pDevice,ID3D11DeviceContext* pContext,LPSTR FileName)
+HRESULT MESH::Init(ID3D11Device* pDevice,ID3D11DeviceContext* pContext)
 {
 	m_pDevice=pDevice;
 	m_pDeviceContext=pContext;
@@ -39,7 +40,8 @@ HRESULT MESH::Init(ID3D11Device* pDevice,ID3D11DeviceContext* pContext,LPSTR Fil
 		MessageBox(0,L"メッシュ用シェーダー作成失敗",NULL,MB_OK);
 		return E_FAIL;
 	}
-	if(FAILED(LoadStaticMesh(FileName)))
+
+	if(FAILED(LoadStaticMesh(MODEL_PATH)))
 	{
 		MessageBox(0,L"メッシュ作成失敗",NULL,MB_OK);
 		return E_FAIL;
@@ -47,9 +49,8 @@ HRESULT MESH::Init(ID3D11Device* pDevice,ID3D11DeviceContext* pContext,LPSTR Fil
 
 	return S_OK;
 }
-//
-//
-//
+
+
 HRESULT MESH::InitShader()
 {
 	//hlslファイル読み込み ブロブ作成　ブロブとはシェーダーの塊みたいなもの。XXシェーダーとして特徴を持たない。後で各種シェーダーに成り得る。
@@ -200,7 +201,7 @@ HRESULT MESH::LoadMaterialFromFile(LPSTR FileName,MY_MATERIAL** ppMaterial)
 //
 //
 //
-HRESULT MESH::LoadStaticMesh(LPSTR FileName)
+HRESULT MESH::LoadStaticMesh(LPWSTR FileName)
 {
 	float x,y,z;
 	int v1=0,v2=0,v3=0;
@@ -214,7 +215,7 @@ HRESULT MESH::LoadStaticMesh(LPSTR FileName)
 	char key[200]={0};
 	//OBJファイルを開いて内容を読み込む
 	FILE* fp=NULL;
-	fopen_s(&fp,FileName,"rt");
+	_wfopen_s(&fp,FileName,L"rt");
 
 	//事前に頂点数、ポリゴン数を調べる
 	while(!feof(fp))

@@ -68,7 +68,7 @@ class MESH
 public:
 	MESH();
 	~MESH();
-	HRESULT Init(ID3D11Device* pDevice,ID3D11DeviceContext* pContext,LPSTR FileName);
+	HRESULT Init(ID3D11Device* pDevice,ID3D11DeviceContext* pContext);
 	HRESULT InitShader();
 	HRESULT LoadMaterialFromFile(LPSTR FileName,MY_MATERIAL** ppMaterial);
 	void Render(D3DXMATRIX& mView,D3DXMATRIX& mProj,D3DXVECTOR3& vLight,D3DXVECTOR3& vEye);
@@ -94,7 +94,10 @@ public:
 	float m_fScale;
 
 private:
+	//モデルのリソースパス
+	LPWSTR MODEL_PATH;
+
 	ID3D11Device* m_pDevice;
 	ID3D11DeviceContext *m_pDeviceContext;
-	HRESULT LoadStaticMesh(LPSTR FileName);
+	HRESULT LoadStaticMesh(LPWSTR FileName);
 };
