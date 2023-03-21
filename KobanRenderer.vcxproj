@@ -19,11 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Script\DefferdRender.cpp" />
     <ClCompile Include="Script\MAIN.cpp" />
     <ClCompile Include="Script\MESH.cpp" />
     <ClCompile Include="Script\Render.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="RenderInclude.h" />
+    <ClInclude Include="Script\DefferdRender.h" />
     <ClInclude Include="Script\MAIN.h" />
     <ClInclude Include="Script\MESH.h" />
     <ClInclude Include="Script\Render.h" />

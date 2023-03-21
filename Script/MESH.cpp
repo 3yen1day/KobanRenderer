@@ -8,11 +8,9 @@ MESH::MESH()
 	ZeroMemory(this,sizeof(MESH));
 	m_fScale=1.0f;
 	MODEL_PATH = L"Resource/Chips.obj";
+	SHADER_PATH = L"Shader/MESH.hlsl";
 }
 
-//
-//
-//
 MESH::~MESH()
 {
 	SAFE_DELETE_ARRAY(m_pMaterial);
@@ -27,9 +25,7 @@ MESH::~MESH()
 	SAFE_RELEASE(m_pTexture);
 }
 
-//
-//
-//
+
 HRESULT MESH::Init(ID3D11Device* pDevice,ID3D11DeviceContext* pContext)
 {
 	m_pDevice=pDevice;
@@ -57,7 +53,7 @@ HRESULT MESH::InitShader()
 	ID3D10Blob *pCompiledShader=NULL;
 	ID3D10Blob *pErrors=NULL;
 	//ブロブからバーテックスシェーダー作成
-	if(FAILED(D3DX11CompileFromFile(L"Shader/MESH.hlsl",NULL,NULL,"VS","vs_4_0",0,0,NULL,&pCompiledShader,&pErrors,NULL)))
+	if(FAILED(D3DX11CompileFromFile(SHADER_PATH,NULL,NULL,"VS","vs_4_0",0,0,NULL,&pCompiledShader,&pErrors,NULL)))
 	{
 		MessageBox(0,L"hlsl読み込み失敗",NULL,MB_OK);
 		return E_FAIL;
@@ -84,7 +80,7 @@ HRESULT MESH::InitShader()
 		return FALSE;
 	}
 	//ブロブからピクセルシェーダー作成
-	if(FAILED(D3DX11CompileFromFile(L"Shader/MESH.hlsl",NULL,NULL,"PS","ps_4_0",0,0,NULL,&pCompiledShader,&pErrors,NULL)))
+	if(FAILED(D3DX11CompileFromFile(SHADER_PATH,NULL,NULL,"PS","ps_4_0",0,0,NULL,&pCompiledShader,&pErrors,NULL)))
 	{
 		MessageBox(0,L"hlsl読み込み失敗",NULL,MB_OK);
 		return E_FAIL;
@@ -97,6 +93,7 @@ HRESULT MESH::InitShader()
 		return E_FAIL;
 	}
 	SAFE_RELEASE(pCompiledShader);
+
 	//コンスタントバッファー作成　変換行列渡し用
 	D3D11_BUFFER_DESC cb;
 	cb.BindFlags= D3D11_BIND_CONSTANT_BUFFER;
@@ -104,18 +101,17 @@ HRESULT MESH::InitShader()
 	cb.CPUAccessFlags=D3D11_CPU_ACCESS_WRITE;
 	cb.MiscFlags	=0;
 	cb.Usage=D3D11_USAGE_DYNAMIC;
-
 	if( FAILED(m_pDevice->CreateBuffer( &cb,NULL,&m_pConstantBuffer0)))
 	{
 		return E_FAIL;
 	}
+
 	//コンスタントバッファー作成  マテリアル渡し用
 	cb.BindFlags= D3D11_BIND_CONSTANT_BUFFER;
 	cb.ByteWidth= sizeof( SIMPLECONSTANT_BUFFER1 );
 	cb.CPUAccessFlags=D3D11_CPU_ACCESS_WRITE;
 	cb.MiscFlags	=0;
 	cb.Usage=D3D11_USAGE_DYNAMIC;
-
 	if( FAILED(m_pDevice->CreateBuffer( &cb,NULL,&m_pConstantBuffer1)))
 	{
 		return E_FAIL;
@@ -123,9 +119,8 @@ HRESULT MESH::InitShader()
 
 	return S_OK;
 }
-//
-//
-//
+
+
 HRESULT MESH::LoadMaterialFromFile(LPSTR FileName,MY_MATERIAL** ppMaterial)
 {
 	//マテリアルファイルを開いて内容を読み込む
@@ -198,9 +193,8 @@ HRESULT MESH::LoadMaterialFromFile(LPSTR FileName,MY_MATERIAL** ppMaterial)
 	
 	return S_OK;
 }
-//
-//
-//
+
+
 HRESULT MESH::LoadStaticMesh(LPWSTR FileName)
 {
 	float x,y,z;
@@ -349,13 +343,13 @@ HRESULT MESH::LoadStaticMesh(LPWSTR FileName)
 				//頂点構造体に代入
 				pvVertexBuffer[dwFCount*3].vPos=pvCoord[v1-1];
 				pvVertexBuffer[dwFCount*3].vNorm=pvNormal[vn1-1];
-				pvVertexBuffer[dwFCount*3].vTex=pvTexture[vt1-1];
+				pvVertexBuffer[dwFCount*3].vUV=pvTexture[vt1-1];
 				pvVertexBuffer[dwFCount*3+1].vPos=pvCoord[v2-1];
 				pvVertexBuffer[dwFCount*3+1].vNorm=pvNormal[vn2-1];
-				pvVertexBuffer[dwFCount*3+1].vTex=pvTexture[vt2-1];
+				pvVertexBuffer[dwFCount*3+1].vUV=pvTexture[vt2-1];
 				pvVertexBuffer[dwFCount*3+2].vPos=pvCoord[v3-1];
 				pvVertexBuffer[dwFCount*3+2].vNorm=pvNormal[vn3-1];
-				pvVertexBuffer[dwFCount*3+2].vTex=pvTexture[vt3-1];
+				pvVertexBuffer[dwFCount*3+2].vUV=pvTexture[vt3-1];
 
 				dwPartFCount++;
 				dwFCount++;
@@ -416,12 +410,11 @@ HRESULT MESH::LoadStaticMesh(LPWSTR FileName)
 	return S_OK;
 }
 
-//
-//
-//
+
 void MESH::Render(D3DXMATRIX& mView,D3DXMATRIX& mProj,
 				  D3DXVECTOR3& vLight,D3DXVECTOR3& vEye)
 {
+	m_fYaw += 0.0001; //回転
 	D3DXMATRIX mWorld,mTran,mYaw,mPitch,mRoll,mScale;
 	//ワールドトランスフォーム（絶対座標変換）
 	D3DXMatrixScaling(&mScale,m_fScale,m_fScale,m_fScale);

@@ -23,8 +23,9 @@ struct MY_VERTEX
 {
 	D3DXVECTOR3 vPos;
 	D3DXVECTOR3 vNorm;
-	D3DXVECTOR2 vTex;
+	D3DXVECTOR2 vUV;
 };
+
 //Simpleシェーダー用のコンスタントバッファーのアプリ側構造体 もちろんシェーダー内のコンスタントバッファーと一致している必要あり
 struct SIMPLECONSTANT_BUFFER0
 {
@@ -40,6 +41,7 @@ struct SIMPLECONSTANT_BUFFER1
 	D3DXVECTOR4 vDiffuse;//ディフューズ色
 	D3DXVECTOR4 vSpecular;//鏡面反射
 };
+
 //オリジナル　マテリアル構造体
 struct MY_MATERIAL
 {
@@ -94,8 +96,8 @@ public:
 	float m_fScale;
 
 private:
-	//モデルのリソースパス
-	LPWSTR MODEL_PATH;
+	LPWSTR MODEL_PATH; //モデルのリソースパス
+	LPWSTR SHADER_PATH; //Shaderのリソースパス
 
 	ID3D11Device* m_pDevice;
 	ID3D11DeviceContext *m_pDeviceContext;
