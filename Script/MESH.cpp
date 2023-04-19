@@ -12,8 +12,6 @@ MESH::MESH()
 
 MESH::~MESH()
 {
-	SAFE_DELETE_ARRAY(m_pMaterial);
-	SAFE_DELETE_ARRAY(m_ppIndexBuffer);
 	SAFE_RELEASE(m_pVertexBuffer);
 	SAFE_RELEASE(m_pSampleLinear);
 	m_Shader.clear();
@@ -59,7 +57,7 @@ HRESULT MESH::LoadResources(LPWSTR meshFileName)
 		if (strcmp(key, "mtllib") == 0)
 		{
 			fscanf_s(fp, "%s ", key, sizeof(key));
-			LoadMaterialFromFile(key, &m_pMaterial);
+			LoadMaterialFromFile(key);
 		}
 		//頂点
 		if (strcmp(key, "v") == 0)
@@ -254,7 +252,7 @@ HRESULT MESH::InitShader()
 
 }
 
-HRESULT MESH::LoadMaterialFromFile(LPSTR FileName, MY_MATERIAL** ppMaterial)
+HRESULT MESH::LoadMaterialFromFile(LPSTR FileName)
 {
 	//マテリアルファイルを開いて内容を読み込む
 	FILE* fp = NULL;
@@ -262,26 +260,13 @@ HRESULT MESH::LoadMaterialFromFile(LPSTR FileName, MY_MATERIAL** ppMaterial)
 	char key[110] = { 0 };
 	D3DXVECTOR4 v(0, 0, 0, 1);
 
-	//マテリアル数を調べる
-	m_dwNumMaterial = 0;
-	while (!feof(fp))
-	{
-		//キーワード読み込み
-		fscanf_s(fp, "%s ", key, sizeof(key));
-		//マテリアル名
-		if (strcmp(key, "newmtl") == 0)
-		{
-			m_dwNumMaterial++;
-		}
-	}
-	MY_MATERIAL* pMaterial = new MY_MATERIAL[m_dwNumMaterial];
-
 	//本読み込み	
 	fseek(fp, SEEK_SET, 0);
 	INT iMCount = -1;
 
 	while (!feof(fp))
 	{
+		MY_MATERIAL* pMaterial = new MY_MATERIAL();
 		//キーワード読み込み
 		fscanf_s(fp, "%s ", key, sizeof(key));
 		//マテリアル名
@@ -289,53 +274,64 @@ HRESULT MESH::LoadMaterialFromFile(LPSTR FileName, MY_MATERIAL** ppMaterial)
 		{
 			iMCount++;
 			fscanf_s(fp, "%s ", key, sizeof(key));
-			strcpy_s(pMaterial[iMCount].szName, key);
+			strcpy_s(pMaterial->szName, key);
 		}
 		//Ka　アンビエント
 		if (strcmp(key, "Ka") == 0)
 		{
 			fscanf_s(fp, "%f %f %f", &v.x, &v.y, &v.z);
-			pMaterial[iMCount].Ka = v;
+			pMaterial->Ka = v;
 		}
 		//Kd　ディフューズ
 		if (strcmp(key, "Kd") == 0)
 		{
 			fscanf_s(fp, "%f %f %f", &v.x, &v.y, &v.z);
-			pMaterial[iMCount].Kd = v;
+			pMaterial->Kd = v;
 		}
 		//Ks　スペキュラー
 		if (strcmp(key, "Ks") == 0)
 		{
 			fscanf_s(fp, "%f %f %f", &v.x, &v.y, &v.z);
-			pMaterial[iMCount].Ks = v;
+			pMaterial->Ks = v;
 		}
 		//map_Kd　テクスチャー
 		if (strcmp(key, "map_Kd") == 0)
 		{
-			fscanf_s(fp, "%s", &pMaterial[iMCount].szTextureName, sizeof(pMaterial[iMCount].szTextureName));
+			fscanf_s(fp, "%s", &pMaterial->szTextureName, sizeof(pMaterial->szTextureName));
 			//テクスチャーを作成
-			if (FAILED(D3DX11CreateShaderResourceViewFromFileA(m_pDevice, pMaterial[iMCount].szTextureName, NULL, NULL, &pMaterial[iMCount].pTexture, NULL)))
+			if (FAILED(D3DX11CreateShaderResourceViewFromFileA(m_pDevice, pMaterial->szTextureName, NULL, NULL, &pMaterial->pTexture, NULL)))
 			{
 				return E_FAIL;
 			}
 		}
+		
 		// shader
 		if (strcmp(key, "shaderPath") == 0)
 		{
 			fscanf_s(fp, "%s ", key, sizeof(key));
 			wchar_t wtext[110];
 			mbstowcs(wtext, key, strlen(key) + 1);//Plus null
-			pMaterial[iMCount].shaderPath = wtext;
-			if (m_Shader.find(wtext) != m_Shader.end()) {
-				m_Shader[wtext] = new cShader(wtext, m_pDevice, m_pDeviceContext);
-
+			pMaterial->shaderPath = wtext;
+			bool isExistShader = false;
+			// shaderが存在していたらそこに追加
+			for (auto itr = m_Shader.begin(); itr != m_Shader.end(); ++itr)
+			{
+				if (itr->first->m_ShaderPath == wtext) {
+					isExistShader = true;
+					itr->second->push_back(pMaterial);
+					break;
+				}
+			}
+			// 存在してなければ新しく作成
+			if (!isExistShader) {
+				auto shader = new cShader(wtext, m_pDevice, m_pDeviceContext);
+				auto list = new std::list<MY_MATERIAL*>;
+				list->push_back(pMaterial);
+				m_Shader[shader] = list;
 			}
 		}
 	}
 	fclose(fp);
-
-	*ppMaterial = pMaterial;
-
 	return S_OK;
 }
 

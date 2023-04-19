@@ -59,6 +59,7 @@ struct MY_MATERIAL
 	~MY_MATERIAL()
 	{
 		SAFE_RELEASE(pTexture);
+		SAFE_RELEASE(m_ppIndexBuffer);
 	}
 };
 
@@ -72,7 +73,7 @@ public:
 	~MESH();
 	HRESULT Init(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	HRESULT InitShader();
-	HRESULT LoadMaterialFromFile(LPSTR FileName, MY_MATERIAL** ppMaterial);
+	HRESULT LoadMaterialFromFile(LPSTR FileName);
 	void Render(D3DXMATRIX& mView, D3DXMATRIX& mProj, D3DXVECTOR3& vLight, D3DXVECTOR3& vEye);
 
 	/// <summary>
@@ -87,15 +88,6 @@ public:
 	/// 頂点バッファ
 	/// </summary>
 	ID3D11Buffer* m_pVertexBuffer;
-
-	/// <summary>
-	/// マテリアル数（マテリアル数だけ描画する）
-	/// </summary>
-	DWORD m_dwNumMaterial;
-	/// <summary>
-	/// マテリアルバッファ配列
-	/// </summary>
-	MY_MATERIAL* m_pMaterial;
 	/// <summary>
 	/// Shader数
 	/// </summary>
@@ -103,7 +95,7 @@ public:
 	/// <summary>
 	/// Shaderのリスト
 	/// </summary>
-	std::unordered_map<LPWSTR, cShader*> m_Shader;
+	std::unordered_map<cShader*, std::list<MY_MATERIAL*>*> m_Shader;
 	/// <summary>
 	/// サンプラーステート
 	/// </summary>
@@ -150,7 +142,7 @@ public:
 	};
 
 
-
+	cShader() {};
 	cShader(LPWSTR shaderPath, ID3D11Device* device, ID3D11DeviceContext* deviceContext);
 	~cShader()
 	{
