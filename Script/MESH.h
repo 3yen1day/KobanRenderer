@@ -39,6 +39,7 @@ struct SIMPLECONSTANT_BUFFER1
 //オリジナル　マテリアル構造体
 struct MY_MATERIAL
 {
+public:
 	CHAR szName[110];
 	D3DXVECTOR4 Ka;//アンビエント
 	D3DXVECTOR4 Kd;//ディフューズ
@@ -50,7 +51,7 @@ struct MY_MATERIAL
 	/// <summary>
 	/// インデックスバッファ
 	/// </summary>
-	ID3D11Buffer** m_ppIndexBuffer;
+	ID3D11Buffer* m_pIndexBuffer;
 
 	MY_MATERIAL()
 	{
@@ -59,7 +60,7 @@ struct MY_MATERIAL
 	~MY_MATERIAL()
 	{
 		SAFE_RELEASE(pTexture);
-		SAFE_RELEASE(m_ppIndexBuffer);
+		SAFE_RELEASE(m_pIndexBuffer);
 	}
 };
 
@@ -153,7 +154,7 @@ public:
 		SAFE_RELEASE(m_pVertexLayout);
 	}
 	HRESULT initShader();
-	HRESULT render(D3DXMATRIX& world, D3DXMATRIX& view, D3DXMATRIX& proj, D3DXMATRIX& mProj, D3DXVECTOR3& vLight, D3DXVECTOR3& vEye);
+	HRESULT render(D3DXMATRIX& world, D3DXMATRIX& view, D3DXMATRIX& proj, D3DXVECTOR3& vLight, D3DXVECTOR3& vEye);
 
 	/// <summary>
 	/// Shaderパス

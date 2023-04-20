@@ -130,88 +130,91 @@ HRESULT MESH::LoadResources(LPWSTR meshFileName)
 		}
 	}
 
-	//マテリアルの数だけインデックスバッファーを作成
-	m_ppIndexBuffer = new ID3D11Buffer * [m_dwNumMaterial];
-
 	//フェイス　読み込み　バラバラに収録されている可能性があるので、マテリアル名を頼りにつなぎ合わせる
 	bool boFlag = false;
 	int* piFaceBuffer = new int[m_dwNumFace * 3];//３頂点ポリゴンなので、1フェイス=3頂点(3インデックス)
 	dwFCount = 0;
 	DWORD dwPartFCount = 0;
-	for (DWORD i = 0; i < m_dwNumMaterial; i++)
+
+	for (auto shaderItr = m_Shader.begin(); shaderItr != m_Shader.end(); ++shaderItr)
 	{
-		dwPartFCount = 0;
-		fseek(fp, SEEK_SET, 0);
-
-		while (!feof(fp))
+		for (auto matItr = shaderItr->second->begin(); matItr != shaderItr->second->end(); ++matItr)
 		{
-			//キーワード 読み込み
-			ZeroMemory(key, sizeof(key));
-			fscanf_s(fp, "%s ", key, sizeof(key));
+			auto targetMat = *matItr;
+			dwPartFCount = 0;
+			fseek(fp, SEEK_SET, 0);
 
-			//フェイス 読み込み→頂点インデックスに
-			if (strcmp(key, "usemtl") == 0)
+			while (!feof(fp))
 			{
+				//キーワード 読み込み
+				ZeroMemory(key, sizeof(key));
 				fscanf_s(fp, "%s ", key, sizeof(key));
-				if (strcmp(key, m_pMaterial[i].szName) == 0)
+
+				//フェイス 読み込み→頂点インデックスに
+				if (strcmp(key, "usemtl") == 0)
 				{
-					boFlag = true;
+					fscanf_s(fp, "%s ", key, sizeof(key));
+					if (strcmp(key, targetMat->szName) == 0)
+					{
+						boFlag = true;
+					}
+					else
+					{
+						boFlag = false;
+					}
 				}
-				else
+				if (strcmp(key, "f") == 0 && boFlag == true)
 				{
-					boFlag = false;
+					if (targetMat->pTexture != NULL)//テクスチャーありサーフェイス
+					{
+						fscanf_s(fp, "%d/%d/%d %d/%d/%d %d/%d/%d", &v1, &vt1, &vn1, &v2, &vt2, &vn2, &v3, &vt3, &vn3);
+					}
+					else//テクスチャー無しサーフェイス
+					{
+						fscanf_s(fp, "%d//%d %d//%d %d//%d", &v1, &vn1, &v2, &vn2, &v3, &vn3);
+					}
+
+					//インデックスバッファー
+					piFaceBuffer[dwPartFCount * 3] = dwFCount * 3;
+					piFaceBuffer[dwPartFCount * 3 + 1] = dwFCount * 3 + 1;
+					piFaceBuffer[dwPartFCount * 3 + 2] = dwFCount * 3 + 2;
+					//頂点構造体に代入
+					pvVertexBuffer[dwFCount * 3].vPos = pvCoord[v1 - 1];
+					pvVertexBuffer[dwFCount * 3].vNorm = pvNormal[vn1 - 1];
+					pvVertexBuffer[dwFCount * 3].vUV = pvTexture[vt1 - 1];
+					pvVertexBuffer[dwFCount * 3 + 1].vPos = pvCoord[v2 - 1];
+					pvVertexBuffer[dwFCount * 3 + 1].vNorm = pvNormal[vn2 - 1];
+					pvVertexBuffer[dwFCount * 3 + 1].vUV = pvTexture[vt2 - 1];
+					pvVertexBuffer[dwFCount * 3 + 2].vPos = pvCoord[v3 - 1];
+					pvVertexBuffer[dwFCount * 3 + 2].vNorm = pvNormal[vn3 - 1];
+					pvVertexBuffer[dwFCount * 3 + 2].vUV = pvTexture[vt3 - 1];
+
+					dwPartFCount++;
+					dwFCount++;
+
 				}
 			}
-			if (strcmp(key, "f") == 0 && boFlag == true)
+			if (dwPartFCount == 0)//使用されていないマテリアル対策
 			{
-				if (m_pMaterial[i].pTexture != NULL)//テクスチャーありサーフェイス
-				{
-					fscanf_s(fp, "%d/%d/%d %d/%d/%d %d/%d/%d", &v1, &vt1, &vn1, &v2, &vt2, &vn2, &v3, &vt3, &vn3);
-				}
-				else//テクスチャー無しサーフェイス
-				{
-					fscanf_s(fp, "%d//%d %d//%d %d//%d", &v1, &vn1, &v2, &vn2, &v3, &vn3);
-				}
-
-				//インデックスバッファー
-				piFaceBuffer[dwPartFCount * 3] = dwFCount * 3;
-				piFaceBuffer[dwPartFCount * 3 + 1] = dwFCount * 3 + 1;
-				piFaceBuffer[dwPartFCount * 3 + 2] = dwFCount * 3 + 2;
-				//頂点構造体に代入
-				pvVertexBuffer[dwFCount * 3].vPos = pvCoord[v1 - 1];
-				pvVertexBuffer[dwFCount * 3].vNorm = pvNormal[vn1 - 1];
-				pvVertexBuffer[dwFCount * 3].vUV = pvTexture[vt1 - 1];
-				pvVertexBuffer[dwFCount * 3 + 1].vPos = pvCoord[v2 - 1];
-				pvVertexBuffer[dwFCount * 3 + 1].vNorm = pvNormal[vn2 - 1];
-				pvVertexBuffer[dwFCount * 3 + 1].vUV = pvTexture[vt2 - 1];
-				pvVertexBuffer[dwFCount * 3 + 2].vPos = pvCoord[v3 - 1];
-				pvVertexBuffer[dwFCount * 3 + 2].vNorm = pvNormal[vn3 - 1];
-				pvVertexBuffer[dwFCount * 3 + 2].vUV = pvTexture[vt3 - 1];
-
-				dwPartFCount++;
-				dwFCount++;
-
+				targetMat->m_pIndexBuffer = NULL;
+				continue;
 			}
-		}
-		if (dwPartFCount == 0)//使用されていないマテリアル対策
-		{
-			m_ppIndexBuffer[i] = NULL;
-			continue;
-		}
 
-		//インデックスバッファーを作成
-		D3D11_BUFFER_DESC bd;
-		bd.Usage = D3D11_USAGE_DEFAULT;
-		bd.ByteWidth = sizeof(int) * dwPartFCount * 3;
-		bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-		bd.CPUAccessFlags = 0;
-		bd.MiscFlags = 0;
-		D3D11_SUBRESOURCE_DATA InitData;
-		InitData.pSysMem = piFaceBuffer;
-		if (FAILED(m_pDevice->CreateBuffer(&bd, &InitData, &m_ppIndexBuffer[i])))
-			return FALSE;
-		m_pMaterial[i].dwNumFace = dwPartFCount;
+			//インデックスバッファーを作成
+			D3D11_BUFFER_DESC bd;
+			bd.Usage = D3D11_USAGE_DEFAULT;
+			bd.ByteWidth = sizeof(int) * dwPartFCount * 3;
+			bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+			bd.CPUAccessFlags = 0;
+			bd.MiscFlags = 0;
+			D3D11_SUBRESOURCE_DATA InitData;
+			InitData.pSysMem = piFaceBuffer;
+			if (FAILED(m_pDevice->CreateBuffer(&bd, &InitData, &targetMat->m_pIndexBuffer)))
+				return FALSE;
+			targetMat->dwNumFace = dwPartFCount;
+		}
 	}
+
 	delete[] piFaceBuffer;
 	fclose(fp);
 
@@ -304,7 +307,7 @@ HRESULT MESH::LoadMaterialFromFile(LPSTR FileName)
 				return E_FAIL;
 			}
 		}
-		
+
 		// shader
 		if (strcmp(key, "shaderPath") == 0)
 		{
@@ -349,46 +352,49 @@ void MESH::Render(D3DXMATRIX& mView, D3DXMATRIX& mProj,
 
 	mWorld = mScale * mYaw * mPitch * mRoll * mTran;
 
-	for (auto itr = m_Shader.begin(); itr != m_Shader.end(); ++itr)
+	for (auto shaderItr = m_Shader.begin(); shaderItr != m_Shader.end(); ++shaderItr)
 	{
-		auto shader = itr->second;
+		auto shader = (shaderItr->first);
 
 		//バーテックスバッファーをセット
 		UINT stride = sizeof(MY_VERTEX);
 		UINT offset = 0;
 		m_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
 
+		shader->render(mWorld, mView, mProj, vLight, vEye);
+
 		//マテリアルの数だけ、それぞれのマテリアルのインデックスバッファ－を描画
-		for (DWORD i = 0; i < m_dwNumMaterial; i++)
+		for (auto matItr = shaderItr->second->begin(); matItr != shaderItr->second->end(); ++matItr)
 		{
+			auto targetMat = *matItr;
 			//使用されていないマテリアル対策
-			if (m_pMaterial[i].dwNumFace == 0)
+			if (targetMat -> dwNumFace == 0)
 			{
 				continue;
 			}
 			//インデックスバッファーをセット
 			stride = sizeof(int);
 			offset = 0;
-			m_pDeviceContext->IASetIndexBuffer(m_ppIndexBuffer[i], DXGI_FORMAT_R32_UINT, 0);
+			m_pDeviceContext->IASetIndexBuffer(targetMat->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 			//マテリアルの各要素をエフェクト（シェーダー）に渡す
 			D3D11_MAPPED_SUBRESOURCE mappedSubResource;
 			//バッファの中身を更新するために、map, unmapを使用する→lock, unlockのようなもの
-			if (SUCCEEDED(m_pDeviceContext->Map(m_pConstantBuffer1, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource)))
+			if (SUCCEEDED(m_pDeviceContext->Map(shader->m_pConstantBuffer1, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource)))
 			{
 				SIMPLECONSTANT_BUFFER1 sg;
-				sg.vAmbient = m_pMaterial[i].Ka;//アンビエントををシェーダーに渡す
-				sg.vDiffuse = m_pMaterial[i].Kd;//ディフューズカラーをシェーダーに渡す
-				sg.vSpecular = m_pMaterial[i].Ks;//スペキュラーをシェーダーに渡す
+				sg.vAmbient = targetMat->Ka;//アンビエントををシェーダーに渡す
+				sg.vDiffuse = targetMat->Kd;//ディフューズカラーをシェーダーに渡す
+				sg.vSpecular = targetMat->Ks;//スペキュラーをシェーダーに渡す
 				memcpy_s(mappedSubResource.pData, mappedSubResource.RowPitch, (void*)&sg, sizeof(SIMPLECONSTANT_BUFFER1));
-				m_pDeviceContext->Unmap(m_pConstantBuffer1, 0);
+				m_pDeviceContext->Unmap(shader->m_pConstantBuffer1, 0);
 			}
-			m_pDeviceContext->VSSetConstantBuffers(1, 1, &m_pConstantBuffer1);
-			m_pDeviceContext->PSSetConstantBuffers(1, 1, &m_pConstantBuffer1);
+			m_pDeviceContext->VSSetConstantBuffers(1, 1, &shader->m_pConstantBuffer1);
+			m_pDeviceContext->PSSetConstantBuffers(1, 1, &shader->m_pConstantBuffer1);
 			//テクスチャーをシェーダーに渡す
-			if (m_pMaterial[i].szTextureName[0] != NULL)
+			if (targetMat->szTextureName[0] != NULL)
 			{
 				m_pDeviceContext->PSSetSamplers(0, 1, &m_pSampleLinear);
-				m_pDeviceContext->PSSetShaderResources(0, 1, &m_pMaterial[i].pTexture);
+				m_pDeviceContext->PSSetShaderResources(0, 1, &targetMat->pTexture);
 			}
 			else
 			{
@@ -396,7 +402,7 @@ void MESH::Render(D3DXMATRIX& mView, D3DXMATRIX& mProj,
 				m_pDeviceContext->PSSetShaderResources(0, 1, Nothing);
 			}
 			//プリミティブをレンダリング
-			m_pDeviceContext->DrawIndexed(m_pMaterial[i].dwNumFace * 3, 0, 0);
+			m_pDeviceContext->DrawIndexed(targetMat->dwNumFace * 3, 0, 0);
 		}
 	}
 
@@ -489,7 +495,7 @@ HRESULT cShader::initShader() {
 	return S_OK;
 }
 
-HRESULT cShader::render(D3DXMATRIX& world, D3DXMATRIX& view, D3DXMATRIX& proj, D3DXMATRIX& mProj, D3DXVECTOR3& vLight, D3DXVECTOR3& vEye) {
+HRESULT cShader::render(D3DXMATRIX& world, D3DXMATRIX& view, D3DXMATRIX& proj, D3DXVECTOR3& vLight, D3DXVECTOR3& vEye) {
 	//使用するシェーダーの登録	
 	m_pDeviceContext->VSSetShader(m_pVertexShader, NULL, 0);
 	m_pDeviceContext->PSSetShader(m_pPixelShader, NULL, 0);
