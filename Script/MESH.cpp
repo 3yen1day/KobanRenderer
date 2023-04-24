@@ -250,11 +250,6 @@ HRESULT MESH::LoadResources(LPWSTR meshFileName)
 	return S_OK;
 }
 
-HRESULT MESH::InitShader()
-{
-
-}
-
 HRESULT MESH::LoadMaterialFromFile(LPSTR FileName)
 {
 	//マテリアルファイルを開いて内容を読み込む
@@ -317,12 +312,14 @@ HRESULT MESH::LoadMaterialFromFile(LPSTR FileName)
 			pMaterial->shaderPath = wtext;
 			bool isExistShader = false;
 			// shaderが存在していたらそこに追加
-			for (auto itr = m_Shader.begin(); itr != m_Shader.end(); ++itr)
-			{
-				if (itr->first->m_ShaderPath == wtext) {
-					isExistShader = true;
-					itr->second->push_back(pMaterial);
-					break;
+			if (m_Shader.empty() == false) {
+				for (auto itr = m_Shader.begin(); itr != m_Shader.end(); ++itr)
+				{
+					if (&itr->first.m_ShaderPath == wtext) {
+						isExistShader = true;
+						itr->second->push_back(pMaterial);
+						break;
+					}
 				}
 			}
 			// 存在してなければ新しく作成
@@ -368,7 +365,7 @@ void MESH::Render(D3DXMATRIX& mView, D3DXMATRIX& mProj,
 		{
 			auto targetMat = *matItr;
 			//使用されていないマテリアル対策
-			if (targetMat -> dwNumFace == 0)
+			if (targetMat->dwNumFace == 0)
 			{
 				continue;
 			}
@@ -493,36 +490,4 @@ HRESULT cShader::initShader() {
 	}
 
 	return S_OK;
-}
-
-HRESULT cShader::render(D3DXMATRIX& world, D3DXMATRIX& view, D3DXMATRIX& proj, D3DXVECTOR3& vLight, D3DXVECTOR3& vEye) {
-	//使用するシェーダーの登録	
-	m_pDeviceContext->VSSetShader(m_pVertexShader, NULL, 0);
-	m_pDeviceContext->PSSetShader(m_pPixelShader, NULL, 0);
-	//シェーダーのコンスタントバッファーに各種データを渡す
-	D3D11_MAPPED_SUBRESOURCE pData;
-	if (SUCCEEDED(m_pDeviceContext->Map(m_pConstantBuffer0, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
-	{
-		SIMPLECONSTANT_BUFFER0 sg;
-		//ワールド行列を渡す
-		sg.mW = world;
-		D3DXMatrixTranspose(&sg.mW, &sg.mW);
-		//ワールド、カメラ、射影行列を渡す
-		sg.mWVP = world * view * proj;
-		D3DXMatrixTranspose(&sg.mWVP, &sg.mWVP);
-		//ライトの方向を渡す
-		sg.vLightDir = D3DXVECTOR4(vLight.x, vLight.y, vLight.z, 0.0f);
-		//視点位置を渡す
-		sg.vEye = D3DXVECTOR4(vEye.x, vEye.y, vEye.z, 0);
-
-		memcpy_s(pData.pData, pData.RowPitch, (void*)&sg, sizeof(SIMPLECONSTANT_BUFFER0));
-		m_pDeviceContext->Unmap(m_pConstantBuffer0, 0);
-	}
-	//このコンスタントバッファーを使うシェーダーの登録
-	m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer0);
-	m_pDeviceContext->PSSetConstantBuffers(0, 1, &m_pConstantBuffer0);
-	//頂点インプットレイアウトをセット
-	m_pDeviceContext->IASetInputLayout(m_pVertexLayout);
-	//プリミティブ・トポロジーをセット
-	m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
