@@ -15,6 +15,7 @@ MESH::~MESH()
 	SAFE_RELEASE(m_pVertexBuffer);
 	SAFE_RELEASE(m_pSampleLinear);
 	m_Shader.clear();
+	m_Material.clear();
 }
 
 
@@ -136,11 +137,11 @@ HRESULT MESH::LoadResources(LPWSTR meshFileName)
 	dwFCount = 0;
 	DWORD dwPartFCount = 0;
 
-	for (auto shaderItr = m_Shader.begin(); shaderItr != m_Shader.end(); ++shaderItr)
+	for (auto matDicItr = m_Material.begin(); matDicItr != m_Material.end(); ++matDicItr)
 	{
-		for (auto matItr = shaderItr->second->begin(); matItr != shaderItr->second->end(); ++matItr)
+		for (auto matListItr = matDicItr->second->begin(); matListItr != matDicItr->second->end(); ++matListItr)
 		{
-			auto targetMat = *matItr;
+			auto targetMat = *matListItr;
 			dwPartFCount = 0;
 			fseek(fp, SEEK_SET, 0);
 
@@ -309,25 +310,23 @@ HRESULT MESH::LoadMaterialFromFile(LPSTR FileName)
 			fscanf_s(fp, "%s ", key, sizeof(key));
 			wchar_t wtext[110];
 			mbstowcs(wtext, key, strlen(key) + 1);//Plus null
+			std::wstring shaderPathStr(wtext);
 			pMaterial->shaderPath = wtext;
 			bool isExistShader = false;
-			// shaderが存在していたらそこに追加
-			if (m_Shader.empty() == false) {
-				for (auto itr = m_Shader.begin(); itr != m_Shader.end(); ++itr)
-				{
-					if (&itr->first.m_ShaderPath == wtext) {
-						isExistShader = true;
-						itr->second->push_back(pMaterial);
-						break;
-					}
-				}
+			// shaderの追加
+			if (m_Shader.size() == 0 || m_Shader.find(shaderPathStr) == m_Shader.end())
+			{
+				m_Shader.insert(shaderPathStr, new cShader(wtext, m_pDevice, m_pDeviceContext));
 			}
-			// 存在してなければ新しく作成
-			if (!isExistShader) {
-				auto shader = new cShader(wtext, m_pDevice, m_pDeviceContext);
-				auto list = new std::list<MY_MATERIAL*>;
-				list->push_back(pMaterial);
-				m_Shader[shader] = list;
+			// materialの追加
+			auto matItr = m_Material.find(shaderPathStr);
+			if (matItr == m_Material.end()) {
+				m_Material[shaderPathStr] = new std::list<MY_MATERIAL*>();
+				m_Material[shaderPathStr]->push_back(pMaterial);
+			}
+			else 
+			{
+				matItr->second->push_back(pMaterial);
 			}
 		}
 	}
@@ -351,7 +350,11 @@ void MESH::Render(D3DXMATRIX& mView, D3DXMATRIX& mProj,
 
 	for (auto shaderItr = m_Shader.begin(); shaderItr != m_Shader.end(); ++shaderItr)
 	{
-		auto shader = (shaderItr->first);
+		auto shader = shaderItr->second;
+		auto matList = m_Material[shaderItr->first];
+		if (matList == nullptr || matList->size() == 0) {
+			continue;
+		}
 
 		//バーテックスバッファーをセット
 		UINT stride = sizeof(MY_VERTEX);
@@ -361,7 +364,7 @@ void MESH::Render(D3DXMATRIX& mView, D3DXMATRIX& mProj,
 		shader->render(mWorld, mView, mProj, vLight, vEye);
 
 		//マテリアルの数だけ、それぞれのマテリアルのインデックスバッファ－を描画
-		for (auto matItr = shaderItr->second->begin(); matItr != shaderItr->second->end(); ++matItr)
+		for (auto matItr = matList->begin(); matItr != matList->end(); ++matItr)
 		{
 			auto targetMat = *matItr;
 			//使用されていないマテリアル対策

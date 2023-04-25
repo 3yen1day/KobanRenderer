@@ -78,12 +78,15 @@ public:
 	/// <summary>
 	/// Shaderのリスト
 	/// </summary>
-	std::unordered_map<cShader*, std::list<MY_MATERIAL*>*> m_Shader;
+	std::unordered_map<std::wstring, cShader*> m_Shader;
+	/// <summary>
+	/// 
+	/// </summary>
+	std::unordered_map<std::wstring, std::list<MY_MATERIAL*>*> m_Material;
 	/// <summary>
 	/// サンプラーステート
 	/// </summary>
 	ID3D11SamplerState* m_pSampleLinear;
-
 
 private:
 	// トランスフォーム情報
