@@ -3,6 +3,7 @@
 #include "cShader.h"
 #include <memory>
 #include <unordered_map>
+#include <string>
 
 //頂点の構造体
 struct MY_VERTEX
@@ -47,6 +48,10 @@ public:
 	}
 };
 
+class Hoge {
+	int a;
+};
+
 //
 //
 //
@@ -78,7 +83,8 @@ public:
 	/// <summary>
 	/// Shaderのリスト
 	/// </summary>
-	std::unordered_map<std::wstring, cShader*> m_Shader;
+	std::unordered_map<std::wstring, cShader> m_Shader;
+	std::unordered_map<std::wstring, Hoge> m_Shader2;
 	/// <summary>
 	/// 
 	/// </summary>

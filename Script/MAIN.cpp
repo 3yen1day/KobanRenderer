@@ -34,6 +34,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, INT)
 
 void MAIN::Awake() {
 	//èâä˙âª
+	hoge[L"key1"] = cShader{};
 	mpRender = new Render(&mHwnd);
 }
 

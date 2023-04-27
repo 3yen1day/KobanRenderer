@@ -5,9 +5,11 @@
 //
 MESH::MESH()
 {
-	ZeroMemory(this, sizeof(MESH));
+	
 	m_fScale = 1.0f;
 	MODEL_PATH = L"Resource/Chips.obj";
+	m_Shader2 = *new std::unordered_map<std::wstring, Hoge>();
+	m_Shader2[L"key1"] = Hoge{};
 }
 
 MESH::~MESH()
@@ -17,7 +19,6 @@ MESH::~MESH()
 	m_Shader.clear();
 	m_Material.clear();
 }
-
 
 HRESULT MESH::Init(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
@@ -316,7 +317,12 @@ HRESULT MESH::LoadMaterialFromFile(LPSTR FileName)
 			// shaderの追加
 			if (m_Shader.size() == 0 || m_Shader.find(shaderPathStr) == m_Shader.end())
 			{
-				m_Shader.insert(shaderPathStr, new cShader(wtext, m_pDevice, m_pDeviceContext));
+				auto path = new std::wstring(shaderPathStr);
+				auto shader = new cShader(/*wtext, m_pDevice, m_pDeviceContext*/);
+				/*std::pair<std::wstring, cShader> shaderPair = std::pair<std::wstring, cShader>(*path, *shader);
+				hoge.insert(shaderPair);*/
+				/*m_Shader.insert(shaderPair);
+				m_Shader[*path] = *shader;*/
 			}
 			// materialの追加
 			auto matItr = m_Material.find(shaderPathStr);
@@ -361,7 +367,7 @@ void MESH::Render(D3DXMATRIX& mView, D3DXMATRIX& mProj,
 		UINT offset = 0;
 		m_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
 
-		shader->render(mWorld, mView, mProj, vLight, vEye);
+		shader.render(mWorld, mView, mProj, vLight, vEye);
 
 		//マテリアルの数だけ、それぞれのマテリアルのインデックスバッファ－を描画
 		for (auto matItr = matList->begin(); matItr != matList->end(); ++matItr)
@@ -379,17 +385,17 @@ void MESH::Render(D3DXMATRIX& mView, D3DXMATRIX& mProj,
 			//マテリアルの各要素をエフェクト（シェーダー）に渡す
 			D3D11_MAPPED_SUBRESOURCE mappedSubResource;
 			//バッファの中身を更新するために、map, unmapを使用する→lock, unlockのようなもの
-			if (SUCCEEDED(m_pDeviceContext->Map(shader->m_pConstantBuffer1, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource)))
+			if (SUCCEEDED(m_pDeviceContext->Map(shader.m_pConstantBuffer1, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource)))
 			{
 				SIMPLECONSTANT_BUFFER1 sg;
 				sg.vAmbient = targetMat->Ka;//アンビエントををシェーダーに渡す
 				sg.vDiffuse = targetMat->Kd;//ディフューズカラーをシェーダーに渡す
 				sg.vSpecular = targetMat->Ks;//スペキュラーをシェーダーに渡す
 				memcpy_s(mappedSubResource.pData, mappedSubResource.RowPitch, (void*)&sg, sizeof(SIMPLECONSTANT_BUFFER1));
-				m_pDeviceContext->Unmap(shader->m_pConstantBuffer1, 0);
+				m_pDeviceContext->Unmap(shader.m_pConstantBuffer1, 0);
 			}
-			m_pDeviceContext->VSSetConstantBuffers(1, 1, &shader->m_pConstantBuffer1);
-			m_pDeviceContext->PSSetConstantBuffers(1, 1, &shader->m_pConstantBuffer1);
+			m_pDeviceContext->VSSetConstantBuffers(1, 1, &shader.m_pConstantBuffer1);
+			m_pDeviceContext->PSSetConstantBuffers(1, 1, &shader.m_pConstantBuffer1);
 			//テクスチャーをシェーダーに渡す
 			if (targetMat->szTextureName[0] != NULL)
 			{
@@ -408,16 +414,16 @@ void MESH::Render(D3DXMATRIX& mView, D3DXMATRIX& mProj,
 
 }
 
-cShader::cShader(LPWSTR shaderPath, ID3D11Device* device, ID3D11DeviceContext* deviceContext) {
-	ZeroMemory(this, sizeof(cShader));
-	m_ShaderPath = shaderPath;
-	m_pDevice = device;
-	m_pDeviceContext = deviceContext;
-	if (FAILED(initShader()))
-	{
-		MessageBox(0, L"メッシュ用シェーダー作成失敗", NULL, MB_OK);
-	}
-}
+//cShader::cShader(LPWSTR shaderPath, ID3D11Device* device, ID3D11DeviceContext* deviceContext) {
+//	ZeroMemory(this, sizeof(cShader));
+//	m_ShaderPath = shaderPath;
+//	m_pDevice = device;
+//	m_pDeviceContext = deviceContext;
+//	if (FAILED(initShader()))
+//	{
+//		MessageBox(0, L"メッシュ用シェーダー作成失敗", NULL, MB_OK);
+//	}
+//}
 
 HRESULT cShader::initShader() {
 	if (m_ShaderPath == nullptr || m_ShaderPath == L"") {
