@@ -1,4 +1,5 @@
 #include "MAIN.h"
+//a
 //グローバル変数
 MAIN* g_pMain = NULL;
 //関数プロトタイプの宣言
