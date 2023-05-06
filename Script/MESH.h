@@ -13,12 +13,7 @@ struct MY_VERTEX
 	D3DXVECTOR2 vUV;
 };
 
-struct SIMPLECONSTANT_BUFFER1
-{
-	D3DXVECTOR4 vAmbient;//アンビエント光
-	D3DXVECTOR4 vDiffuse;//ディフューズ色
-	D3DXVECTOR4 vSpecular;//鏡面反射
-};
+
 
 //オリジナル　マテリアル構造体
 struct MY_MATERIAL
@@ -84,7 +79,6 @@ public:
 	/// Shaderのリスト
 	/// </summary>
 	std::unordered_map<std::wstring, cShader> m_Shader;
-	std::unordered_map<std::wstring, Hoge> m_Shader2;
 	/// <summary>
 	/// 
 	/// </summary>
@@ -97,8 +91,7 @@ public:
 private:
 	// トランスフォーム情報
 	D3DXVECTOR3 m_vPos;
-	float m_fYaw, m_fPitch, m_fRoll;
-	float m_fScale;
+	float m_fYaw, m_fPitch, m_fRoll, m_fScale;
 
 	/// <summary>
 	/// モデルのリソースパス

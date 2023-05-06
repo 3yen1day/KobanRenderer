@@ -3,13 +3,16 @@
 //
 //
 //
-MESH::MESH()
+MESH::MESH():
+	m_dwNumVert{0},
+	m_dwNumFace{0},
+	m_dwNumShader{0},
+	m_fYaw{0},
+	m_fPitch{0},
+	m_fRoll{0},
+	m_fScale{1.0f}, 
+	MODEL_PATH{ L"Resource/Chips.obj" }
 {
-	
-	m_fScale = 1.0f;
-	MODEL_PATH = L"Resource/Chips.obj";
-	m_Shader2 = *new std::unordered_map<std::wstring, Hoge>();
-	m_Shader2[L"key1"] = Hoge{};
 }
 
 MESH::~MESH()
@@ -318,9 +321,9 @@ HRESULT MESH::LoadMaterialFromFile(LPSTR FileName)
 			if (m_Shader.size() == 0 || m_Shader.find(shaderPathStr) == m_Shader.end())
 			{
 				auto path = new std::wstring(shaderPathStr);
-				auto shader = new cShader(/*wtext, m_pDevice, m_pDeviceContext*/);
-				/*std::pair<std::wstring, cShader> shaderPair = std::pair<std::wstring, cShader>(*path, *shader);
-				hoge.insert(shaderPair);*/
+				auto shader = new cShader(wtext, m_pDevice, m_pDeviceContext);
+				std::pair<std::wstring, cShader> shaderPair = std::pair<std::wstring, cShader>(*path, *shader);
+				hoge.insert(shaderPair);
 				/*m_Shader.insert(shaderPair);
 				m_Shader[*path] = *shader;*/
 			}
@@ -382,20 +385,14 @@ void MESH::Render(D3DXMATRIX& mView, D3DXMATRIX& mProj,
 			stride = sizeof(int);
 			offset = 0;
 			m_pDeviceContext->IASetIndexBuffer(targetMat->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-			//マテリアルの各要素をエフェクト（シェーダー）に渡す
-			D3D11_MAPPED_SUBRESOURCE mappedSubResource;
-			//バッファの中身を更新するために、map, unmapを使用する→lock, unlockのようなもの
-			if (SUCCEEDED(m_pDeviceContext->Map(shader.m_pConstantBuffer1, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource)))
-			{
-				SIMPLECONSTANT_BUFFER1 sg;
-				sg.vAmbient = targetMat->Ka;//アンビエントををシェーダーに渡す
-				sg.vDiffuse = targetMat->Kd;//ディフューズカラーをシェーダーに渡す
-				sg.vSpecular = targetMat->Ks;//スペキュラーをシェーダーに渡す
-				memcpy_s(mappedSubResource.pData, mappedSubResource.RowPitch, (void*)&sg, sizeof(SIMPLECONSTANT_BUFFER1));
-				m_pDeviceContext->Unmap(shader.m_pConstantBuffer1, 0);
-			}
-			m_pDeviceContext->VSSetConstantBuffers(1, 1, &shader.m_pConstantBuffer1);
-			m_pDeviceContext->PSSetConstantBuffers(1, 1, &shader.m_pConstantBuffer1);
+
+
+			cShader::SIMPLECONSTANT_BUFFER1 sg; 
+			sg.vAmbient = targetMat->Ka;//アンビエントををシェーダーに渡す
+			sg.vDiffuse = targetMat->Kd;//ディフューズカラーをシェーダーに渡す
+			sg.vSpecular = targetMat->Ks;//スペキュラーをシェーダーに渡す
+			shader.setBuffer(sg);
+
 			//テクスチャーをシェーダーに渡す
 			if (targetMat->szTextureName[0] != NULL)
 			{
