@@ -1,4 +1,5 @@
 newmtl chipis_fukuro_mae
+shaderPath Shader\MESH.hlsl
 Ka 0 0 0
 Kd 1 1 1
 Ks 0.605 0.605 0.605
@@ -7,9 +8,9 @@ Ns 800
 Tf 1 1 1
 d 1
 map_Kd Resource\Chips_Cover.jpg
-shaderPath Shader\MESH.hlsl
 
 newmtl chipis_fukuro_ushiro
+shaderPath Shader\MESH.hlsl
 Ka 0 0 0
 Kd 1 1 1
 Ks 0.75 0.75 0.75
@@ -18,4 +19,3 @@ Ns 600
 Tf 1 1 1
 d 1
 map_Kd Resource\Chips_Cover.jpg
-shaderPath Shader\MESH.hlsl

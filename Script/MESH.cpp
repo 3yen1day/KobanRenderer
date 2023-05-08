@@ -3,14 +3,13 @@
 //
 //
 //
-MESH::MESH():
-	m_dwNumVert{0},
-	m_dwNumFace{0},
-	m_dwNumShader{0},
-	m_fYaw{0},
-	m_fPitch{0},
-	m_fRoll{0},
-	m_fScale{1.0f}, 
+MESH::MESH() :
+	m_dwNumVert{ 0 },
+	m_dwNumFace{ 0 },
+	m_fYaw{ 0 },
+	m_fPitch{ 0 },
+	m_fRoll{ 0 },
+	m_fScale{ 1.0f },
 	MODEL_PATH{ L"Resource/Chips.obj" }
 {
 }
@@ -265,81 +264,86 @@ HRESULT MESH::LoadMaterialFromFile(LPSTR FileName)
 
 	//本読み込み	
 	fseek(fp, SEEK_SET, 0);
-	INT iMCount = -1;
+
+	auto pMaterial = new std::vector<MY_MATERIAL*>();
+	int matCount = -1;
 
 	while (!feof(fp))
 	{
-		MY_MATERIAL* pMaterial = new MY_MATERIAL();
 		//キーワード読み込み
 		fscanf_s(fp, "%s ", key, sizeof(key));
 		//マテリアル名
 		if (strcmp(key, "newmtl") == 0)
 		{
-			iMCount++;
+			matCount++;
+			pMaterial->push_back(new MY_MATERIAL());
 			fscanf_s(fp, "%s ", key, sizeof(key));
-			strcpy_s(pMaterial->szName, key);
+			strcpy_s(pMaterial->at(matCount)->szName, key);
 		}
-		//Ka　アンビエント
-		if (strcmp(key, "Ka") == 0)
-		{
-			fscanf_s(fp, "%f %f %f", &v.x, &v.y, &v.z);
-			pMaterial->Ka = v;
-		}
-		//Kd　ディフューズ
-		if (strcmp(key, "Kd") == 0)
-		{
-			fscanf_s(fp, "%f %f %f", &v.x, &v.y, &v.z);
-			pMaterial->Kd = v;
-		}
-		//Ks　スペキュラー
-		if (strcmp(key, "Ks") == 0)
-		{
-			fscanf_s(fp, "%f %f %f", &v.x, &v.y, &v.z);
-			pMaterial->Ks = v;
-		}
-		//map_Kd　テクスチャー
-		if (strcmp(key, "map_Kd") == 0)
-		{
-			fscanf_s(fp, "%s", &pMaterial->szTextureName, sizeof(pMaterial->szTextureName));
-			//テクスチャーを作成
-			if (FAILED(D3DX11CreateShaderResourceViewFromFileA(m_pDevice, pMaterial->szTextureName, NULL, NULL, &pMaterial->pTexture, NULL)))
-			{
-				return E_FAIL;
-			}
-		}
-
 		// shader
 		if (strcmp(key, "shaderPath") == 0)
 		{
 			fscanf_s(fp, "%s ", key, sizeof(key));
 			wchar_t wtext[110];
 			mbstowcs(wtext, key, strlen(key) + 1);//Plus null
-			std::wstring shaderPathStr(wtext);
-			pMaterial->shaderPath = wtext;
-			bool isExistShader = false;
-			// shaderの追加
-			if (m_Shader.size() == 0 || m_Shader.find(shaderPathStr) == m_Shader.end())
-			{
-				auto path = new std::wstring(shaderPathStr);
-				auto shader = new cShader(wtext, m_pDevice, m_pDeviceContext);
-				std::pair<std::wstring, cShader> shaderPair = std::pair<std::wstring, cShader>(*path, *shader);
-				hoge.insert(shaderPair);
-				/*m_Shader.insert(shaderPair);
-				m_Shader[*path] = *shader;*/
-			}
-			// materialの追加
-			auto matItr = m_Material.find(shaderPathStr);
-			if (matItr == m_Material.end()) {
-				m_Material[shaderPathStr] = new std::list<MY_MATERIAL*>();
-				m_Material[shaderPathStr]->push_back(pMaterial);
-			}
-			else 
-			{
-				matItr->second->push_back(pMaterial);
-			}
+			pMaterial->at(matCount)->shaderPath = wtext;
 		}
+		//Ka　アンビエント
+		if (strcmp(key, "Ka") == 0)
+		{
+			fscanf_s(fp, "%f %f %f", &v.x, &v.y, &v.z);
+			pMaterial->at(matCount)->Ka = v;
+		}
+		//Kd　ディフューズ
+		if (strcmp(key, "Kd") == 0)
+		{
+			fscanf_s(fp, "%f %f %f", &v.x, &v.y, &v.z);
+			pMaterial->at(matCount)->Kd = v;
+		}
+		//Ks　スペキュラー
+		if (strcmp(key, "Ks") == 0)
+		{
+			fscanf_s(fp, "%f %f %f", &v.x, &v.y, &v.z);
+			pMaterial->at(matCount)->Ks = v;
+		}
+		//map_Kd　テクスチャー
+		if (strcmp(key, "map_Kd") == 0)
+		{
+			fscanf_s(fp, "%s", &pMaterial->at(matCount)->szTextureName, sizeof(pMaterial->at(matCount)->szTextureName));
+		}
+
 	}
 	fclose(fp);
+
+	for (auto i = 0; i < pMaterial->size(); i++)
+	{
+		// shaderの追加
+		auto shaderPath = pMaterial->at(i)->shaderPath;
+		auto wstrPath = new std::wstring(shaderPath);
+		if (m_Shader.size() == 0 || m_Shader.find(shaderPath) == m_Shader.end())
+		{
+			auto shader = new cShader(shaderPath, m_pDevice, m_pDeviceContext);
+			//std::pair<std::wstring, cShader> shaderPair = std::pair<std::wstring, cShader>(*path, *shader);
+			//m_Shader.insert(shaderPair);
+			m_Shader[*wstrPath] = *shader;
+		}
+		// materialの追加
+		auto matItr = m_Material.find(shaderPath);
+		auto mat = new MY_MATERIAL(*(pMaterial->at(i)));
+		//テクスチャーを作成
+		if (FAILED(D3DX11CreateShaderResourceViewFromFileA(m_pDevice, mat->szTextureName, NULL, NULL, &mat->pTexture, NULL)))
+		{
+			return E_FAIL;
+		}
+		if (matItr == m_Material.end()) {
+			m_Material[*wstrPath] = new std::list<MY_MATERIAL*>();
+			m_Material[*wstrPath]->push_back(mat);
+		}
+		else
+		{
+			matItr->second->push_back(mat);
+		}
+	}
 	return S_OK;
 }
 
@@ -387,7 +391,7 @@ void MESH::Render(D3DXMATRIX& mView, D3DXMATRIX& mProj,
 			m_pDeviceContext->IASetIndexBuffer(targetMat->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 
-			cShader::SIMPLECONSTANT_BUFFER1 sg; 
+			cShader::SIMPLECONSTANT_BUFFER1 sg;
 			sg.vAmbient = targetMat->Ka;//アンビエントををシェーダーに渡す
 			sg.vDiffuse = targetMat->Kd;//ディフューズカラーをシェーダーに渡す
 			sg.vSpecular = targetMat->Ks;//スペキュラーをシェーダーに渡す
@@ -421,79 +425,3 @@ void MESH::Render(D3DXMATRIX& mView, D3DXMATRIX& mProj,
 //		MessageBox(0, L"メッシュ用シェーダー作成失敗", NULL, MB_OK);
 //	}
 //}
-
-HRESULT cShader::initShader() {
-	if (m_ShaderPath == nullptr || m_ShaderPath == L"") {
-		MessageBox(0, L"shaderPathが不正", NULL, MB_OK);
-		return E_FAIL;
-	}
-	//hlslファイル読み込み ブロブ作成　ブロブとはシェーダーの塊みたいなもの。XXシェーダーとして特徴を持たない。後で各種シェーダーに成り得る。
-	ID3D10Blob* pCompiledShader = NULL;
-	ID3D10Blob* pErrors = NULL;
-	//ブロブからバーテックスシェーダー作成
-	if (FAILED(D3DX11CompileFromFile(m_ShaderPath, NULL, NULL, "VS", "vs_4_0", 0, 0, NULL, &pCompiledShader, &pErrors, NULL)))
-	{
-		MessageBox(0, L"hlsl読み込み失敗", NULL, MB_OK);
-		return E_FAIL;
-	}
-	SAFE_RELEASE(pErrors);
-
-	if (FAILED(m_pDevice->CreateVertexShader(pCompiledShader->GetBufferPointer(), pCompiledShader->GetBufferSize(), NULL, &m_pVertexShader)))
-	{
-		SAFE_RELEASE(pCompiledShader);
-		MessageBox(0, L"バーテックスシェーダー作成失敗", NULL, MB_OK);
-		return E_FAIL;
-	}
-	//頂点インプットレイアウトを定義	
-	D3D11_INPUT_ELEMENT_DESC layout[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	};
-	UINT numElements = sizeof(layout) / sizeof(layout[0]);
-	//頂点インプットレイアウトを作成
-	if (FAILED(m_pDevice->CreateInputLayout(layout, numElements, pCompiledShader->GetBufferPointer(), pCompiledShader->GetBufferSize(), &m_pVertexLayout)))
-	{
-		return FALSE;
-	}
-	//ブロブからピクセルシェーダー作成
-	if (FAILED(D3DX11CompileFromFile(m_ShaderPath, NULL, NULL, "PS", "ps_4_0", 0, 0, NULL, &pCompiledShader, &pErrors, NULL)))
-	{
-		MessageBox(0, L"hlsl読み込み失敗", NULL, MB_OK);
-		return E_FAIL;
-	}
-	SAFE_RELEASE(pErrors);
-	if (FAILED(m_pDevice->CreatePixelShader(pCompiledShader->GetBufferPointer(), pCompiledShader->GetBufferSize(), NULL, &m_pPixelShader)))
-	{
-		SAFE_RELEASE(pCompiledShader);
-		MessageBox(0, L"ピクセルシェーダー作成失敗", NULL, MB_OK);
-		return E_FAIL;
-	}
-	SAFE_RELEASE(pCompiledShader);
-
-	//コンスタントバッファー作成　変換行列渡し用
-	D3D11_BUFFER_DESC cb;
-	cb.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cb.ByteWidth = sizeof(SIMPLECONSTANT_BUFFER0);
-	cb.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	cb.MiscFlags = 0;
-	cb.Usage = D3D11_USAGE_DYNAMIC;
-	if (FAILED(m_pDevice->CreateBuffer(&cb, NULL, &m_pConstantBuffer0)))
-	{
-		return E_FAIL;
-	}
-
-	//コンスタントバッファー作成  マテリアル渡し用
-	cb.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cb.ByteWidth = sizeof(SIMPLECONSTANT_BUFFER1);
-	cb.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	cb.MiscFlags = 0;
-	cb.Usage = D3D11_USAGE_DYNAMIC;
-	if (FAILED(m_pDevice->CreateBuffer(&cb, NULL, &m_pConstantBuffer1)))
-	{
-		return E_FAIL;
-	}
-
-	return S_OK;
-}

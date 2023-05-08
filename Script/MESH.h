@@ -36,15 +36,21 @@ public:
 	{
 		ZeroMemory(this, sizeof(MY_MATERIAL));
 	}
+
+	MY_MATERIAL(const MY_MATERIAL& srcMat) {
+		ZeroMemory(this, sizeof(MY_MATERIAL));
+		Ka = srcMat.Ka;
+		Kd = srcMat.Kd;
+		Ks = srcMat.Ks;
+		strcpy_s(szName, srcMat.szName);
+		strcpy_s(szTextureName, srcMat.szTextureName);
+	}
+
 	~MY_MATERIAL()
 	{
 		SAFE_RELEASE(pTexture);
 		SAFE_RELEASE(m_pIndexBuffer);
 	}
-};
-
-class Hoge {
-	int a;
 };
 
 //
@@ -71,10 +77,6 @@ public:
 	/// 頂点バッファ
 	/// </summary>
 	ID3D11Buffer* m_pVertexBuffer;
-	/// <summary>
-	/// Shader数
-	/// </summary>
-	DWORD m_dwNumShader;
 	/// <summary>
 	/// Shaderのリスト
 	/// </summary>

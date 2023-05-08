@@ -4,6 +4,7 @@
 class cShader {
 public:
 	cShader() {};
+	cShader(LPWSTR path, ID3D11Device* device, ID3D11DeviceContext* deviceContext);
 	~cShader() {};
 
 	struct SIMPLECONSTANT_BUFFER0
