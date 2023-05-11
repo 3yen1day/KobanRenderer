@@ -4,6 +4,7 @@
 #include <memory>
 #include <unordered_map>
 #include <string>
+#include <atlstr.h>
 
 //頂点の構造体
 struct MY_VERTEX
@@ -19,31 +20,27 @@ struct MY_VERTEX
 struct MY_MATERIAL
 {
 public:
-	CHAR szName[110];
+	std::wstring szName;
+	std::wstring szTextureName;//テクスチャーファイル名
+	std::wstring shaderPath;
 	D3DXVECTOR4 Ka;//アンビエント
 	D3DXVECTOR4 Kd;//ディフューズ
 	D3DXVECTOR4 Ks;//スペキュラー
-	CHAR szTextureName[110];//テクスチャーファイル名
-	ID3D11ShaderResourceView* pTexture;
 	DWORD dwNumFace;//そのマテリアルであるポリゴン数
-	LPWSTR shaderPath;
+	ID3D11ShaderResourceView* pTexture;
 	/// <summary>
 	/// インデックスバッファ
 	/// </summary>
 	ID3D11Buffer* m_pIndexBuffer;
 
-	MY_MATERIAL()
+	MY_MATERIAL():
+		szName{L""},
+		szTextureName{L""},
+		shaderPath{L""},
+		dwNumFace{0},
+		pTexture{nullptr},
+		m_pIndexBuffer{nullptr}
 	{
-		ZeroMemory(this, sizeof(MY_MATERIAL));
-	}
-
-	MY_MATERIAL(const MY_MATERIAL& srcMat) {
-		ZeroMemory(this, sizeof(MY_MATERIAL));
-		Ka = srcMat.Ka;
-		Kd = srcMat.Kd;
-		Ks = srcMat.Ks;
-		strcpy_s(szName, srcMat.szName);
-		strcpy_s(szTextureName, srcMat.szTextureName);
 	}
 
 	~MY_MATERIAL()
@@ -62,7 +59,7 @@ public:
 	MESH();
 	~MESH();
 	HRESULT Init(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	HRESULT LoadMaterialFromFile(LPSTR FileName);
+	HRESULT LoadMaterialFromFile(std::wstring FileName);
 	void Render(D3DXMATRIX& mView, D3DXMATRIX& mProj, D3DXVECTOR3& vLight, D3DXVECTOR3& vEye);
 
 	/// <summary>
@@ -98,7 +95,7 @@ private:
 	/// <summary>
 	/// モデルのリソースパス
 	/// </summary>
-	LPWSTR MODEL_PATH;
+	std::wstring MODEL_PATH;
 	/// <summary>
 	/// デバイス
 	/// </summary>
@@ -113,5 +110,5 @@ private:
 	/// </summary>
 	/// <param name="FileName"></param>
 	/// <returns></returns>
-	HRESULT LoadResources(LPWSTR FileName);
+	HRESULT LoadResources(std::wstring FileName);
 };

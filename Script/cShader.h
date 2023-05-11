@@ -4,7 +4,7 @@
 class cShader {
 public:
 	cShader() {};
-	cShader(LPWSTR path, ID3D11Device* device, ID3D11DeviceContext* deviceContext);
+	cShader(std::wstring path, ID3D11Device* device, ID3D11DeviceContext* deviceContext);
 	~cShader() {};
 
 	struct SIMPLECONSTANT_BUFFER0
@@ -43,5 +43,5 @@ private:
 	/// </summary>
 	ID3D11DeviceContext* m_pDeviceContext;
 
-	LPWSTR m_ShaderPath;
+	std::wstring m_ShaderPath;
 };

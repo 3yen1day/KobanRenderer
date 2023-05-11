@@ -36,7 +36,7 @@ HRESULT MESH::Init(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	return S_OK;
 }
 
-HRESULT MESH::LoadResources(LPWSTR meshFileName)
+HRESULT MESH::LoadResources(std::wstring meshFileName)
 {
 	float x, y, z;
 	int v1 = 0, v2 = 0, v3 = 0;
@@ -47,39 +47,39 @@ HRESULT MESH::LoadResources(LPWSTR meshFileName)
 	DWORD dwVTCount = 0;//読み込みカウンター
 	DWORD dwFCount = 0;//読み込みカウンター
 
-	char key[200] = { 0 };
+	wchar_t key[200] = { 0 };
 	//OBJファイルを開いて内容を読み込む
 	FILE* fp = NULL;
-	_wfopen_s(&fp, meshFileName, L"rt");
+	_wfopen_s(&fp, meshFileName.data(), L"rt");
 
 	//事前に頂点数、ポリゴン数を調べる
 	while (!feof(fp))
 	{
 		//キーワード読み込み
-		fscanf_s(fp, "%s ", key, sizeof(key));
+		fwscanf_s(fp, L"%s ", key, sizeof(key));
 		//マテリアル読み込み
-		if (strcmp(key, "mtllib") == 0)
+		if (wcscmp(key, L"mtllib") == 0)
 		{
-			fscanf_s(fp, "%s ", key, sizeof(key));
+			fwscanf_s(fp, L"%s ", key, sizeof(key));
 			LoadMaterialFromFile(key);
 		}
 		//頂点
-		if (strcmp(key, "v") == 0)
+		if (wcscmp(key, L"v") == 0)
 		{
 			m_dwNumVert++;
 		}
 		//法線
-		if (strcmp(key, "vn") == 0)
+		if (wcscmp(key, L"vn") == 0)
 		{
 			dwVNCount++;
 		}
 		//テクスチャー座標
-		if (strcmp(key, "vt") == 0)
+		if (wcscmp(key, L"vt") == 0)
 		{
 			dwVTCount++;
 		}
 		//フェイス（ポリゴン）
-		if (strcmp(key, "f") == 0)
+		if (wcscmp(key, L"f") == 0)
 		{
 			m_dwNumFace++;
 		}
@@ -102,12 +102,12 @@ HRESULT MESH::LoadResources(LPWSTR meshFileName)
 	{
 		//キーワード 読み込み
 		ZeroMemory(key, sizeof(key));
-		fscanf_s(fp, "%s ", key, sizeof(key));
+		fwscanf_s(fp, L"%s ", key, sizeof(key));
 
 		//頂点 読み込み
-		if (strcmp(key, "v") == 0)
+		if (wcscmp(key, L"v") == 0)
 		{
-			fscanf_s(fp, "%f %f %f", &x, &y, &z);
+			fwscanf_s(fp, L"%f %f %f", &x, &y, &z);
 			pvCoord[dwVCount].x = -x;
 			pvCoord[dwVCount].y = y;
 			pvCoord[dwVCount].z = z;
@@ -115,9 +115,9 @@ HRESULT MESH::LoadResources(LPWSTR meshFileName)
 		}
 
 		//法線 読み込み
-		if (strcmp(key, "vn") == 0)
+		if (wcscmp(key, L"vn") == 0)
 		{
-			fscanf_s(fp, "%f %f %f", &x, &y, &z);
+			fwscanf_s(fp, L"%f %f %f", &x, &y, &z);
 			pvNormal[dwVNCount].x = -x;
 			pvNormal[dwVNCount].y = y;
 			pvNormal[dwVNCount].z = z;
@@ -125,9 +125,9 @@ HRESULT MESH::LoadResources(LPWSTR meshFileName)
 		}
 
 		//テクスチャー座標 読み込み
-		if (strcmp(key, "vt") == 0)
+		if (wcscmp(key, L"vt") == 0)
 		{
-			fscanf_s(fp, "%f %f", &x, &y);
+			fwscanf_s(fp, L"%f %f", &x, &y);
 			pvTexture[dwVTCount].x = x;
 			pvTexture[dwVTCount].y = 1 - y;//OBJファイルはY成分が逆なので合わせる
 			dwVTCount++;
@@ -152,13 +152,13 @@ HRESULT MESH::LoadResources(LPWSTR meshFileName)
 			{
 				//キーワード 読み込み
 				ZeroMemory(key, sizeof(key));
-				fscanf_s(fp, "%s ", key, sizeof(key));
+				fwscanf_s(fp, L"%s ", key, sizeof(key));
 
 				//フェイス 読み込み→頂点インデックスに
-				if (strcmp(key, "usemtl") == 0)
+				if (wcscmp(key, L"usemtl") == 0)
 				{
-					fscanf_s(fp, "%s ", key, sizeof(key));
-					if (strcmp(key, targetMat->szName) == 0)
+					fwscanf_s(fp, L"%s ", key, sizeof(key));
+					if (wcscmp(key, targetMat->szName.data()) == 0)
 					{
 						boFlag = true;
 					}
@@ -167,15 +167,15 @@ HRESULT MESH::LoadResources(LPWSTR meshFileName)
 						boFlag = false;
 					}
 				}
-				if (strcmp(key, "f") == 0 && boFlag == true)
+				if (wcscmp(key, L"f") == 0 && boFlag == true)
 				{
 					if (targetMat->pTexture != NULL)//テクスチャーありサーフェイス
 					{
-						fscanf_s(fp, "%d/%d/%d %d/%d/%d %d/%d/%d", &v1, &vt1, &vn1, &v2, &vt2, &vn2, &v3, &vt3, &vn3);
+						fwscanf_s(fp, L"%d/%d/%d %d/%d/%d %d/%d/%d", &v1, &vt1, &vn1, &v2, &vt2, &vn2, &v3, &vt3, &vn3);
 					}
 					else//テクスチャー無しサーフェイス
 					{
-						fscanf_s(fp, "%d//%d %d//%d %d//%d", &v1, &vn1, &v2, &vn2, &v3, &vn3);
+						fwscanf_s(fp, L"%d//%d %d//%d %d//%d", &v1, &vn1, &v2, &vn2, &v3, &vn3);
 					}
 
 					//インデックスバッファー
@@ -254,12 +254,12 @@ HRESULT MESH::LoadResources(LPWSTR meshFileName)
 	return S_OK;
 }
 
-HRESULT MESH::LoadMaterialFromFile(LPSTR FileName)
+HRESULT MESH::LoadMaterialFromFile(std::wstring FileName)
 {
 	//マテリアルファイルを開いて内容を読み込む
 	FILE* fp = NULL;
-	fopen_s(&fp, FileName, "rt");
-	char key[110] = { 0 };
+	_wfopen_s(&fp, FileName.data(), L"rt");
+	wchar_t key[110] = { 0 };
 	D3DXVECTOR4 v(0, 0, 0, 1);
 
 	//本読み込み	
@@ -271,45 +271,41 @@ HRESULT MESH::LoadMaterialFromFile(LPSTR FileName)
 	while (!feof(fp))
 	{
 		//キーワード読み込み
-		fscanf_s(fp, "%s ", key, sizeof(key));
+		fwscanf_s(fp, L"%s ", key, sizeof(key));
 		//マテリアル名
-		if (strcmp(key, "newmtl") == 0)
+		if (wcscmp(key, L"newmtl") == 0)
 		{
 			matCount++;
 			pMaterial->push_back(new MY_MATERIAL());
-			fscanf_s(fp, "%s ", key, sizeof(key));
-			strcpy_s(pMaterial->at(matCount)->szName, key);
+			fwscanf_s(fp, L"%s ", pMaterial->at(matCount)->szName, sizeof(pMaterial->at(matCount)->szName));
 		}
 		// shader
-		if (strcmp(key, "shaderPath") == 0)
+		if (wcscmp(key, L"shaderPath") == 0)
 		{
-			fscanf_s(fp, "%s ", key, sizeof(key));
-			wchar_t wtext[110];
-			mbstowcs(wtext, key, strlen(key) + 1);//Plus null
-			pMaterial->at(matCount)->shaderPath = wtext;
+			fwscanf_s(fp, L"%s ", pMaterial->at(matCount)->shaderPath, sizeof(pMaterial->at(matCount)->shaderPath));
 		}
 		//Ka　アンビエント
-		if (strcmp(key, "Ka") == 0)
+		if (wcscmp(key, L"Ka") == 0)
 		{
-			fscanf_s(fp, "%f %f %f", &v.x, &v.y, &v.z);
+			fwscanf_s(fp, L"%f %f %f", &v.x, &v.y, &v.z);
 			pMaterial->at(matCount)->Ka = v;
 		}
 		//Kd　ディフューズ
-		if (strcmp(key, "Kd") == 0)
+		if (wcscmp(key, L"Kd") == 0)
 		{
-			fscanf_s(fp, "%f %f %f", &v.x, &v.y, &v.z);
+			fwscanf_s(fp, L"%f %f %f", &v.x, &v.y, &v.z);
 			pMaterial->at(matCount)->Kd = v;
 		}
 		//Ks　スペキュラー
-		if (strcmp(key, "Ks") == 0)
+		if (wcscmp(key, L"Ks") == 0)
 		{
-			fscanf_s(fp, "%f %f %f", &v.x, &v.y, &v.z);
+			fwscanf_s(fp, L"%f %f %f", &v.x, &v.y, &v.z);
 			pMaterial->at(matCount)->Ks = v;
 		}
 		//map_Kd　テクスチャー
-		if (strcmp(key, "map_Kd") == 0)
+		if (wcscmp(key, L"map_Kd") == 0)
 		{
-			fscanf_s(fp, "%s", &pMaterial->at(matCount)->szTextureName, sizeof(pMaterial->at(matCount)->szTextureName));
+			fwscanf_s(fp, L"%s", &pMaterial->at(matCount)->szTextureName, sizeof(pMaterial->at(matCount)->szTextureName));
 		}
 
 	}
@@ -318,26 +314,28 @@ HRESULT MESH::LoadMaterialFromFile(LPSTR FileName)
 	for (auto i = 0; i < pMaterial->size(); i++)
 	{
 		// shaderの追加
-		auto shaderPath = pMaterial->at(i)->shaderPath;
-		auto wstrPath = new std::wstring(shaderPath);
-		if (m_Shader.size() == 0 || m_Shader.find(shaderPath) == m_Shader.end())
+		auto wstrPath = pMaterial->at(i)->shaderPath;
+		if (m_Shader.size() == 0 || m_Shader.find(wstrPath) == m_Shader.end())
 		{
-			auto shader = new cShader(shaderPath, m_pDevice, m_pDeviceContext);
+			auto shader = new cShader(wstrPath, m_pDevice, m_pDeviceContext);
 			//std::pair<std::wstring, cShader> shaderPair = std::pair<std::wstring, cShader>(*path, *shader);
 			//m_Shader.insert(shaderPair);
-			m_Shader[*wstrPath] = *shader;
+			m_Shader[wstrPath] = *shader;
 		}
 		// materialの追加
-		auto matItr = m_Material.find(shaderPath);
-		auto mat = new MY_MATERIAL(*(pMaterial->at(i)));
+		auto matItr = m_Material.find(wstrPath);
+		auto mat = pMaterial->at(i);
+
+		char* c;
+		wcstombs(c, mat->szTextureName.data(), sizeof(mat->szTextureName.data()));
 		//テクスチャーを作成
-		if (FAILED(D3DX11CreateShaderResourceViewFromFileA(m_pDevice, mat->szTextureName, NULL, NULL, &mat->pTexture, NULL)))
+		if (FAILED(D3DX11CreateShaderResourceViewFromFileA(m_pDevice, c, NULL, NULL, &mat->pTexture, NULL)))
 		{
 			return E_FAIL;
 		}
 		if (matItr == m_Material.end()) {
-			m_Material[*wstrPath] = new std::list<MY_MATERIAL*>();
-			m_Material[*wstrPath]->push_back(mat);
+			m_Material[wstrPath] = new std::list<MY_MATERIAL*>();
+			m_Material[wstrPath]->push_back(mat);
 		}
 		else
 		{

@@ -1,6 +1,6 @@
 #include "cShader.h"
 
-cShader::cShader(LPWSTR path, ID3D11Device* device, ID3D11DeviceContext* deviceContext):
+cShader::cShader(std::wstring path, ID3D11Device* device, ID3D11DeviceContext* deviceContext):
 	m_pVertexLayout(nullptr),
 	m_pConstantBuffer0(nullptr),
 	m_pConstantBuffer1(nullptr),
@@ -62,7 +62,7 @@ void cShader::render(D3DXMATRIX& mWorld, D3DXMATRIX& mView, D3DXMATRIX& mProj,
 }
 
 HRESULT cShader::initShader() {
-	if (m_ShaderPath == nullptr || m_ShaderPath == L"") {
+	if (m_ShaderPath == L"") {
 		MessageBox(0, L"shaderPathが不正", NULL, MB_OK);
 		return E_FAIL;
 	}
@@ -70,7 +70,7 @@ HRESULT cShader::initShader() {
 	ID3D10Blob* pCompiledShader = NULL;
 	ID3D10Blob* pErrors = NULL;
 	//ブロブからバーテックスシェーダー作成
-	if (FAILED(D3DX11CompileFromFile(m_ShaderPath, NULL, NULL, "VS", "vs_4_0", 0, 0, NULL, &pCompiledShader, &pErrors, NULL)))
+	if (FAILED(D3DX11CompileFromFile(m_ShaderPath.data(), NULL, NULL, "VS", "vs_4_0", 0, 0, NULL, &pCompiledShader, &pErrors, NULL)))
 	{
 		MessageBox(0, L"hlsl読み込み失敗", NULL, MB_OK);
 		return E_FAIL;
@@ -97,7 +97,7 @@ HRESULT cShader::initShader() {
 		return E_FAIL;
 	}
 	//ブロブからピクセルシェーダー作成
-	if (FAILED(D3DX11CompileFromFile(m_ShaderPath, NULL, NULL, "PS", "ps_4_0", 0, 0, NULL, &pCompiledShader, &pErrors, NULL)))
+	if (FAILED(D3DX11CompileFromFile(m_ShaderPath.data(), NULL, NULL, "PS", "ps_4_0", 0, 0, NULL, &pCompiledShader, &pErrors, NULL)))
 	{
 		MessageBox(0, L"hlsl読み込み失敗", NULL, MB_OK);
 		return E_FAIL;
