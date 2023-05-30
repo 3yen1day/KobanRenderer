@@ -1,14 +1,15 @@
 #pragma once
 //ヘッダファイルやライブラリのインクルードヘッダ
+#include "DefaultInclude.h"
 
 //ヘッダーファイルのインクルード
-#include <string>
 #include <stdio.h>
 #include <windows.h>
 #include <d3d11.h>
 #include <d3dx10.h>
 #include <d3dx11.h>
 #include <d3dCompiler.h>
+
 
 //必要なライブラリファイルのロード
 #pragma comment(lib,"winmm.lib")

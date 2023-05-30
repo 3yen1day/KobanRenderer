@@ -2,8 +2,8 @@
 using namespace std;
 
 //RenderTarget
-#include "MESH.h"
-#include "RenderInclude.h"
+#include "TestMesh.h"
+#include "Include/RenderInclude.h"
 
 //定数定義
 #define WINDOW_WIDTH 640 //ウィンドウ幅
@@ -31,5 +31,5 @@ public:
 
 private:
 	//カメラ系のMatrixは全部まとめる
-	MESH* mpMesh;
+	TestMesh* mpMesh;
 };

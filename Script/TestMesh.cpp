@@ -1,34 +1,34 @@
-#include "MESH.h"
-
+#include "TestMesh.h"
 //
 //
 //
-MESH::MESH() :
-	m_dwNumVert{ 0 },
-	m_dwNumFace{ 0 },
-	m_fYaw{ 0 },
-	m_fPitch{ 0 },
-	m_fRoll{ 0 },
-	m_fScale{ 1.0f },
-	MODEL_PATH{ L"Resource/Chips.obj" }
+TestMesh::TestMesh() :
+	mVertNum{ 0 },
+	mFaceNum{ 0 },
+	mPos{*new D3DXVECTOR3 (0,0,0)},
+	mYaw{ 0 },
+	mPitch{ 0 },
+	mRoll{ 0 },
+	mScale{ 1.0f },
+	mModelPath{ L"Resource/Chips.obj" }
 {
 }
 
-MESH::~MESH()
+TestMesh::~TestMesh()
 {
-	SAFE_RELEASE(m_pVertexBuffer);
-	SAFE_RELEASE(m_pSampleLinear);
-	m_Shader.clear();
-	m_Material.clear();
+	SAFE_RELEASE(mpVertexBuffer);
+	SAFE_RELEASE(mpSampleLinear);
+	mShaderDic.clear();
+	mMaterialDic.clear();
 }
 
-HRESULT MESH::Init(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+HRESULT TestMesh::Init(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	m_pDevice = pDevice;
-	m_pDeviceContext = pContext;
+	mpDevice = pDevice;
+	mpDeviceContext = pContext;
 
 
-	if (FAILED(LoadResources(MODEL_PATH)))
+	if (FAILED(LoadResources(mModelPath)))
 	{
 		MessageBox(0, L"メッシュ作成失敗", NULL, MB_OK);
 		return E_FAIL;
@@ -36,37 +36,37 @@ HRESULT MESH::Init(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	return S_OK;
 }
 
-HRESULT MESH::LoadResources(std::wstring meshFileName)
+HRESULT TestMesh::LoadResources(std::wstring meshFileName)
 {
 	float x, y, z;
 	int v1 = 0, v2 = 0, v3 = 0;
 	int vn1 = 0, vn2 = 0, vn3 = 0;
 	int vt1 = 0, vt2 = 0, vt3 = 0;
-	DWORD dwVCount = 0;//読み込みカウンター
-	DWORD dwVNCount = 0;//読み込みカウンター
-	DWORD dwVTCount = 0;//読み込みカウンター
-	DWORD dwFCount = 0;//読み込みカウンター
+	uint32_t dwVCount = 0;//読み込みカウンター
+	uint32_t dwVNCount = 0;//読み込みカウンター
+	uint32_t dwVTCount = 0;//読み込みカウンター
+	uint32_t dwFCount = 0;//読み込みカウンター
 
 	wchar_t key[200] = { 0 };
 	//OBJファイルを開いて内容を読み込む
 	FILE* fp = NULL;
 	_wfopen_s(&fp, meshFileName.data(), L"rt");
-
 	//事前に頂点数、ポリゴン数を調べる
 	while (!feof(fp))
 	{
+		auto size = 201 * sizeof(wchar_t);
 		//キーワード読み込み
-		fwscanf_s(fp, L"%s ", key, sizeof(key));
+		fwscanf_s(fp, L"%s ", key, _countof(key));
 		//マテリアル読み込み
 		if (wcscmp(key, L"mtllib") == 0)
 		{
-			fwscanf_s(fp, L"%s ", key, sizeof(key));
+			fwscanf_s(fp, L"%s ", key, _countof(key));
 			LoadMaterialFromFile(key);
 		}
 		//頂点
 		if (wcscmp(key, L"v") == 0)
 		{
-			m_dwNumVert++;
+			mVertNum++;
 		}
 		//法線
 		if (wcscmp(key, L"vn") == 0)
@@ -81,13 +81,13 @@ HRESULT MESH::LoadResources(std::wstring meshFileName)
 		//フェイス（ポリゴン）
 		if (wcscmp(key, L"f") == 0)
 		{
-			m_dwNumFace++;
+			mFaceNum++;
 		}
 	}
 
 	//一時的なメモリ確保（頂点バッファとインデックスバッファ）
-	MY_VERTEX* pvVertexBuffer = new MY_VERTEX[m_dwNumFace * 3];
-	D3DXVECTOR3* pvCoord = new D3DXVECTOR3[m_dwNumVert];
+	MY_VERTEX* pvVertexBuffer = new MY_VERTEX[mFaceNum * 3];
+	D3DXVECTOR3* pvCoord = new D3DXVECTOR3[mVertNum];
 	D3DXVECTOR3* pvNormal = new D3DXVECTOR3[dwVNCount];
 	D3DXVECTOR2* pvTexture = new D3DXVECTOR2[dwVTCount];
 
@@ -102,7 +102,7 @@ HRESULT MESH::LoadResources(std::wstring meshFileName)
 	{
 		//キーワード 読み込み
 		ZeroMemory(key, sizeof(key));
-		fwscanf_s(fp, L"%s ", key, sizeof(key));
+		fwscanf_s(fp, L"%s ", key, _countof(key));
 
 		//頂点 読み込み
 		if (wcscmp(key, L"v") == 0)
@@ -136,11 +136,11 @@ HRESULT MESH::LoadResources(std::wstring meshFileName)
 
 	//フェイス　読み込み　バラバラに収録されている可能性があるので、マテリアル名を頼りにつなぎ合わせる
 	bool boFlag = false;
-	int* piFaceBuffer = new int[m_dwNumFace * 3];//３頂点ポリゴンなので、1フェイス=3頂点(3インデックス)
+	int* piFaceBuffer = new int[mFaceNum * 3];//３頂点ポリゴンなので、1フェイス=3頂点(3インデックス)
 	dwFCount = 0;
-	DWORD dwPartFCount = 0;
+	uint32_t dwPartFCount = 0;
 
-	for (auto matDicItr = m_Material.begin(); matDicItr != m_Material.end(); ++matDicItr)
+	for (auto matDicItr = mMaterialDic.begin(); matDicItr != mMaterialDic.end(); ++matDicItr)
 	{
 		for (auto matListItr = matDicItr->second->begin(); matListItr != matDicItr->second->end(); ++matListItr)
 		{
@@ -152,13 +152,13 @@ HRESULT MESH::LoadResources(std::wstring meshFileName)
 			{
 				//キーワード 読み込み
 				ZeroMemory(key, sizeof(key));
-				fwscanf_s(fp, L"%s ", key, sizeof(key));
+				fwscanf_s(fp, L"%s ", key, _countof(key));
 
 				//フェイス 読み込み→頂点インデックスに
 				if (wcscmp(key, L"usemtl") == 0)
 				{
-					fwscanf_s(fp, L"%s ", key, sizeof(key));
-					if (wcscmp(key, targetMat->szName.data()) == 0)
+					fwscanf_s(fp, L"%s ", key, _countof(key));
+					if (wcscmp(key, targetMat->mName.data()) == 0)
 					{
 						boFlag = true;
 					}
@@ -169,7 +169,7 @@ HRESULT MESH::LoadResources(std::wstring meshFileName)
 				}
 				if (wcscmp(key, L"f") == 0 && boFlag == true)
 				{
-					if (targetMat->pTexture != NULL)//テクスチャーありサーフェイス
+					if (targetMat->mpTexture != NULL)//テクスチャーありサーフェイス
 					{
 						fwscanf_s(fp, L"%d/%d/%d %d/%d/%d %d/%d/%d", &v1, &vt1, &vn1, &v2, &vt2, &vn2, &v3, &vt3, &vn3);
 					}
@@ -183,15 +183,15 @@ HRESULT MESH::LoadResources(std::wstring meshFileName)
 					piFaceBuffer[dwPartFCount * 3 + 1] = dwFCount * 3 + 1;
 					piFaceBuffer[dwPartFCount * 3 + 2] = dwFCount * 3 + 2;
 					//頂点構造体に代入
-					pvVertexBuffer[dwFCount * 3].vPos = pvCoord[v1 - 1];
-					pvVertexBuffer[dwFCount * 3].vNorm = pvNormal[vn1 - 1];
-					pvVertexBuffer[dwFCount * 3].vUV = pvTexture[vt1 - 1];
-					pvVertexBuffer[dwFCount * 3 + 1].vPos = pvCoord[v2 - 1];
-					pvVertexBuffer[dwFCount * 3 + 1].vNorm = pvNormal[vn2 - 1];
-					pvVertexBuffer[dwFCount * 3 + 1].vUV = pvTexture[vt2 - 1];
-					pvVertexBuffer[dwFCount * 3 + 2].vPos = pvCoord[v3 - 1];
-					pvVertexBuffer[dwFCount * 3 + 2].vNorm = pvNormal[vn3 - 1];
-					pvVertexBuffer[dwFCount * 3 + 2].vUV = pvTexture[vt3 - 1];
+					pvVertexBuffer[dwFCount * 3].mPos = pvCoord[v1 - 1];
+					pvVertexBuffer[dwFCount * 3].mNorm = pvNormal[vn1 - 1];
+					pvVertexBuffer[dwFCount * 3].mUV = pvTexture[vt1 - 1];
+					pvVertexBuffer[dwFCount * 3 + 1].mPos = pvCoord[v2 - 1];
+					pvVertexBuffer[dwFCount * 3 + 1].mNorm = pvNormal[vn2 - 1];
+					pvVertexBuffer[dwFCount * 3 + 1].mUV = pvTexture[vt2 - 1];
+					pvVertexBuffer[dwFCount * 3 + 2].mPos = pvCoord[v3 - 1];
+					pvVertexBuffer[dwFCount * 3 + 2].mNorm = pvNormal[vn3 - 1];
+					pvVertexBuffer[dwFCount * 3 + 2].mUV = pvTexture[vt3 - 1];
 
 					dwPartFCount++;
 					dwFCount++;
@@ -200,7 +200,7 @@ HRESULT MESH::LoadResources(std::wstring meshFileName)
 			}
 			if (dwPartFCount == 0)//使用されていないマテリアル対策
 			{
-				targetMat->m_pIndexBuffer = NULL;
+				targetMat->mpIndexBuffer = NULL;
 				continue;
 			}
 
@@ -213,9 +213,9 @@ HRESULT MESH::LoadResources(std::wstring meshFileName)
 			bd.MiscFlags = 0;
 			D3D11_SUBRESOURCE_DATA InitData;
 			InitData.pSysMem = piFaceBuffer;
-			if (FAILED(m_pDevice->CreateBuffer(&bd, &InitData, &targetMat->m_pIndexBuffer)))
+			if (FAILED(mpDevice->CreateBuffer(&bd, &InitData, &targetMat->mpIndexBuffer)))
 				return FALSE;
-			targetMat->dwNumFace = dwPartFCount;
+			targetMat->mFaceNum = dwPartFCount;
 		}
 	}
 
@@ -225,14 +225,14 @@ HRESULT MESH::LoadResources(std::wstring meshFileName)
 	//バーテックスバッファーを作成
 	D3D11_BUFFER_DESC bd;
 	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(MY_VERTEX) * m_dwNumFace * 3;
+	bd.ByteWidth = sizeof(MY_VERTEX) * mFaceNum * 3;
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bd.CPUAccessFlags = 0;
 	bd.MiscFlags = 0;
 	D3D11_SUBRESOURCE_DATA InitData;
 	InitData.pSysMem = pvVertexBuffer;
 
-	if (FAILED(m_pDevice->CreateBuffer(&bd, &InitData, &m_pVertexBuffer)))
+	if (FAILED(mpDevice->CreateBuffer(&bd, &InitData, &mpVertexBuffer)))
 		return FALSE;
 
 	//一時的な入れ物は、もはや不要
@@ -249,12 +249,12 @@ HRESULT MESH::LoadResources(std::wstring meshFileName)
 	SamDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	m_pDevice->CreateSamplerState(&SamDesc, &m_pSampleLinear);
+	mpDevice->CreateSamplerState(&SamDesc, &mpSampleLinear);
 
 	return S_OK;
 }
 
-HRESULT MESH::LoadMaterialFromFile(std::wstring FileName)
+HRESULT TestMesh::LoadMaterialFromFile(std::wstring FileName)
 {
 	//マテリアルファイルを開いて内容を読み込む
 	FILE* fp = NULL;
@@ -265,47 +265,50 @@ HRESULT MESH::LoadMaterialFromFile(std::wstring FileName)
 	//本読み込み	
 	fseek(fp, SEEK_SET, 0);
 
-	auto pMaterial = new std::vector<MY_MATERIAL*>();
+	auto pMaterial = new std::vector<TestMaterial*>();
 	int matCount = -1;
 
 	while (!feof(fp))
 	{
 		//キーワード読み込み
-		fwscanf_s(fp, L"%s ", key, sizeof(key));
+		fwscanf_s(fp, L"%s ", key, _countof(key));
 		//マテリアル名
 		if (wcscmp(key, L"newmtl") == 0)
 		{
 			matCount++;
-			pMaterial->push_back(new MY_MATERIAL());
-			fwscanf_s(fp, L"%s ", pMaterial->at(matCount)->szName, sizeof(pMaterial->at(matCount)->szName));
+			pMaterial->push_back(new TestMaterial());
+			fwscanf_s(fp, L"%s ", key, _countof(key));
+			pMaterial->at(matCount)->mName = key;
 		}
 		// shader
 		if (wcscmp(key, L"shaderPath") == 0)
 		{
-			fwscanf_s(fp, L"%s ", pMaterial->at(matCount)->shaderPath, sizeof(pMaterial->at(matCount)->shaderPath));
+			fwscanf_s(fp, L"%s ", key, _countof(key));
+			pMaterial->at(matCount)->shaderPath = key;
 		}
 		//Ka　アンビエント
 		if (wcscmp(key, L"Ka") == 0)
 		{
 			fwscanf_s(fp, L"%f %f %f", &v.x, &v.y, &v.z);
-			pMaterial->at(matCount)->Ka = v;
+			pMaterial->at(matCount)->mKa = v;
 		}
 		//Kd　ディフューズ
 		if (wcscmp(key, L"Kd") == 0)
 		{
 			fwscanf_s(fp, L"%f %f %f", &v.x, &v.y, &v.z);
-			pMaterial->at(matCount)->Kd = v;
+			pMaterial->at(matCount)->mKd = v;
 		}
 		//Ks　スペキュラー
 		if (wcscmp(key, L"Ks") == 0)
 		{
 			fwscanf_s(fp, L"%f %f %f", &v.x, &v.y, &v.z);
-			pMaterial->at(matCount)->Ks = v;
+			pMaterial->at(matCount)->mKs = v;
 		}
 		//map_Kd　テクスチャー
 		if (wcscmp(key, L"map_Kd") == 0)
 		{
-			fwscanf_s(fp, L"%s", &pMaterial->at(matCount)->szTextureName, sizeof(pMaterial->at(matCount)->szTextureName));
+			fwscanf_s(fp, L"%s ", key, _countof(key));
+			pMaterial->at(matCount)->mTextureName = key;
 		}
 
 	}
@@ -315,27 +318,27 @@ HRESULT MESH::LoadMaterialFromFile(std::wstring FileName)
 	{
 		// shaderの追加
 		auto wstrPath = pMaterial->at(i)->shaderPath;
-		if (m_Shader.size() == 0 || m_Shader.find(wstrPath) == m_Shader.end())
+		if (mShaderDic.size() == 0 || mShaderDic.find(wstrPath) == mShaderDic.end())
 		{
-			auto shader = new cShader(wstrPath, m_pDevice, m_pDeviceContext);
+			auto shader = new TestShader(wstrPath, mpDevice, mpDeviceContext);
 			//std::pair<std::wstring, cShader> shaderPair = std::pair<std::wstring, cShader>(*path, *shader);
 			//m_Shader.insert(shaderPair);
-			m_Shader[wstrPath] = *shader;
+			mShaderDic[wstrPath] = *shader;
 		}
 		// materialの追加
-		auto matItr = m_Material.find(wstrPath);
+		auto matItr = mMaterialDic.find(wstrPath);
 		auto mat = pMaterial->at(i);
 
-		char* c;
-		wcstombs(c, mat->szTextureName.data(), sizeof(mat->szTextureName.data()));
+		char c[110] = { 0 };
+		wcstombs(c, mat->mTextureName.data(), mat->mTextureName.length());
 		//テクスチャーを作成
-		if (FAILED(D3DX11CreateShaderResourceViewFromFileA(m_pDevice, c, NULL, NULL, &mat->pTexture, NULL)))
+		if (FAILED(D3DX11CreateShaderResourceViewFromFileA(mpDevice, c, NULL, NULL, &mat->mpTexture, NULL)))
 		{
 			return E_FAIL;
 		}
-		if (matItr == m_Material.end()) {
-			m_Material[wstrPath] = new std::list<MY_MATERIAL*>();
-			m_Material[wstrPath]->push_back(mat);
+		if (matItr == mMaterialDic.end()) {
+			mMaterialDic[wstrPath] = new std::list<TestMaterial*>();
+			mMaterialDic[wstrPath]->push_back(mat);
 		}
 		else
 		{
@@ -345,24 +348,24 @@ HRESULT MESH::LoadMaterialFromFile(std::wstring FileName)
 	return S_OK;
 }
 
-void MESH::Render(D3DXMATRIX& mView, D3DXMATRIX& mProj,
+void TestMesh::Render(D3DXMATRIX& mView, D3DXMATRIX& mProj,
 	D3DXVECTOR3& vLight, D3DXVECTOR3& vEye)
 {
-	m_fYaw += 0.0001; //回転
-	D3DXMATRIX mWorld, mTran, mYaw, mPitch, mRoll, mScale;
+	mYaw += 0.0001; //回転
+	D3DXMATRIX worldMat, transMat, yawMat, pitchMat, rollMat, scaleMat;
 	//ワールドトランスフォーム（絶対座標変換）
-	D3DXMatrixScaling(&mScale, m_fScale, m_fScale, m_fScale);
-	D3DXMatrixRotationY(&mYaw, m_fYaw);
-	D3DXMatrixRotationX(&mPitch, m_fPitch);
-	D3DXMatrixRotationZ(&mRoll, m_fRoll);
-	D3DXMatrixTranslation(&mTran, m_vPos.x, m_vPos.y, m_vPos.z);
+	D3DXMatrixScaling(&scaleMat, mScale, mScale, mScale);
+	D3DXMatrixRotationY(&yawMat, mYaw);
+	D3DXMatrixRotationX(&pitchMat, mPitch);
+	D3DXMatrixRotationZ(&rollMat, mRoll);
+	D3DXMatrixTranslation(&transMat, mPos.x, mPos.y, mPos.z);
 
-	mWorld = mScale * mYaw * mPitch * mRoll * mTran;
+	worldMat = scaleMat * yawMat * pitchMat * rollMat * transMat;
 
-	for (auto shaderItr = m_Shader.begin(); shaderItr != m_Shader.end(); ++shaderItr)
+	for (auto shaderItr = mShaderDic.begin(); shaderItr != mShaderDic.end(); ++shaderItr)
 	{
 		auto shader = shaderItr->second;
-		auto matList = m_Material[shaderItr->first];
+		auto matList = mMaterialDic[shaderItr->first];
 		if (matList == nullptr || matList->size() == 0) {
 			continue;
 		}
@@ -370,56 +373,45 @@ void MESH::Render(D3DXMATRIX& mView, D3DXMATRIX& mProj,
 		//バーテックスバッファーをセット
 		UINT stride = sizeof(MY_VERTEX);
 		UINT offset = 0;
-		m_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
+		mpDeviceContext->IASetVertexBuffers(0, 1, &mpVertexBuffer, &stride, &offset);
 
-		shader.render(mWorld, mView, mProj, vLight, vEye);
+		shader.render(worldMat, mView, mProj, vLight, vEye);
 
 		//マテリアルの数だけ、それぞれのマテリアルのインデックスバッファ－を描画
 		for (auto matItr = matList->begin(); matItr != matList->end(); ++matItr)
 		{
 			auto targetMat = *matItr;
 			//使用されていないマテリアル対策
-			if (targetMat->dwNumFace == 0)
+			if (targetMat->mFaceNum == 0)
 			{
 				continue;
 			}
 			//インデックスバッファーをセット
 			stride = sizeof(int);
 			offset = 0;
-			m_pDeviceContext->IASetIndexBuffer(targetMat->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+			mpDeviceContext->IASetIndexBuffer(targetMat->mpIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 
-			cShader::SIMPLECONSTANT_BUFFER1 sg;
-			sg.vAmbient = targetMat->Ka;//アンビエントををシェーダーに渡す
-			sg.vDiffuse = targetMat->Kd;//ディフューズカラーをシェーダーに渡す
-			sg.vSpecular = targetMat->Ks;//スペキュラーをシェーダーに渡す
+			TestShader::SIMPLECONSTANT_BUFFER1 sg;
+			sg.mAmbient = targetMat->mKa;//アンビエントををシェーダーに渡す
+			sg.mDiffuse = targetMat->mKd;//ディフューズカラーをシェーダーに渡す
+			sg.mSpecular = targetMat->mKs;//スペキュラーをシェーダーに渡す
 			shader.setBuffer(sg);
 
 			//テクスチャーをシェーダーに渡す
-			if (targetMat->szTextureName[0] != NULL)
+			if (targetMat->mTextureName[0] != NULL)
 			{
-				m_pDeviceContext->PSSetSamplers(0, 1, &m_pSampleLinear);
-				m_pDeviceContext->PSSetShaderResources(0, 1, &targetMat->pTexture);
+				mpDeviceContext->PSSetSamplers(0, 1, &mpSampleLinear);
+				mpDeviceContext->PSSetShaderResources(0, 1, &targetMat->mpTexture);
 			}
 			else
 			{
 				ID3D11ShaderResourceView* Nothing[1] = { 0 };
-				m_pDeviceContext->PSSetShaderResources(0, 1, Nothing);
+				mpDeviceContext->PSSetShaderResources(0, 1, Nothing);
 			}
 			//プリミティブをレンダリング
-			m_pDeviceContext->DrawIndexed(targetMat->dwNumFace * 3, 0, 0);
+			mpDeviceContext->DrawIndexed(targetMat->mFaceNum * 3, 0, 0);
 		}
 	}
 
 }
-
-//cShader::cShader(LPWSTR shaderPath, ID3D11Device* device, ID3D11DeviceContext* deviceContext) {
-//	ZeroMemory(this, sizeof(cShader));
-//	m_ShaderPath = shaderPath;
-//	m_pDevice = device;
-//	m_pDeviceContext = deviceContext;
-//	if (FAILED(initShader()))
-//	{
-//		MessageBox(0, L"メッシュ用シェーダー作成失敗", NULL, MB_OK);
-//	}
-//}

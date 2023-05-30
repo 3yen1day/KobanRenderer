@@ -11,7 +11,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 /// コンストラクタ
 /// </summary>
 /// <param name="pHWnd">ウィンドウのハンドラ</param>
-Render::Render(HWND * pHWnd):mHwnd(pHWnd)
+Render::Render(HWND * pHWnd):
+	mHwnd(pHWnd), 
+	mpDevice(nullptr), 
+	mpDeviceContext(nullptr), 
+	mpSwapChain(nullptr),
+	mpBackBuffer_TexRTV(nullptr),
+	mpBackBuffer_DSTexDSV(nullptr),
+	mpBackBuffer_DSTex(nullptr),
+	mpMesh(nullptr)
 {
 	// デバイスとスワップチェーンの作成
 	DXGI_SWAP_CHAIN_DESC sd;
@@ -95,7 +103,7 @@ void Render::CreateRenderObject()
 {
 	//RenderObjectの初期化
 	//メッシュ作成
-	mpMesh = new MESH;
+	mpMesh = new TestMesh;
 	if (FAILED(mpMesh->Init(mpDevice, mpDeviceContext)))
 	{
 		//なんか例外

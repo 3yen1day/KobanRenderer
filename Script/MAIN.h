@@ -1,6 +1,6 @@
 #include"Render.h"
 
-class MAIN
+class Main
 {
 public:
 	HRESULT InitWindow(HINSTANCE,INT,INT,INT,INT,LPCWSTR);
@@ -13,7 +13,6 @@ public:
 	void Destroy();
 
 	HWND mHwnd;
-	std::unordered_map<std::wstring, cShader> hoge;
 
 private:
 	Render* mpRender;

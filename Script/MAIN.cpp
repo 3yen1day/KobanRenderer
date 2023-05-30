@@ -1,7 +1,7 @@
-#include "MAIN.h"
-//a
+#include "Main.h"
+
 //グローバル変数
-MAIN* g_pMain = NULL;
+Main* g_pMain = NULL;
 //関数プロトタイプの宣言
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -13,7 +13,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 //アプリケーションのエントリー関数 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, INT)
 {
-	g_pMain = new MAIN;
+	g_pMain = new Main;
 	if (g_pMain != NULL)
 	{
 		if (SUCCEEDED(g_pMain->InitWindow(hInstance, 0, 0, WINDOW_WIDTH,
@@ -33,16 +33,16 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, INT)
 }
 
 
-void MAIN::Awake() {
+void Main::Awake() {
 	mpRender = new Render(&mHwnd);
 }
 
 
-void MAIN::Start() {
+void Main::Start() {
 }
 
 //メッセージループとアプリケーション処理の入り口
-void MAIN::Loop()
+void Main::Loop()
 {
 
 	//メッシュ作成　終わり
@@ -68,16 +68,16 @@ void MAIN::Loop()
 	//アプリケーションの終了
 }
 
-void MAIN::Update()
+void Main::Update()
 {
 }
 
-void MAIN::Draw() 
+void Main::Draw() 
 {
 	mpRender->Draw();
 }
 
-void MAIN::Destroy()
+void Main::Destroy()
 {
 	SAFE_DELETE(mpRender);
 }
@@ -93,7 +93,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 
 //ウィンドウ作成
-HRESULT MAIN::InitWindow(HINSTANCE hInstance,
+HRESULT Main::InitWindow(HINSTANCE hInstance,
 	INT iX, INT iY, INT iWidth, INT iHeight, LPCWSTR WindowName)
 {
 	// ウィンドウの定義
@@ -126,7 +126,7 @@ HRESULT MAIN::InitWindow(HINSTANCE hInstance,
 
 
 //ウィンドウプロシージャー
-LRESULT MAIN::MsgProc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
+LRESULT Main::MsgProc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (iMsg)
 	{

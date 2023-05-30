@@ -1,41 +1,49 @@
-#include "cShader.h"
+#include "TestShader.h"
 
-cShader::cShader(std::wstring path, ID3D11Device* device, ID3D11DeviceContext* deviceContext):
-	m_pVertexLayout(nullptr),
-	m_pConstantBuffer0(nullptr),
-	m_pConstantBuffer1(nullptr),
-	m_pVertexShader(nullptr),
-	m_pPixelShader(nullptr),
-	m_pDevice(device),
-	m_pDeviceContext(deviceContext),
-	m_ShaderPath(path)
+TestShader::TestShader(std::wstring path, ID3D11Device* device, ID3D11DeviceContext* deviceContext):
+	mpVertexLayout(nullptr),
+	mpConstantBuffer0(nullptr),
+	mpConstantBuffer1(nullptr),
+	mpVertexShader(nullptr),
+	mpPixelShader(nullptr),
+	mpDevice(device),
+	mpDeviceContext(deviceContext),
+	mShaderPath(path)
 {
 	initShader();
 }
 
+TestShader::~TestShader() {
+	SAFE_RELEASE(mpVertexLayout);
+	SAFE_RELEASE(mpConstantBuffer0);
+	SAFE_RELEASE(mpConstantBuffer1);
+	SAFE_RELEASE(mpVertexShader);
+	SAFE_RELEASE(mpPixelShader);
+}
+
 ///マテリアルの各要素をエフェクト（シェーダー）に渡す
-void cShader::setBuffer(SIMPLECONSTANT_BUFFER1 buffer) {
+void TestShader::setBuffer(SIMPLECONSTANT_BUFFER1 buffer) {
 	D3D11_MAPPED_SUBRESOURCE mappedSubResource;
 
 	//バッファの中身を更新するために、map, unmapを使用する→lock, unlockのようなもの
-	if (SUCCEEDED(m_pDeviceContext->Map(m_pConstantBuffer1, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource)))
+	if (SUCCEEDED(mpDeviceContext->Map(mpConstantBuffer1, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource)))
 	{
 		memcpy_s(mappedSubResource.pData, mappedSubResource.RowPitch, (void*)&buffer, sizeof(SIMPLECONSTANT_BUFFER1));
-		m_pDeviceContext->Unmap(m_pConstantBuffer1, 0);
+		mpDeviceContext->Unmap(mpConstantBuffer1, 0);
 	}
-	m_pDeviceContext->VSSetConstantBuffers(1, 1, &m_pConstantBuffer1);
-	m_pDeviceContext->PSSetConstantBuffers(1, 1, &m_pConstantBuffer1);
+	mpDeviceContext->VSSetConstantBuffers(1, 1, &mpConstantBuffer1);
+	mpDeviceContext->PSSetConstantBuffers(1, 1, &mpConstantBuffer1);
 }
 
-void cShader::render(D3DXMATRIX& mWorld, D3DXMATRIX& mView, D3DXMATRIX& mProj,
+void TestShader::render(D3DXMATRIX& mWorld, D3DXMATRIX& mView, D3DXMATRIX& mProj,
 	D3DXVECTOR3& vLight, D3DXVECTOR3& vEye) 
 {
 	//使用するシェーダーの登録	
-	m_pDeviceContext->VSSetShader(m_pVertexShader, NULL, 0);
-	m_pDeviceContext->PSSetShader(m_pPixelShader, NULL, 0);
+	mpDeviceContext->VSSetShader(mpVertexShader, NULL, 0);
+	mpDeviceContext->PSSetShader(mpPixelShader, NULL, 0);
 	//シェーダーのコンスタントバッファーに各種データを渡す
 	D3D11_MAPPED_SUBRESOURCE pData;
-	if (SUCCEEDED(m_pDeviceContext->Map(m_pConstantBuffer0, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
+	if (SUCCEEDED(mpDeviceContext->Map(mpConstantBuffer0, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
 	{
 		SIMPLECONSTANT_BUFFER0 sg;
 		//ワールド行列を渡す
@@ -45,24 +53,24 @@ void cShader::render(D3DXMATRIX& mWorld, D3DXMATRIX& mView, D3DXMATRIX& mProj,
 		sg.mWVP = mWorld * mView * mProj;
 		D3DXMatrixTranspose(&sg.mWVP, &sg.mWVP);
 		//ライトの方向を渡す
-		sg.vLightDir = D3DXVECTOR4(vLight.x, vLight.y, vLight.z, 0.0f);
+		sg.mLightDir = D3DXVECTOR4(vLight.x, vLight.y, vLight.z, 0.0f);
 		//視点位置を渡す
-		sg.vEye = D3DXVECTOR4(vEye.x, vEye.y, vEye.z, 0);
+		sg.mEyePos = D3DXVECTOR4(vEye.x, vEye.y, vEye.z, 0);
 
 		memcpy_s(pData.pData, pData.RowPitch, (void*)&sg, sizeof(SIMPLECONSTANT_BUFFER0));
-		m_pDeviceContext->Unmap(m_pConstantBuffer0, 0);
+		mpDeviceContext->Unmap(mpConstantBuffer0, 0);
 	}
 	//このコンスタントバッファーを使うシェーダーの登録
-	m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer0);
-	m_pDeviceContext->PSSetConstantBuffers(0, 1, &m_pConstantBuffer0);
+	mpDeviceContext->VSSetConstantBuffers(0, 1, &mpConstantBuffer0);
+	mpDeviceContext->PSSetConstantBuffers(0, 1, &mpConstantBuffer0);
 	//頂点インプットレイアウトをセット
-	m_pDeviceContext->IASetInputLayout(m_pVertexLayout);
+	mpDeviceContext->IASetInputLayout(mpVertexLayout);
 	//プリミティブ・トポロジーをセット
-	m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	mpDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-HRESULT cShader::initShader() {
-	if (m_ShaderPath == L"") {
+HRESULT TestShader::initShader() {
+	if (mShaderPath == L"") {
 		MessageBox(0, L"shaderPathが不正", NULL, MB_OK);
 		return E_FAIL;
 	}
@@ -70,14 +78,14 @@ HRESULT cShader::initShader() {
 	ID3D10Blob* pCompiledShader = NULL;
 	ID3D10Blob* pErrors = NULL;
 	//ブロブからバーテックスシェーダー作成
-	if (FAILED(D3DX11CompileFromFile(m_ShaderPath.data(), NULL, NULL, "VS", "vs_4_0", 0, 0, NULL, &pCompiledShader, &pErrors, NULL)))
+	if (FAILED(D3DX11CompileFromFile(mShaderPath.data(), NULL, NULL, "VS", "vs_4_0", 0, 0, NULL, &pCompiledShader, &pErrors, NULL)))
 	{
 		MessageBox(0, L"hlsl読み込み失敗", NULL, MB_OK);
 		return E_FAIL;
 	}
 	SAFE_RELEASE(pErrors);
 
-	if (FAILED(m_pDevice->CreateVertexShader(pCompiledShader->GetBufferPointer(), pCompiledShader->GetBufferSize(), NULL, &m_pVertexShader)))
+	if (FAILED(mpDevice->CreateVertexShader(pCompiledShader->GetBufferPointer(), pCompiledShader->GetBufferSize(), NULL, &mpVertexShader)))
 	{
 		SAFE_RELEASE(pCompiledShader);
 		MessageBox(0, L"バーテックスシェーダー作成失敗", NULL, MB_OK);
@@ -92,18 +100,18 @@ HRESULT cShader::initShader() {
 	};
 	UINT numElements = sizeof(layout) / sizeof(layout[0]);
 	//頂点インプットレイアウトを作成
-	if (FAILED(m_pDevice->CreateInputLayout(layout, numElements, pCompiledShader->GetBufferPointer(), pCompiledShader->GetBufferSize(), &m_pVertexLayout)))
+	if (FAILED(mpDevice->CreateInputLayout(layout, numElements, pCompiledShader->GetBufferPointer(), pCompiledShader->GetBufferSize(), &mpVertexLayout)))
 	{
 		return E_FAIL;
 	}
 	//ブロブからピクセルシェーダー作成
-	if (FAILED(D3DX11CompileFromFile(m_ShaderPath.data(), NULL, NULL, "PS", "ps_4_0", 0, 0, NULL, &pCompiledShader, &pErrors, NULL)))
+	if (FAILED(D3DX11CompileFromFile(mShaderPath.data(), NULL, NULL, "PS", "ps_4_0", 0, 0, NULL, &pCompiledShader, &pErrors, NULL)))
 	{
 		MessageBox(0, L"hlsl読み込み失敗", NULL, MB_OK);
 		return E_FAIL;
 	}
 	SAFE_RELEASE(pErrors);
-	if (FAILED(m_pDevice->CreatePixelShader(pCompiledShader->GetBufferPointer(), pCompiledShader->GetBufferSize(), NULL, &m_pPixelShader)))
+	if (FAILED(mpDevice->CreatePixelShader(pCompiledShader->GetBufferPointer(), pCompiledShader->GetBufferSize(), NULL, &mpPixelShader)))
 	{
 		SAFE_RELEASE(pCompiledShader);
 		MessageBox(0, L"ピクセルシェーダー作成失敗", NULL, MB_OK);
@@ -118,7 +126,7 @@ HRESULT cShader::initShader() {
 	cb.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	cb.MiscFlags = 0;
 	cb.Usage = D3D11_USAGE_DYNAMIC;
-	if (FAILED(m_pDevice->CreateBuffer(&cb, NULL, &m_pConstantBuffer0)))
+	if (FAILED(mpDevice->CreateBuffer(&cb, NULL, &mpConstantBuffer0)))
 	{
 		return E_FAIL;
 	}
@@ -129,7 +137,7 @@ HRESULT cShader::initShader() {
 	cb.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	cb.MiscFlags = 0;
 	cb.Usage = D3D11_USAGE_DYNAMIC;
-	if (FAILED(m_pDevice->CreateBuffer(&cb, NULL, &m_pConstantBuffer1)))
+	if (FAILED(mpDevice->CreateBuffer(&cb, NULL, &mpConstantBuffer1)))
 	{
 		return E_FAIL;
 	}

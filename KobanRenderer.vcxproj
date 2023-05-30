@@ -19,19 +19,20 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Script\cShader.cpp" />
+    <ClCompile Include="Script\TestShader.cpp" />
     <ClCompile Include="Script\DefferdRender.cpp" />
-    <ClCompile Include="Script\MAIN.cpp" />
-    <ClCompile Include="Script\MESH.cpp" />
+    <ClCompile Include="Script\Main.cpp" />
+    <ClCompile Include="Script\TestMesh.cpp" />
     <ClCompile Include="Script\Render.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Script\cShader.h" />
+    <ClInclude Include="Script\Include\DefaultInclude.h" />
+    <ClInclude Include="Script\Include\RenderInclude.h" />
+    <ClInclude Include="Script\TestShader.h" />
     <ClInclude Include="Script\DefferdRender.h" />
-    <ClInclude Include="Script\MAIN.h" />
-    <ClInclude Include="Script\MESH.h" />
+    <ClInclude Include="Script\Main.h" />
+    <ClInclude Include="Script\TestMesh.h" />
     <ClInclude Include="Script\Render.h" />
-    <ClInclude Include="Script\RenderInclude.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\MESH.hlsl" />
