@@ -1,4 +1,4 @@
-#include "MainClass.h"
+#include "Main.h"
 
 //ƒOƒ[ƒoƒ‹•Ï”
 Main* g_pMain = NULL;
