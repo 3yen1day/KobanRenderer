@@ -21,7 +21,7 @@
   <ItemGroup>
     <ClCompile Include="Script\TestShader.cpp" />
     <ClCompile Include="Script\DefferdRender.cpp" />
-    <ClCompile Include="Script\Main.cpp" />
+    <ClCompile Include="Script\MainClass.cpp" />
     <ClCompile Include="Script\TestMesh.cpp" />
     <ClCompile Include="Script\Render.cpp" />
   </ItemGroup>
@@ -30,7 +30,7 @@
     <ClInclude Include="Script\Include\RenderInclude.h" />
     <ClInclude Include="Script\TestShader.h" />
     <ClInclude Include="Script\DefferdRender.h" />
-    <ClInclude Include="Script\Main.h" />
+    <ClInclude Include="Script\MainClass.h" />
     <ClInclude Include="Script\TestMesh.h" />
     <ClInclude Include="Script\Render.h" />
   </ItemGroup>
