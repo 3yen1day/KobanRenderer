@@ -13,7 +13,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 //アプリケーションのエントリー関数 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, INT)
 {
-	g_pMain = new Main;
+	g_pMain = new Main();
 	if (g_pMain != NULL)
 	{
 		if (SUCCEEDED(g_pMain->InitWindow(hInstance, 0, 0, WINDOW_WIDTH,
@@ -34,7 +34,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, INT)
 
 
 void Main::Awake() {
-	mpRender = new Render(&mHwnd);
+	mpRender = new Koban::Render(&mHwnd);
 }
 
 

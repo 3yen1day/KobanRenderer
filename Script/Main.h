@@ -15,5 +15,5 @@ public:
 	HWND mHwnd;
 
 private:
-	Render* mpRender;
+	Koban::Render* mpRender;
 };
