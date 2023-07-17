@@ -25,7 +25,7 @@ namespace Koban {
 
 		HRESULT initShader();
 		void setBuffer(SIMPLECONSTANT_BUFFER1 buffer);
-		void render(D3DXMATRIX& mWorld, D3DXMATRIX& mView, D3DXMATRIX& mProj,
+		void Render(D3DXMATRIX& mWorld, D3DXMATRIX& mViewMat, D3DXMATRIX& mProjMat,
 			D3DXVECTOR3& vLight, D3DXVECTOR3& vEye);
 
 	private:

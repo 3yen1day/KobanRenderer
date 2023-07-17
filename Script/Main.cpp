@@ -70,6 +70,7 @@ void Main::Loop()
 
 void Main::Update()
 {
+	mpRender->Update();
 }
 
 void Main::Draw() 

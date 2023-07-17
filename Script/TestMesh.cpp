@@ -27,9 +27,9 @@ namespace Koban {
 		mMaterialDic.clear();
 	}
 
-	HRESULT TestMesh::Init()
+	HRESULT TestMesh::init()
 	{
-		if (FAILED(LoadResources(mModelPath)))
+		if (FAILED(loadResources(mModelPath)))
 		{
 			MessageBox(0, L"メッシュ作成失敗", NULL, MB_OK);
 			return E_FAIL;
@@ -37,7 +37,7 @@ namespace Koban {
 		return S_OK;
 	}
 
-	HRESULT TestMesh::LoadResources(std::wstring meshFileName)
+	HRESULT TestMesh::loadResources(std::wstring meshFileName)
 	{
 		float x, y, z;
 		int v1 = 0, v2 = 0, v3 = 0;
@@ -62,7 +62,7 @@ namespace Koban {
 			if (wcscmp(key, L"mtllib") == 0)
 			{
 				fwscanf_s(fp, L"%s ", key, _countof(key));
-				LoadMaterialFromFile(key);
+				loadMaterialFromFile(key);
 			}
 			//頂点
 			if (wcscmp(key, L"v") == 0)
@@ -255,7 +255,7 @@ namespace Koban {
 		return S_OK;
 	}
 
-	HRESULT TestMesh::LoadMaterialFromFile(std::wstring FileName)
+	HRESULT TestMesh::loadMaterialFromFile(std::wstring FileName)
 	{
 		//マテリアルファイルを開いて内容を読み込む
 		FILE* fp = NULL;
@@ -349,7 +349,7 @@ namespace Koban {
 		return S_OK;
 	}
 
-	void TestMesh::Render(D3DXMATRIX& mView, D3DXMATRIX& mProj,
+	void TestMesh::Render(D3DXMATRIX& mViewMat, D3DXMATRIX& mProjMat,
 		D3DXVECTOR3& vLight, D3DXVECTOR3& vEye)
 	{
 		mYaw += 0.0001; //回転
@@ -376,7 +376,7 @@ namespace Koban {
 			UINT offset = 0;
 			Render::getDeviceContext()->IASetVertexBuffers(0, 1, &mpVertexBuffer, &stride, &offset);
 
-			shader.render(worldMat, mView, mProj, vLight, vEye);
+			shader.Render(worldMat, mViewMat, mProjMat, vLight, vEye);
 
 			//マテリアルの数だけ、それぞれのマテリアルのインデックスバッファ－を描画
 			for (auto matItr = matList->begin(); matItr != matList->end(); ++matItr)

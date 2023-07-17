@@ -19,17 +19,23 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Script\Camera.cpp" />
+    <ClCompile Include="Script\RTTManager.cpp" />
+    <ClCompile Include="Script\TestDefferdRender.cpp" />
     <ClCompile Include="Script\TestShader.cpp" />
-    <ClCompile Include="Script\DefferdRender.cpp" />
     <ClCompile Include="Script\Main.cpp" />
     <ClCompile Include="Script\TestMesh.cpp" />
     <ClCompile Include="Script\Render.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Script\Camera.h" />
     <ClInclude Include="Script\Include\DefaultInclude.h" />
     <ClInclude Include="Script\Include\RenderInclude.h" />
+    <ClInclude Include="Script\Object.h" />
+    <ClInclude Include="Script\RenderObject.h" />
+    <ClInclude Include="Script\RTTManager.h" />
+    <ClInclude Include="Script\TestDefferdRender.h" />
     <ClInclude Include="Script\TestShader.h" />
-    <ClInclude Include="Script\DefferdRender.h" />
     <ClInclude Include="Script\Main.h" />
     <ClInclude Include="Script\TestMesh.h" />
     <ClInclude Include="Script\Render.h" />

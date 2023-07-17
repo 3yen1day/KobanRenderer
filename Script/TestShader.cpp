@@ -35,7 +35,7 @@ namespace Koban {
 		Render::getDeviceContext()->PSSetConstantBuffers(1, 1, &mpConstantBuffer1);
 	}
 
-	void TestShader::render(D3DXMATRIX& mWorld, D3DXMATRIX& mView, D3DXMATRIX& mProj,
+	void TestShader::Render(D3DXMATRIX& mWorld, D3DXMATRIX& mViewMat, D3DXMATRIX& mProjMat,
 		D3DXVECTOR3& vLight, D3DXVECTOR3& vEye)
 	{
 		//使用するシェーダーの登録	
@@ -50,7 +50,7 @@ namespace Koban {
 			sg.mW = mWorld;
 			D3DXMatrixTranspose(&sg.mW, &sg.mW);
 			//ワールド、カメラ、射影行列を渡す
-			sg.mWVP = mWorld * mView * mProj;
+			sg.mWVP = mWorld * mViewMat * mProjMat;
 			D3DXMatrixTranspose(&sg.mWVP, &sg.mWVP);
 			//ライトの方向を渡す
 			sg.mLightDir = D3DXVECTOR4(vLight.x, vLight.y, vLight.z, 0.0f);

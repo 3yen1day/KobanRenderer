@@ -1,5 +1,8 @@
 #include "Render.h"
 
+//対象のRenderObject
+#include "TestDefferdRender.h"
+
 #define SAFE_RELEASE(x) if(x){x->Release(); x=0;}
 #define SAFE_DELETE(x) if(x){delete x; x=0;}
 #define SAFE_DELETE_ARRAY(x) if(x){delete[] x; x=0;}
@@ -9,6 +12,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 ID3D11Device* Koban::Render::mpDevice;
 ID3D11DeviceContext* Koban::Render::mpDeviceContext;
+Koban::Camera* Koban::Render::mpCamera;
+Koban::RTTManager* Koban::Render::mpRTTManager;
 
 /// <summary>
 /// コンストラクタ
@@ -19,12 +24,13 @@ namespace Koban {
 		mHwnd(pHWnd),
 		mpSwapChain(nullptr),
 		mpBackBuffer_TexRTV(nullptr),
-		mpBackBuffer_DSTexDSV(nullptr),
-		mpBackBuffer_DSTex(nullptr),
-		mpMesh(nullptr)
+		mpDepthStencilView(nullptr),
+		mpDephStencilTex(nullptr)
 	{
 		mpDevice = nullptr;
 		mpDeviceContext = nullptr;
+		mpRTTManager = nullptr;
+		mpCamera = nullptr;
 
 		// デバイスとスワップチェーンの作成
 		DXGI_SWAP_CHAIN_DESC sd;
@@ -73,12 +79,10 @@ namespace Koban {
 		descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 		descDepth.CPUAccessFlags = 0;
 		descDepth.MiscFlags = 0;
-		mpDevice->CreateTexture2D(&descDepth, NULL, &mpBackBuffer_DSTex);
+		mpDevice->CreateTexture2D(&descDepth, NULL, &mpDephStencilTex);
 		//そのテクスチャーに対しデプスステンシルビュー(DSV)を作成
-		mpDevice->CreateDepthStencilView(mpBackBuffer_DSTex, NULL, &mpBackBuffer_DSTexDSV);
+		mpDevice->CreateDepthStencilView(mpDephStencilTex, NULL, &mpDepthStencilView);
 
-		//レンダーターゲットビューと深度ステンシルビューをパイプラインにバインド
-		mpDeviceContext->OMSetRenderTargets(1, &mpBackBuffer_TexRTV, mpBackBuffer_DSTexDSV);
 		//ビューポートの設定
 		D3D11_VIEWPORT vp;
 		vp.Width = WINDOW_WIDTH;
@@ -98,58 +102,74 @@ namespace Koban {
 		mpDeviceContext->RSSetState(pIr);
 		SAFE_RELEASE(pIr);
 
-		CreateRenderObject();
+		//RenderObject
+		CreateObjects();
 	}
 
 	/// <summary>
-	/// RenderObjectの作成
+	/// Objectの作成
 	/// </summary>
-	void Render::CreateRenderObject()
+	void Render::CreateObjects()
 	{
+		//Cameraの作成
+		mpCamera = new Camera();
+
+		//RTTを作成するくん
+		mpRTTManager = new RTTManager();
+
 		//RenderObjectの初期化
-		//メッシュ作成
-		mpMesh = new TestMesh();
-		if (FAILED(mpMesh->Init()))
-		{
-			//なんか例外
-			return;
-		}
+		mpRenderObjects = { new TestDefferdRender() };
 	}
 
 	void Render::Destroy()
 	{
-		//todo:登録したポインタをデリート
-		SAFE_DELETE(mpMesh);
+		mpRTTManager->destroy();
+		for (const auto e : mpRenderObjects) {
+			e->destroy();
+		}
 
 		//リソースのデリート
 		SAFE_RELEASE(mpSwapChain);
 		SAFE_RELEASE(mpBackBuffer_TexRTV);
-		SAFE_RELEASE(mpBackBuffer_DSTexDSV);
-		SAFE_RELEASE(mpBackBuffer_DSTex);
+		SAFE_RELEASE(mpDepthStencilView);
+		SAFE_RELEASE(mpDephStencilTex);
 		SAFE_RELEASE(mpDevice);
 	}
 
+	void Render::Update() {
+		mpCamera->update();
+
+		for (const auto e : mpRenderObjects) {
+			e->update();
+		}
+	}
 
 	//シーンを画面にレンダリング
 	void Render::Draw()
 	{
-		D3DXMATRIX mView;
-		D3DXMATRIX mProj;
 		//画面クリア（実際は単色で画面を塗りつぶす処理）
 		float ClearColor[4] = { 0,0,1,1 };// クリア色作成　RGBAの順
 		mpDeviceContext->ClearRenderTargetView(mpBackBuffer_TexRTV, ClearColor);//画面クリア
-		mpDeviceContext->ClearDepthStencilView(mpBackBuffer_DSTexDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);//深度バッファクリア
-		// ビュートランスフォーム（視点座標変換）
-		D3DXVECTOR3 vEyePt(0.0f, 0.0f, -0.5f); //カメラ（視点）位置
-		D3DXVECTOR3 vLookatPt(0.0f, 0.0f, 0.0f);//注視位置
-		D3DXVECTOR3 vUpVec(0.0f, 1.0f, 0.0f);//上方位置
-		D3DXMatrixLookAtLH(&mView, &vEyePt, &vLookatPt, &vUpVec);
-		// プロジェクショントランスフォーム（射影変換）
-		D3DXMatrixPerspectiveFovLH(&mProj, D3DX_PI / 4, (FLOAT)WINDOW_WIDTH / (FLOAT)WINDOW_HEIGHT, 0.1f, 110.0f);
+		mpDeviceContext->ClearDepthStencilView(mpDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);//深度バッファクリア
+		
+		//カメラの更新
+		mpCamera->update();
 
 		//レンダリング
+		// GBufferのレンダリング
+		//mpRTTManager->Render();
+
+		// バックバッファをRTに設定
+		// レンダーターゲットビューと深度ステンシルビューをパイプラインにバインド
+		mpDeviceContext->OMSetRenderTargets(1, &mpBackBuffer_TexRTV, mpDepthStencilView);
+
 		//RenderObjectの更新
-		mpMesh->Render(mView, mProj, D3DXVECTOR3(1, 1, -1), vEyePt);
+		//todo:イベントに登録されたupdateを呼ぶ形に変更
+		//mpMesh->Render(mViewMat, mProjMat, D3DXVECTOR3(1, 1, -1), mPosition);
+		for (const auto e : mpRenderObjects) {
+			e->draw();
+		}
+
 		//画面更新（バックバッファをフロントバッファに）
 		mpSwapChain->Present(0, 0);
 	}

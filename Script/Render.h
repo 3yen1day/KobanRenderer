@@ -1,14 +1,10 @@
 #pragma once
 using namespace std;
 
-//RenderTarget
-#include "TestMesh.h"
+#include "Camera.h"
+#include "RTTManager.h"
 #include "Include/RenderInclude.h"
-
-//定数定義
-#define WINDOW_WIDTH 640 //ウィンドウ幅
-#define WINDOW_HEIGHT 480 //ウィンドウ高さ
-#define APP_NAME L"KOBAN_RENDERER"
+#include "RenderObject.h"
 
 namespace Koban {
 	class Render
@@ -17,16 +13,16 @@ namespace Koban {
 		Render(HWND* pHWnd);
 
 		//void Awake(); //エントリーポイントで呼ぶ
-		//void Update();
+		void Update();
 		void Draw(); //毎フレ更新
 		void Destroy();
-		void CreateRenderObject();
+		void CreateObjects();
 
 		HWND* mHwnd;
 		IDXGISwapChain* mpSwapChain;
 		ID3D11RenderTargetView* mpBackBuffer_TexRTV;
-		ID3D11DepthStencilView* mpBackBuffer_DSTexDSV;
-		ID3D11Texture2D* mpBackBuffer_DSTex;
+		ID3D11Texture2D* mpDephStencilTex;
+		ID3D11DepthStencilView* mpDepthStencilView;
 
 		static ID3D11Device* getDevice()
 		{
@@ -38,10 +34,21 @@ namespace Koban {
 			return mpDeviceContext;
 		}
 
+		static RTTManager* getRTTManager() {
+			return mpRTTManager;
+		}
+
+		static Camera* getCamera()
+		{
+			return mpCamera;
+		}
+
 	private:
-		//カメラ系のMatrixは全部まとめる
-		TestMesh* mpMesh;
 		static ID3D11Device* mpDevice;
 		static ID3D11DeviceContext* mpDeviceContext;
+		static RTTManager* mpRTTManager;
+		static Camera* mpCamera;
+
+		vector<RenderObject*> mpRenderObjects;
 	};
 }
