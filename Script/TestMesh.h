@@ -1,6 +1,5 @@
 #pragma once
-#include "TestShader.h"
-
+#include "../stdafx.h"
 //マテリアル構造体
 namespace Koban {
 	struct TestMaterial

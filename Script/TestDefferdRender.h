@@ -1,5 +1,5 @@
 #pragma once
-#include "RenderObject.h"
+#include "../stdafx.h"
 namespace Koban {
 	class TestDefferdRender : public Koban::RenderObject
 	{

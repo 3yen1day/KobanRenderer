@@ -1,10 +1,10 @@
 #pragma once
-using namespace std;
 
-#include "Camera.h"
-#include "RTTManager.h"
-#include "Include/RenderInclude.h"
-#include "RenderObject.h"
+namespace Koban {
+	class RTTManager;
+	class Camera;
+	class RenderObject;
+}
 
 namespace Koban {
 	class Render
@@ -13,16 +13,12 @@ namespace Koban {
 		Render(HWND* pHWnd);
 
 		//void Awake(); //エントリーポイントで呼ぶ
-		void Update();
-		void Draw(); //毎フレ更新
-		void Destroy();
-		void CreateObjects();
+		void update();
+		void drawDefferd(); //毎フレ更新
+		void destroy();
+		void createObjects();
 
 		HWND* mHwnd;
-		IDXGISwapChain* mpSwapChain;
-		ID3D11RenderTargetView* mpBackBuffer_TexRTV;
-		ID3D11Texture2D* mpDephStencilTex;
-		ID3D11DepthStencilView* mpDepthStencilView;
 
 		static ID3D11Device* getDevice()
 		{
@@ -34,6 +30,11 @@ namespace Koban {
 			return mpDeviceContext;
 		}
 
+		static IDXGISwapChain* getSwapChain()
+		{
+			return mpSwapChain;
+		}
+
 		static RTTManager* getRTTManager() {
 			return mpRTTManager;
 		}
@@ -43,9 +44,16 @@ namespace Koban {
 			return mpCamera;
 		}
 
+		static bool createVertexShader(const std::wstring& fileName, const std::wstring& shaderName, ID3D11VertexShader* vs);
+
+		static bool createPixelShader(const std::wstring& fileName, const std::wstring& shaderName, ID3D11PixelShader* ps);
+
+
 	private:
 		static ID3D11Device* mpDevice;
 		static ID3D11DeviceContext* mpDeviceContext;
+		static IDXGISwapChain* mpSwapChain;
+
 		static RTTManager* mpRTTManager;
 		static Camera* mpCamera;
 

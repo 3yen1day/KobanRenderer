@@ -1,5 +1,4 @@
-#include "TestMesh.h"
-#include"Render.h"
+#include "../stdafx.h"
 
 namespace Koban {
 	TestMaterial::~TestMaterial() {
@@ -214,7 +213,7 @@ namespace Koban {
 				bd.MiscFlags = 0;
 				D3D11_SUBRESOURCE_DATA InitData;
 				InitData.pSysMem = piFaceBuffer;
-				if (FAILED(Render::getDevice()->CreateBuffer(&bd, &InitData, &targetMat->mpIndexBuffer)))
+				if (FAILED(DEVICE->CreateBuffer(&bd, &InitData, &targetMat->mpIndexBuffer)))
 					return FALSE;
 				targetMat->mFaceNum = dwPartFCount;
 			}
@@ -233,7 +232,7 @@ namespace Koban {
 		D3D11_SUBRESOURCE_DATA InitData;
 		InitData.pSysMem = pvVertexBuffer;
 
-		if (FAILED(Render::getDevice()->CreateBuffer(&bd, &InitData, &mpVertexBuffer)))
+		if (FAILED(DEVICE->CreateBuffer(&bd, &InitData, &mpVertexBuffer)))
 			return FALSE;
 
 		//一時的な入れ物は、もはや不要
@@ -250,7 +249,7 @@ namespace Koban {
 		SamDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 		SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 		SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-		Render::getDevice()->CreateSamplerState(&SamDesc, &mpSampleLinear);
+		DEVICE->CreateSamplerState(&SamDesc, &mpSampleLinear);
 
 		return S_OK;
 	}
@@ -333,7 +332,7 @@ namespace Koban {
 			char c[110] = { 0 };
 			wcstombs(c, mat->mTextureName.data(), mat->mTextureName.length());
 			//テクスチャーを作成
-			if (FAILED(D3DX11CreateShaderResourceViewFromFileA(Render::getDevice(), c, NULL, NULL, &mat->mpTexture, NULL)))
+			if (FAILED(D3DX11CreateShaderResourceViewFromFileA(DEVICE, c, NULL, NULL, &mat->mpTexture, NULL)))
 			{
 				return E_FAIL;
 			}
@@ -374,7 +373,7 @@ namespace Koban {
 			//バーテックスバッファーをセット
 			UINT stride = sizeof(MY_VERTEX);
 			UINT offset = 0;
-			Render::getDeviceContext()->IASetVertexBuffers(0, 1, &mpVertexBuffer, &stride, &offset);
+			DEVICE_CONTEXT->IASetVertexBuffers(0, 1, &mpVertexBuffer, &stride, &offset);
 
 			shader.Render(worldMat, mViewMat, mProjMat, vLight, vEye);
 
@@ -390,7 +389,7 @@ namespace Koban {
 				//インデックスバッファーをセット
 				stride = sizeof(int);
 				offset = 0;
-				Render::getDeviceContext()->IASetIndexBuffer(targetMat->mpIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+				DEVICE_CONTEXT->IASetIndexBuffer(targetMat->mpIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 
 				TestShader::SIMPLECONSTANT_BUFFER1 sg;
@@ -402,16 +401,16 @@ namespace Koban {
 				//テクスチャーをシェーダーに渡す
 				if (targetMat->mTextureName[0] != NULL)
 				{
-					Render::getDeviceContext()->PSSetSamplers(0, 1, &mpSampleLinear);
-					Render::getDeviceContext()->PSSetShaderResources(0, 1, &targetMat->mpTexture);
+					DEVICE_CONTEXT->PSSetSamplers(0, 1, &mpSampleLinear);
+					DEVICE_CONTEXT->PSSetShaderResources(0, 1, &targetMat->mpTexture);
 				}
 				else
 				{
 					ID3D11ShaderResourceView* Nothing[1] = { 0 };
-					Render::getDeviceContext()->PSSetShaderResources(0, 1, Nothing);
+					DEVICE_CONTEXT->PSSetShaderResources(0, 1, Nothing);
 				}
 				//プリミティブをレンダリング
-				Render::getDeviceContext()->DrawIndexed(targetMat->mFaceNum * 3, 0, 0);
+				DEVICE_CONTEXT->DrawIndexed(targetMat->mFaceNum * 3, 0, 0);
 			}
 		}
 	}

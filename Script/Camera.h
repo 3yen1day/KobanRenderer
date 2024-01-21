@@ -1,6 +1,6 @@
 #pragma once
-#include "Include/RenderInclude.h"
 #include "Object.h"
+
 namespace Koban {
 
 	class Camera : public Object

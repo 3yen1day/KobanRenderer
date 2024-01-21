@@ -1,17 +1,13 @@
 #include "Render.h"
-
-//対象のRenderObject
-#include "TestDefferdRender.h"
-
-#define SAFE_RELEASE(x) if(x){x->Release(); x=0;}
-#define SAFE_DELETE(x) if(x){delete x; x=0;}
-#define SAFE_DELETE_ARRAY(x) if(x){delete[] x; x=0;}
+#include "RTTManager.h"
+#include "Camera.h"
 
 //関数プロトタイプの宣言
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 ID3D11Device* Koban::Render::mpDevice;
 ID3D11DeviceContext* Koban::Render::mpDeviceContext;
+IDXGISwapChain* Koban::Render::mpSwapChain;
 Koban::Camera* Koban::Render::mpCamera;
 Koban::RTTManager* Koban::Render::mpRTTManager;
 
@@ -21,14 +17,11 @@ Koban::RTTManager* Koban::Render::mpRTTManager;
 /// <param name="pHWnd">ウィンドウのハンドラ</param>
 namespace Koban {
 	Render::Render(HWND* pHWnd) :
-		mHwnd(pHWnd),
-		mpSwapChain(nullptr),
-		mpBackBuffer_TexRTV(nullptr),
-		mpDepthStencilView(nullptr),
-		mpDephStencilTex(nullptr)
+		mHwnd(pHWnd)
 	{
 		mpDevice = nullptr;
 		mpDeviceContext = nullptr;
+		mpSwapChain = nullptr;
 		mpRTTManager = nullptr;
 		mpCamera = nullptr;
 
@@ -57,31 +50,6 @@ namespace Koban {
 			//なんか例外
 			return;
 		}
-		//各種テクスチャーと、それに付帯する各種ビューを作成
-
-		//バックバッファーテクスチャーを取得（既にあるので作成ではない）
-		ID3D11Texture2D* pBackBuffer_Tex;
-		mpSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer_Tex);
-		//そのテクスチャーに対しレンダーターゲットビュー(RTV)を作成
-		mpDevice->CreateRenderTargetView(pBackBuffer_Tex, NULL, &mpBackBuffer_TexRTV);
-		SAFE_RELEASE(pBackBuffer_Tex);
-
-		//デプスステンシルビュー用のテクスチャーを作成
-		D3D11_TEXTURE2D_DESC descDepth;
-		descDepth.Width = WINDOW_WIDTH;
-		descDepth.Height = WINDOW_HEIGHT;
-		descDepth.MipLevels = 1;
-		descDepth.ArraySize = 1;
-		descDepth.Format = DXGI_FORMAT_D32_FLOAT;
-		descDepth.SampleDesc.Count = 1;
-		descDepth.SampleDesc.Quality = 0;
-		descDepth.Usage = D3D11_USAGE_DEFAULT;
-		descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-		descDepth.CPUAccessFlags = 0;
-		descDepth.MiscFlags = 0;
-		mpDevice->CreateTexture2D(&descDepth, NULL, &mpDephStencilTex);
-		//そのテクスチャーに対しデプスステンシルビュー(DSV)を作成
-		mpDevice->CreateDepthStencilView(mpDephStencilTex, NULL, &mpDepthStencilView);
 
 		//ビューポートの設定
 		D3D11_VIEWPORT vp;
@@ -103,40 +71,38 @@ namespace Koban {
 		SAFE_RELEASE(pIr);
 
 		//RenderObject
-		CreateObjects();
+		createObjects();
 	}
 
 	/// <summary>
 	/// Objectの作成
 	/// </summary>
-	void Render::CreateObjects()
+	void Render::createObjects()
 	{
-		//Cameraの作成
-		mpCamera = new Camera();
-
 		//RTTを作成するくん
 		mpRTTManager = new RTTManager();
 
+		//Cameraの作成
+		mpCamera = new Camera();
+
 		//RenderObjectの初期化
-		mpRenderObjects = { new TestDefferdRender() };
+		//mpRenderObjects = { new TestDefferdRender() };
 	}
 
-	void Render::Destroy()
+	void Render::destroy()
 	{
 		mpRTTManager->destroy();
 		for (const auto e : mpRenderObjects) {
 			e->destroy();
 		}
 
-		//リソースのデリート
+		//リソース所有権の破棄
 		SAFE_RELEASE(mpSwapChain);
-		SAFE_RELEASE(mpBackBuffer_TexRTV);
-		SAFE_RELEASE(mpDepthStencilView);
-		SAFE_RELEASE(mpDephStencilTex);
 		SAFE_RELEASE(mpDevice);
 	}
 
-	void Render::Update() {
+	void Render::update() {
+		//カメラ更新
 		mpCamera->update();
 
 		for (const auto e : mpRenderObjects) {
@@ -145,32 +111,64 @@ namespace Koban {
 	}
 
 	//シーンを画面にレンダリング
-	void Render::Draw()
+	void Render::drawDefferd()
 	{
-		//画面クリア（実際は単色で画面を塗りつぶす処理）
-		float ClearColor[4] = { 0,0,1,1 };// クリア色作成　RGBAの順
-		mpDeviceContext->ClearRenderTargetView(mpBackBuffer_TexRTV, ClearColor);//画面クリア
-		mpDeviceContext->ClearDepthStencilView(mpDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);//深度バッファクリア
-		
-		//カメラの更新
-		mpCamera->update();
-
-		//レンダリング
-		// GBufferのレンダリング
-		//mpRTTManager->Render();
-
-		// バックバッファをRTに設定
-		// レンダーターゲットビューと深度ステンシルビューをパイプラインにバインド
-		mpDeviceContext->OMSetRenderTargets(1, &mpBackBuffer_TexRTV, mpDepthStencilView);
-
 		//RenderObjectの更新
-		//todo:イベントに登録されたupdateを呼ぶ形に変更
 		//mpMesh->Render(mViewMat, mProjMat, D3DXVECTOR3(1, 1, -1), mPosition);
 		for (const auto e : mpRenderObjects) {
 			e->draw();
 		}
 
-		//画面更新（バックバッファをフロントバッファに）
-		mpSwapChain->Present(0, 0);
+		//// 描画されたRTTをもとに絵を描く
+		//// GBufferのクリアとセット
+		//mpRTTManager->drawDefferd();
+
+		////画面更新（バックバッファをフロントバッファに）
+		//mpSwapChain->Present(0, 0);
+	}
+
+	bool Render::createVertexShader(const std::wstring& fileName, const std::wstring& shaderName, ID3D11VertexShader* vs) {
+		//hlslファイル読み込み ブロブ作成　ブロブとはシェーダーの塊みたいなもの。XXシェーダーとして特徴を持たない。後で各種シェーダーに成り得る。
+		std::unique_ptr<ID3D10Blob> upCompiledShader = NULL;
+		std::unique_ptr<ID3D10Blob> upErrors = NULL;
+		ID3D10Blob* pCompiledShader = upCompiledShader.get();
+		ID3D10Blob* pErrors = upErrors.get();
+		auto shaderName_s = StringLib::wstr2str(shaderName);
+		
+		//ブロブからバーテックスシェーダー作成
+		if (FAILED(D3DX11CompileFromFile(fileName.data(), NULL, NULL, shaderName_s->data(), "vs_5_0", 0, 0, NULL, &pCompiledShader, &pErrors, NULL)))
+		{
+			MessageBox(0, L"hlsl読み込み失敗", NULL, MB_OK);
+			return false;
+		}
+		if (FAILED(mpDevice->CreateVertexShader(pCompiledShader->GetBufferPointer(), pCompiledShader->GetBufferSize(), NULL, &vs)))
+		{
+			MessageBox(0, L"バーテックスシェーダー作成失敗", NULL, MB_OK);
+			return false;
+		}
+
+		return true;
+	}
+
+	bool Render::createPixelShader(const std::wstring& fileName, const std::wstring& shaderName, ID3D11PixelShader* ps) {
+		//hlslファイル読み込み ブロブ作成　ブロブとはシェーダーの塊みたいなもの。XXシェーダーとして特徴を持たない。後で各種シェーダーに成り得る。
+		std::unique_ptr<ID3D10Blob> upCompiledShader = NULL;
+		std::unique_ptr<ID3D10Blob> upErrors = NULL;
+		ID3D10Blob* pCompiledShader = upCompiledShader.get();
+		ID3D10Blob* pErrors = upErrors.get();
+		auto shaderName_s = StringLib::wstr2str(shaderName);
+
+		if (FAILED(D3DX11CompileFromFile(fileName.data(), NULL, NULL, shaderName_s->data(), "ps_5_0", 0, 0, NULL, &pCompiledShader, &pErrors, NULL)))
+		{
+			MessageBox(0, L"hlsl読み込み失敗", NULL, MB_OK);
+			return false;
+		}
+
+		if (FAILED(mpDevice->CreatePixelShader(pCompiledShader->GetBufferPointer(), pCompiledShader->GetBufferSize(), NULL, &ps)))
+		{
+			MessageBox(0, L"ピクセルシェーダー作成失敗", NULL, MB_OK);
+			return false;
+		}
+		return true;
 	}
 }

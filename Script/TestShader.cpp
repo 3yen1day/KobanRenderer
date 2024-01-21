@@ -1,5 +1,4 @@
-#include "TestShader.h"
-#include"Render.h"
+#include "../stdafx.h"
 
 namespace Koban {
 	TestShader::TestShader(std::wstring path) :
@@ -26,24 +25,24 @@ namespace Koban {
 		D3D11_MAPPED_SUBRESOURCE mappedSubResource;
 
 		//バッファの中身を更新するために、map, unmapを使用する→lock, unlockのようなもの
-		if (SUCCEEDED(Render::getDeviceContext()->Map(mpConstantBuffer1, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource)))
+		if (SUCCEEDED(DEVICE_CONTEXT->Map(mpConstantBuffer1, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource)))
 		{
 			memcpy_s(mappedSubResource.pData, mappedSubResource.RowPitch, (void*)&buffer, sizeof(SIMPLECONSTANT_BUFFER1));
-			Render::getDeviceContext()->Unmap(mpConstantBuffer1, 0);
+			DEVICE_CONTEXT->Unmap(mpConstantBuffer1, 0);
 		}
-		Render::getDeviceContext()->VSSetConstantBuffers(1, 1, &mpConstantBuffer1);
-		Render::getDeviceContext()->PSSetConstantBuffers(1, 1, &mpConstantBuffer1);
+		DEVICE_CONTEXT->VSSetConstantBuffers(1, 1, &mpConstantBuffer1);
+		DEVICE_CONTEXT->PSSetConstantBuffers(1, 1, &mpConstantBuffer1);
 	}
 
 	void TestShader::Render(D3DXMATRIX& mWorld, D3DXMATRIX& mViewMat, D3DXMATRIX& mProjMat,
 		D3DXVECTOR3& vLight, D3DXVECTOR3& vEye)
 	{
 		//使用するシェーダーの登録	
-		Render::getDeviceContext()->VSSetShader(mpVertexShader, NULL, 0);
-		Render::getDeviceContext()->PSSetShader(mpPixelShader, NULL, 0);
+		DEVICE_CONTEXT->VSSetShader(mpVertexShader, NULL, 0);
+		DEVICE_CONTEXT->PSSetShader(mpPixelShader, NULL, 0);
 		//シェーダーのコンスタントバッファーに各種データを渡す
 		D3D11_MAPPED_SUBRESOURCE pData;
-		if (SUCCEEDED(Render::getDeviceContext()->Map(mpConstantBuffer0, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
+		if (SUCCEEDED(DEVICE_CONTEXT->Map(mpConstantBuffer0, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
 		{
 			SIMPLECONSTANT_BUFFER0 sg;
 			//ワールド行列を渡す
@@ -58,15 +57,15 @@ namespace Koban {
 			sg.mEyePos = D3DXVECTOR4(vEye.x, vEye.y, vEye.z, 0);
 
 			memcpy_s(pData.pData, pData.RowPitch, (void*)&sg, sizeof(SIMPLECONSTANT_BUFFER0));
-			Render::getDeviceContext()->Unmap(mpConstantBuffer0, 0);
+			DEVICE_CONTEXT->Unmap(mpConstantBuffer0, 0);
 		}
 		//このコンスタントバッファーを使うシェーダーの登録
-		Render::getDeviceContext()->VSSetConstantBuffers(0, 1, &mpConstantBuffer0);
-		Render::getDeviceContext()->PSSetConstantBuffers(0, 1, &mpConstantBuffer0);
+		DEVICE_CONTEXT->VSSetConstantBuffers(0, 1, &mpConstantBuffer0);
+		DEVICE_CONTEXT->PSSetConstantBuffers(0, 1, &mpConstantBuffer0);
 		//頂点インプットレイアウトをセット
-		Render::getDeviceContext()->IASetInputLayout(mpVertexLayout);
+		DEVICE_CONTEXT->IASetInputLayout(mpVertexLayout);
 		//プリミティブ・トポロジーをセット
-		Render::getDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		DEVICE_CONTEXT->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 
 	HRESULT TestShader::initShader() {
@@ -85,7 +84,7 @@ namespace Koban {
 		}
 		SAFE_RELEASE(pErrors);
 
-		if (FAILED(Render::getDevice()->CreateVertexShader(pCompiledShader->GetBufferPointer(), pCompiledShader->GetBufferSize(), NULL, &mpVertexShader)))
+		if (FAILED(DEVICE->CreateVertexShader(pCompiledShader->GetBufferPointer(), pCompiledShader->GetBufferSize(), NULL, &mpVertexShader)))
 		{
 			SAFE_RELEASE(pCompiledShader);
 			MessageBox(0, L"バーテックスシェーダー作成失敗", NULL, MB_OK);
@@ -100,7 +99,7 @@ namespace Koban {
 		};
 		UINT numElements = sizeof(layout) / sizeof(layout[0]);
 		//頂点インプットレイアウトを作成
-		if (FAILED(Render::getDevice()->CreateInputLayout(layout, numElements, pCompiledShader->GetBufferPointer(), pCompiledShader->GetBufferSize(), &mpVertexLayout)))
+		if (FAILED(DEVICE->CreateInputLayout(layout, numElements, pCompiledShader->GetBufferPointer(), pCompiledShader->GetBufferSize(), &mpVertexLayout)))
 		{
 			return E_FAIL;
 		}
@@ -111,7 +110,7 @@ namespace Koban {
 			return E_FAIL;
 		}
 		SAFE_RELEASE(pErrors);
-		if (FAILED(Render::getDevice()->CreatePixelShader(pCompiledShader->GetBufferPointer(), pCompiledShader->GetBufferSize(), NULL, &mpPixelShader)))
+		if (FAILED(DEVICE->CreatePixelShader(pCompiledShader->GetBufferPointer(), pCompiledShader->GetBufferSize(), NULL, &mpPixelShader)))
 		{
 			SAFE_RELEASE(pCompiledShader);
 			MessageBox(0, L"ピクセルシェーダー作成失敗", NULL, MB_OK);
@@ -126,7 +125,7 @@ namespace Koban {
 		cb.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		cb.MiscFlags = 0;
 		cb.Usage = D3D11_USAGE_DYNAMIC;
-		if (FAILED(Render::getDevice()->CreateBuffer(&cb, NULL, &mpConstantBuffer0)))
+		if (FAILED(DEVICE->CreateBuffer(&cb, NULL, &mpConstantBuffer0)))
 		{
 			return E_FAIL;
 		}
@@ -137,7 +136,7 @@ namespace Koban {
 		cb.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		cb.MiscFlags = 0;
 		cb.Usage = D3D11_USAGE_DYNAMIC;
-		if (FAILED(Render::getDevice()->CreateBuffer(&cb, NULL, &mpConstantBuffer1)))
+		if (FAILED(DEVICE->CreateBuffer(&cb, NULL, &mpConstantBuffer1)))
 		{
 			return E_FAIL;
 		}

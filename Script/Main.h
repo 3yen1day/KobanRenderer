@@ -1,16 +1,16 @@
-#include"Render.h"
+#include "Render.h"
 
 class Main
 {
 public:
-	HRESULT InitWindow(HINSTANCE,INT,INT,INT,INT,LPCWSTR);
-	LRESULT MsgProc(HWND,UINT,WPARAM,LPARAM);
+	HRESULT InitWindow(HINSTANCE, INT, INT, INT, INT, LPCWSTR);
+	LRESULT MsgProc(HWND, UINT, WPARAM, LPARAM);
 	void Awake();
 	void Start();
 	void Loop();
-	void Update();
-	void Draw();
-	void Destroy();
+	void update();
+	void draw();
+	void destroy();
 
 	HWND mHwnd;
 

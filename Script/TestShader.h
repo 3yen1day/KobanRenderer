@@ -1,5 +1,5 @@
 #pragma once
-#include "Include/RenderInclude.h"
+#include "../stdafx.h"
 
 namespace Koban {
 	class TestShader {

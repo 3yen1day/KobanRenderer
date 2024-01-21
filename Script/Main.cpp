@@ -5,10 +5,6 @@ Main* g_pMain = NULL;
 //関数プロトタイプの宣言
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-#define SAFE_RELEASE(x) if(x){x->Release(); x=0;}
-#define SAFE_DELETE(x) if(x){delete x; x=0;}
-#define SAFE_DELETE_ARRAY(x) if(x){delete[] x; x=0;}
-
 #pragma region メイン処理
 //アプリケーションのエントリー関数 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, INT)
@@ -26,7 +22,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, INT)
 			g_pMain->Loop();
 		}
 		//アプリ終了
-		g_pMain->Destroy();
+		g_pMain->destroy();
 		delete g_pMain;
 	}
 	return 0;
@@ -60,25 +56,25 @@ void Main::Loop()
 		else
 		{
 			//更新
-			Update();
+			update();
 			//描画
-			Draw();
+			draw();
 		}
 	}
 	//アプリケーションの終了
 }
 
-void Main::Update()
+void Main::update()
 {
-	mpRender->Update();
+	mpRender->update();
 }
 
-void Main::Draw() 
+void Main::draw() 
 {
-	mpRender->Draw();
+	//mpRender->draw();
 }
 
-void Main::Destroy()
+void Main::destroy()
 {
 	SAFE_DELETE(mpRender);
 }

@@ -1,4 +1,5 @@
 #include "Camera.h"
+
 namespace Koban {
 
 	Camera::Camera()
