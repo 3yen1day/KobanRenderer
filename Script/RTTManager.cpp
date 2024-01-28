@@ -1,5 +1,6 @@
 #include "RTTManager.h"
 #include "Render.h"
+#include "Camera.h"
 
 namespace Koban {
 	RTTManager::RTTManager() :
@@ -125,7 +126,7 @@ namespace Koban {
 		DEVICE->CreateShaderResourceView(mpPosition_Tex, &SRVDesc, &mpPosition_SRV);
 	}
 
-	void RTTManager::drawDefferd() {
+	void RTTManager::renderToScene() {
 		//RenderTarget‚ğ’Êí‚É–ß‚·
 		DEVICE_CONTEXT->OMSetRenderTargets(1, &mpBackBuffer_RTV, mpDepthStencil_SRV);
 		//RTT‚ÌƒNƒŠƒA

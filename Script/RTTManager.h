@@ -22,7 +22,11 @@ namespace Koban {
 
 		void destroy() override;
 
-		void drawDefferd();
+		/// <summary>
+		/// GBuffer‚©‚çƒV[ƒ“‚É•`‰æ
+		/// </summary>
+		void renderToScene();
+
 		/// <summary>
 		/// RTT‚ÌSRV‚ğæ“¾
 		/// </summary>
@@ -76,8 +80,8 @@ namespace Koban {
 		ID3D11RenderTargetView* mpPosition_RTV;
 		ID3D11ShaderResourceView* mpPosition_SRV;
 
-		wstring mShaderFileName = L"Deferred.hlsl";
-		wstring mVertShaderName = L"VS_From_Tex";
-		wstring mPixShaderName = L"PS_From_Tex";
+		wstring mShaderFileName = L"Shader/Deferred.hlsl";
+		wstring mVertShaderName = L"VS_To_Tex";
+		wstring mPixShaderName = L"PS_To_Tex";
 	};
 }

@@ -111,8 +111,13 @@ namespace Koban {
 	}
 
 	//シーンを画面にレンダリング
-	void Render::drawDefferd()
+	void Render::draw()
 	{
+		//ディファードレンダリング
+		drawDefferd();
+	}
+
+	void Render::drawDefferd() {
 		//RenderObjectの更新
 		//mpMesh->Render(mViewMat, mProjMat, D3DXVECTOR3(1, 1, -1), mPosition);
 		for (const auto e : mpRenderObjects) {
@@ -121,12 +126,13 @@ namespace Koban {
 
 		//// 描画されたRTTをもとに絵を描く
 		//// GBufferのクリアとセット
-		//mpRTTManager->drawDefferd();
+		//mpRTTManager->renderToScene();
 
 		////画面更新（バックバッファをフロントバッファに）
 		//mpSwapChain->Present(0, 0);
 	}
 
+#pragma region static関数
 	bool Render::createVertexShader(const std::wstring& fileName, const std::wstring& shaderName, ID3D11VertexShader* vs) {
 		//hlslファイル読み込み ブロブ作成　ブロブとはシェーダーの塊みたいなもの。XXシェーダーとして特徴を持たない。後で各種シェーダーに成り得る。
 		std::unique_ptr<ID3D10Blob> upCompiledShader = NULL;
@@ -171,4 +177,5 @@ namespace Koban {
 		}
 		return true;
 	}
+#pragma endregion
 }

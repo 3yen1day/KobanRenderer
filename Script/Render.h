@@ -14,7 +14,7 @@ namespace Koban {
 
 		//void Awake(); //エントリーポイントで呼ぶ
 		void update();
-		void drawDefferd(); //毎フレ更新
+		void draw(); //毎フレ更新
 		void destroy();
 		void createObjects();
 
@@ -50,6 +50,8 @@ namespace Koban {
 
 
 	private:
+		void drawDefferd();
+
 		static ID3D11Device* mpDevice;
 		static ID3D11DeviceContext* mpDeviceContext;
 		static IDXGISwapChain* mpSwapChain;
