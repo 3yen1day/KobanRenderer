@@ -8,6 +8,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 ID3D11Device* Koban::Render::mpDevice;
 ID3D11DeviceContext* Koban::Render::mpDeviceContext;
 IDXGISwapChain* Koban::Render::mpSwapChain;
+ID3D11RenderTargetView* Koban::Render::mpBackBuffer_RTV;
 Koban::Camera* Koban::Render::mpCamera;
 Koban::RTTManager* Koban::Render::mpRTTManager;
 
@@ -70,7 +71,14 @@ namespace Koban {
 		mpDeviceContext->RSSetState(pIr);
 		SAFE_RELEASE(pIr);
 
-		//RenderObject
+		//バックバッファ
+		//バックバッファーテクスチャーを取得（既にあるので作成ではない）
+		ID3D11Texture2D* pBackBuffer_Tex;
+		Koban::Render::getSwapChain()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer_Tex);
+		DEVICE->CreateRenderTargetView(pBackBuffer_Tex, NULL, &mpBackBuffer_RTV);
+		SAFE_RELEASE(pBackBuffer_Tex);
+
+		//Objectの作成
 		createObjects();
 	}
 
@@ -99,6 +107,7 @@ namespace Koban {
 		//リソース所有権の破棄
 		SAFE_RELEASE(mpSwapChain);
 		SAFE_RELEASE(mpDevice);
+		SAFE_RELEASE(mpBackBuffer_RTV);
 	}
 
 	void Render::update() {

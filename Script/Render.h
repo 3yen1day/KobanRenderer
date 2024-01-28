@@ -35,6 +35,10 @@ namespace Koban {
 			return mpSwapChain;
 		}
 
+		static ID3D11RenderTargetView* getBackBuffer() {
+			return mpBackBuffer_RTV;
+		}
+
 		static RTTManager* getRTTManager() {
 			return mpRTTManager;
 		}
@@ -55,6 +59,7 @@ namespace Koban {
 		static ID3D11Device* mpDevice;
 		static ID3D11DeviceContext* mpDeviceContext;
 		static IDXGISwapChain* mpSwapChain;
+		static ID3D11RenderTargetView* mpBackBuffer_RTV;
 
 		static RTTManager* mpRTTManager;
 		static Camera* mpCamera;
