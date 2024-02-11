@@ -24,6 +24,8 @@
     <ClCompile Include="Script\RTTManager.cpp" />
     <ClCompile Include="Script\Main.cpp" />
     <ClCompile Include="Script\Render.cpp" />
+    <ClCompile Include="Script\TestMesh.cpp" />
+    <ClCompile Include="Script\TestShader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
@@ -39,10 +41,13 @@
     <ClInclude Include="Script\Main.h" />
     <ClInclude Include="Script\Render.h" />
     <ClInclude Include="Script\ShaderObject.h" />
+    <ClInclude Include="Script\TestMaterial.h" />
+    <ClInclude Include="Script\TestMesh.h" />
+    <ClInclude Include="Script\TestShader.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shader\MESH.hlsl" />
+    <FxCompile Include="Shader\Deferred.hlsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D79A3495-6C0F-46E6-BCD7-4465C6DE11C8}</ProjectGuid>

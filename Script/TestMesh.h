@@ -1,37 +1,8 @@
 #pragma once
-#include "../stdafx.h"
+#include "TestShader.h"
+
 //マテリアル構造体
 namespace Koban {
-	struct TestMaterial
-	{
-	public:
-		std::wstring mName;
-		std::wstring mTextureName;//テクスチャーファイル名
-		std::wstring shaderPath;
-		D3DXVECTOR4 mKa;//アンビエント
-		D3DXVECTOR4 mKd;//ディフューズ
-		D3DXVECTOR4 mKs;//スペキュラー
-		uint32_t mFaceNum;//そのマテリアルであるポリゴン数
-		ID3D11ShaderResourceView* mpTexture;
-		/// <summary>
-		/// インデックスバッファ
-		/// </summary>
-		ID3D11Buffer* mpIndexBuffer;
-
-		TestMaterial() :
-			mName{ L"" },
-			mTextureName{ L"" },
-			shaderPath{ L"" },
-			mFaceNum{ 0 },
-			mpTexture{ nullptr },
-			mpIndexBuffer{ nullptr }
-		{
-		}
-
-		~TestMaterial();
-	};
-
-
 	class TestMesh
 	{
 	public:
@@ -54,13 +25,13 @@ namespace Koban {
 		/// </summary>
 		ID3D11Buffer* mpVertexBuffer;
 		/// <summary>
-		/// ShaderのDic
+		/// ShaderのDic。key:shaderPath, value:shader。
 		/// </summary>
 		std::unordered_map<std::wstring, TestShader> mShaderDic;
 
 		/// <summary>
-		/// MaterialのDic
-		/// 構造的にはMaterialがShaderを持つ形が理想だが、Shader毎に処理を行ったほうが効率がいい二律背反。一旦分けておく。
+		/// MaterialのDic。key:shaderPath, value:そのshaderを持つMaterialのlist。
+		/// shader毎に処理をするので、shader基準。
 		/// </summary>
 		std::unordered_map<std::wstring, std::list<TestMaterial*>*> mMaterialDic;
 		/// <summary>

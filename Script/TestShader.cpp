@@ -1,4 +1,5 @@
-#include "../stdafx.h"
+#include "TestShader.h"
+#include "Render.h"
 
 namespace Koban {
 	TestShader::TestShader(std::wstring path) :

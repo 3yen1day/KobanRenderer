@@ -1,4 +1,5 @@
-#include "../stdafx.h"
+#include "TestMesh.h"
+#include "Render.h"
 
 namespace Koban {
 	TestMaterial::~TestMaterial() {

@@ -1,4 +1,3 @@
-#include "../stdafx.h"
 #include "DefferdRendering.h"
 #include "Render.h"
 #include "RTTManager.h"
@@ -58,7 +57,7 @@ namespace Koban {
 		//RTTのクリア
 		float clearColor[4] = { 0,1,0,1 };
 		DEVICE_CONTEXT->ClearRenderTargetView(pBackBuffer, clearColor);
-		DEVICE_CONTEXT->ClearDepthStencilView(pDepthStencil, D3D11_CLEAR_DEPTH, 1.0f, 0);
+		//DEVICE_CONTEXT->ClearDepthStencilView(pDepthStencil, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 		//シェーダーのセット
 		DEVICE_CONTEXT->VSSetShader(mpVertexShader, NULL, 0);
