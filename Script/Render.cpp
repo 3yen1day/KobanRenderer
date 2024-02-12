@@ -9,8 +9,8 @@ ID3D11Device* Koban::Render::mpDevice;
 ID3D11DeviceContext* Koban::Render::mpDeviceContext;
 IDXGISwapChain* Koban::Render::mpSwapChain;
 ID3D11RenderTargetView* Koban::Render::mpBackBuffer_RTV;
-Koban::Camera* Koban::Render::mpCamera;
-Koban::RTTManager* Koban::Render::mpRTTManager;
+std::unique_ptr<Koban::Camera> Koban::Render::mpCamera;
+std::unique_ptr<Koban::RTTManager> Koban::Render::mpRTTManager;
 
 /// <summary>
 /// コンストラクタ
@@ -20,12 +20,6 @@ namespace Koban {
 	Render::Render(HWND* pHWnd) :
 		mHwnd(pHWnd)
 	{
-		mpDevice = nullptr;
-		mpDeviceContext = nullptr;
-		mpSwapChain = nullptr;
-		mpRTTManager = nullptr;
-		mpCamera = nullptr;
-
 		// デバイスとスワップチェーンの作成
 		DXGI_SWAP_CHAIN_DESC sd;
 		ZeroMemory(&sd, sizeof(sd));
@@ -44,6 +38,9 @@ namespace Koban {
 		D3D_FEATURE_LEVEL pFeatureLevels = D3D_FEATURE_LEVEL_11_0;
 		D3D_FEATURE_LEVEL* pFeatureLevel = NULL;
 
+		mpSwapChain = nullptr;
+		mpDevice = nullptr;
+		mpDeviceContext = nullptr;
 		if (FAILED(D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL,
 			0, &pFeatureLevels, 1, D3D11_SDK_VERSION, &sd, &mpSwapChain, &mpDevice,
 			pFeatureLevel, &mpDeviceContext)))
@@ -73,6 +70,7 @@ namespace Koban {
 
 		//バックバッファ
 		//バックバッファーテクスチャーを取得（既にあるので作成ではない）
+		mpBackBuffer_RTV = nullptr;
 		ID3D11Texture2D* pBackBuffer_Tex;
 		Koban::Render::getSwapChain()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer_Tex);
 		DEVICE->CreateRenderTargetView(pBackBuffer_Tex, NULL, &mpBackBuffer_RTV);
@@ -82,16 +80,18 @@ namespace Koban {
 		createObjects();
 	}
 
+	Render::~Render() = default; // デストラクタを非インライン化
+
 	/// <summary>
 	/// Objectの作成
 	/// </summary>
 	void Render::createObjects()
 	{
 		//RTTを作成するくん
-		mpRTTManager = new RTTManager();
+		mpRTTManager.reset(new RTTManager());
 
 		//Cameraの作成
-		mpCamera = new Camera();
+		mpCamera.reset(new Camera());
 
 		//RenderObjectの初期化
 		//mpRenderObjects = { new TestDefferdRender() };
@@ -100,13 +100,16 @@ namespace Koban {
 	void Render::destroy()
 	{
 		mpRTTManager->destroy();
-		for (const auto e : mpRenderObjects) {
+
+		//unique_ptrはコピー不可なので、&をつけて参照型にする必要がある
+		for (const auto& e : mpRenderObjects) {
 			e->destroy();
 		}
 
 		//リソース所有権の破棄
 		SAFE_RELEASE(mpSwapChain);
 		SAFE_RELEASE(mpDevice);
+		SAFE_RELEASE(mpDeviceContext);
 		SAFE_RELEASE(mpBackBuffer_RTV);
 	}
 
@@ -114,7 +117,7 @@ namespace Koban {
 		//カメラ更新
 		mpCamera->update();
 
-		for (const auto e : mpRenderObjects) {
+		for (const auto& e : mpRenderObjects) {
 			e->update();
 		}
 	}
@@ -129,7 +132,7 @@ namespace Koban {
 	void Render::drawDefferd() {
 		//RenderObjectの更新
 		//mpMesh->Render(mViewMat, mProjMat, D3DXVECTOR3(1, 1, -1), mPosition);
-		for (const auto e : mpRenderObjects) {
+		for (const auto& e : mpRenderObjects) {
 			e->draw();
 		}
 

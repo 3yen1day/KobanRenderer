@@ -15,24 +15,24 @@ namespace Koban {
 		/// À•Wæ“¾
 		/// </summary>
 		/// <returns></returns>
-		D3DXMATRIX* const getPosition(){
-			return &mPosition;
+		D3DXMATRIX const &getPosition(){
+			return mPosition;
 		};
 
 		/// <summary>
 		/// ViewMatrixæ“¾
 		/// </summary>
 		/// <returns></returns>
-		D3DXMATRIX* const getViewMat() {
-			return &mViewMat;
+		D3DXMATRIX const &getViewMat() {
+			return mViewMat;
 		};
 
 		/// <summary>
 		/// ProjectionMatrixæ“¾
 		/// </summary>
 		/// <returns></returns>
-		D3DXMATRIX* const getProjMat() {
-			return &mProjMat;
+		D3DXMATRIX const &getProjMat() {
+			return mProjMat;
 		};
 
 	private:

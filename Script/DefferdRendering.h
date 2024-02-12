@@ -33,8 +33,8 @@ namespace Koban {
 
 		//ConstantBuffer
 		//screen描画用頂点バッファ
-		ID3D11Buffer* mpVertexBuffer;
-		ID3D11Buffer* mpConstantBuffer;
+		std::unique_ptr<ID3D11Buffer> mpVertexBuffer;
+		std::unique_ptr <ID3D11Buffer> mpConstantBuffer;
 
 		const std::wstring mShaderFileName = L"Deferred.hlsl";
 		const std::wstring mVSShaderName = L"VS_From_Tex";

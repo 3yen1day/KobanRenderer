@@ -30,7 +30,8 @@ namespace Koban {
 		bd.MiscFlags = 0;
 		D3D11_SUBRESOURCE_DATA sd;
 		sd.pSysMem = VertexData;
-		if (FAILED(DEVICE->CreateBuffer(&bd, &sd, &mpVertexBuffer))) {
+		auto vb_p = mpVertexBuffer.get();
+		if (FAILED(DEVICE->CreateBuffer(&bd, &sd, &vb_p))) {
 			return;
 		}
 
@@ -41,8 +42,8 @@ namespace Koban {
 		cb.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		cb.MiscFlags = 0;
 		cb.Usage = D3D11_USAGE_DYNAMIC;
-
-		if (FAILED(DEVICE->CreateBuffer(&cb, NULL, &mpConstantBuffer)))
+		auto cb_p = mpConstantBuffer.get();
+		if (FAILED(DEVICE->CreateBuffer(&cb, NULL, &cb_p)))
 		{
 			return;
 		}
@@ -74,14 +75,13 @@ namespace Koban {
 		//頂点バッファのセット
 		UINT stride = sizeof(MY_VERTEX);
 		UINT offset = 0;
-		DEVICE_CONTEXT->IASetVertexBuffers(0, 1, &mpVertexBuffer, &stride, &offset);
+		auto vb_p = mpVertexBuffer.get();
+		DEVICE_CONTEXT->IASetVertexBuffers(0, 1, &vb_p, &stride, &offset);
 		//バックバッファにDraw!
 		DEVICE_CONTEXT->Draw(4, 0);
 	}
 
 	void DefferdShader::destroy() {
 		ShaderObject::destroy();
-		SAFE_RELEASE(mpVertexBuffer);
-		SAFE_RELEASE(mpConstantBuffer);
 	}
 }

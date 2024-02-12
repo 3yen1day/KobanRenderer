@@ -30,7 +30,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, INT)
 
 
 void Main::Awake() {
-	mpRender = new Koban::Render(&mHwnd);
+	mpRender.reset(new Koban::Render(&mHwnd));
 }
 
 
@@ -76,7 +76,6 @@ void Main::draw()
 
 void Main::destroy()
 {
-	SAFE_DELETE(mpRender);
 }
 #pragma endregion ƒƒCƒ“ˆ—
 

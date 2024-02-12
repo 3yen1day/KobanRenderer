@@ -15,5 +15,5 @@ public:
 	HWND mHwnd;
 
 private:
-	Koban::Render* mpRender;
+	std::unique_ptr<Koban::Render> mpRender;
 };

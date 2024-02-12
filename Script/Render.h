@@ -11,6 +11,7 @@ namespace Koban {
 	{
 	public:
 		Render(HWND* pHWnd);
+		~Render();
 
 		//void Awake(); //エントリーポイントで呼ぶ
 		void update();
@@ -39,13 +40,13 @@ namespace Koban {
 			return mpBackBuffer_RTV;
 		}
 
-		static RTTManager* getRTTManager() {
-			return mpRTTManager;
+		static RTTManager* const getRTTManager() {
+			return mpRTTManager.get();
 		}
 
 		static Camera* getCamera()
 		{
-			return mpCamera;
+			return mpCamera.get();
 		}
 
 		static bool createVertexShader(const std::wstring& fileName, const std::wstring& shaderName, ID3D11VertexShader* vs);
@@ -56,14 +57,15 @@ namespace Koban {
 	private:
 		void drawDefferd();
 
+		//unique_ptrを使うと解放時に例外
 		static ID3D11Device* mpDevice;
 		static ID3D11DeviceContext* mpDeviceContext;
 		static IDXGISwapChain* mpSwapChain;
 		static ID3D11RenderTargetView* mpBackBuffer_RTV;
 
-		static RTTManager* mpRTTManager;
-		static Camera* mpCamera;
+		static std::unique_ptr<RTTManager> mpRTTManager;
+		static std::unique_ptr<Camera> mpCamera;
 
-		vector<RenderObject*> mpRenderObjects;
+		std::vector<std::unique_ptr<RenderObject>> mpRenderObjects;
 	};
 }
