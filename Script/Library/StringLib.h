@@ -36,5 +36,14 @@ namespace Koban {
 			delete[] wcs;
 			return std::make_unique<std::wstring>(ret);
 		}
+
+		/// <summary>
+		/// wstringÅ®LPWSTR
+		/// </summary>
+		/// <param name="str"></param>
+		/// <returns></returns>
+		static LPWSTR wstring2LPWSTR(const std::wstring& str) {
+			return (LPWSTR)str.data();
+		}
 	};
 }

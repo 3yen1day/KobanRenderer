@@ -1,5 +1,6 @@
 #pragma once
 #include "TestShader.h"
+#include "TestMaterial.h"
 
 //マテリアル構造体
 namespace Koban {

@@ -20,4 +20,5 @@
 
 //Library
 #include "Script/Library/StringLib.h"
+#include "Script/Library/DebugLib.h"
 #include "Script/Include/DefaultInclude.h"

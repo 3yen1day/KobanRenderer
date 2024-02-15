@@ -1,11 +1,10 @@
 #pragma once
-
 namespace Koban {
-	class TestShader {
+	class BaseShader {
 	public:
-		TestShader() {};
-		TestShader(std::wstring path);
-		~TestShader();
+		BaseShader() {};
+		BaseShader(std::wstring path);
+		~BaseShader();
 
 		struct SIMPLECONSTANT_BUFFER0
 		{
@@ -15,25 +14,20 @@ namespace Koban {
 			D3DXVECTOR4 mEyePos;//カメラ位置
 		};
 
-		struct SIMPLECONSTANT_BUFFER1
-		{
-			D3DXVECTOR4 mAmbient;//アンビエント光
-			D3DXVECTOR4 mDiffuse;//ディフューズ色
-			D3DXVECTOR4 mSpecular;//鏡面反射
-		};
-
 		HRESULT initShader();
-		void setBuffer(SIMPLECONSTANT_BUFFER1 buffer);
-		void Render(D3DXMATRIX& mWorld, D3DXMATRIX& mViewMat, D3DXMATRIX& mProjMat,
-			D3DXVECTOR3& vLight, D3DXVECTOR3& vEye);
+
+		void setConstantBuffer(SIMPLECONSTANT_BUFFER0 data) {
+			mConstantBuffer = data;
+		}
+		void update();
 
 	private:
 		ID3D11InputLayout* mpVertexLayout;
 		ID3D11Buffer* mpConstantBuffer0;
-		ID3D11Buffer* mpConstantBuffer1;
 		ID3D11VertexShader* mpVertexShader;
 		ID3D11PixelShader* mpPixelShader;
 
+		SIMPLECONSTANT_BUFFER0 mConstantBuffer;
 		std::wstring mShaderPath;
 	};
 }

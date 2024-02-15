@@ -4,7 +4,6 @@
 namespace Koban {
 	TestMaterial::~TestMaterial() {
 		SAFE_RELEASE(mpTexture);
-		SAFE_RELEASE(mpIndexBuffer);
 	}
 
 	TestMesh::TestMesh() :
