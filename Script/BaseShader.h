@@ -1,4 +1,9 @@
 #pragma once
+
+namespace Koban {
+	class BaseMaterial;
+}
+
 namespace Koban {
 	class BaseShader {
 	public:
@@ -14,12 +19,29 @@ namespace Koban {
 			D3DXVECTOR4 mEyePos;//ÉJÉÅÉâà íu
 		};
 
-		HRESULT initShader();
+		virtual void initShader();
+		virtual void update();
+		virtual void updateBaseConstantBuffer
+		(
+			const D3DXMATRIX& worldMat,
+			const D3DXMATRIX& viewMat,
+			const D3DXMATRIX& projMat,
+			const D3DXVECTOR3& light,
+			const D3DXVECTOR3& eye
+		);
 
-		void setConstantBuffer(SIMPLECONSTANT_BUFFER0 data) {
-			mConstantBuffer = data;
-		}
-		void update();
+		/// <summary>
+		/// MaterialÇÃí«â¡
+		/// </summary>
+		/// <param name="material"></param>
+		void addMaterial(BaseMaterial* material);
+
+		/// <summary>
+		/// MaterialÇÃéÊìæ
+		/// </summary>
+		/// <param name="fileName"></param>
+		/// <returns></returns>
+		const BaseMaterial* getMaterial(std::wstring matName);
 
 	private:
 		ID3D11InputLayout* mpVertexLayout;
@@ -27,7 +49,7 @@ namespace Koban {
 		ID3D11VertexShader* mpVertexShader;
 		ID3D11PixelShader* mpPixelShader;
 
-		SIMPLECONSTANT_BUFFER0 mConstantBuffer;
 		std::wstring mShaderPath;
+		std::unordered_map<std::wstring, unique_ptr<BaseMaterial>> mMaterialDic;
 	};
 }

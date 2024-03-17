@@ -10,7 +10,7 @@ namespace Koban {
 		TestMesh();
 		~TestMesh();
 		HRESULT init();
-		HRESULT loadMaterialFromFile(std::wstring FileName);
+		void createMaterialFromFile(std::wstring FileName);
 		void Render(D3DXMATRIX& mViewMat, D3DXMATRIX& mProjMat, D3DXVECTOR3& vLight, D3DXVECTOR3& vEye);
 
 		/// <summary>
@@ -26,15 +26,7 @@ namespace Koban {
 		/// </summary>
 		ID3D11Buffer* mpVertexBuffer;
 		/// <summary>
-		/// ShaderのDic。key:shaderPath, value:shader。
-		/// </summary>
-		std::unordered_map<std::wstring, TestShader> mShaderDic;
-
-		/// <summary>
-		/// MaterialのDic。key:shaderPath, value:そのshaderを持つMaterialのlist。
-		/// shader毎に処理をするので、shader基準。
-		/// </summary>
-		std::unordered_map<std::wstring, std::list<TestMaterial*>*> mMaterialDic;
+	
 		/// <summary>
 		/// サンプラーステート
 		/// </summary>
@@ -64,5 +56,10 @@ namespace Koban {
 		/// <param name="FileName"></param>
 		/// <returns></returns>
 		HRESULT loadResources(std::wstring FileName);
+
+		/// <summary>
+		/// ShaderのDic。key:shaderPath, value:shader。
+		/// </summary>
+		std::unordered_map<std::wstring, BaseShader> mShaderDic;
 	};
 }

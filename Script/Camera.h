@@ -35,9 +35,18 @@ namespace Koban {
 			return mProjMat;
 		};
 
+		/// <summary>
+		/// éãê¸ÉxÉNÉgÉã
+		/// </summary>
+		/// <returns></returns>
+		D3DXVECTOR3 const& getEyeDir() {
+			return mEyeVec;
+		}
+
 	private:
 		D3DXMATRIX mPosition;
 		D3DXMATRIX mViewMat;
 		D3DXMATRIX mProjMat;
+		const D3DXVECTOR3 mEyeVec = D3DXVECTOR3(1, 1, -1);
 	};
 }

@@ -5,7 +5,6 @@
 #define SAFE_RELEASE(x) if(x){x->Release(); x=0;}
 #define SAFE_DELETE(x) if(x){delete x; x=0;}
 #define SAFE_DELETE_ARRAY(x) if(x){delete[] x; x=0;}
-
 #define MAX_Light 100
 #define DEVICE Koban::Render::getDevice()
 #define DEVICE_CONTEXT Koban::Render::getDeviceContext()

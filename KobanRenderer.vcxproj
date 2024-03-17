@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Script\BaseMaterial.cpp" />
+    <ClCompile Include="Script\BaseMesh.cpp" />
     <ClCompile Include="Script\BaseShader.cpp" />
     <ClCompile Include="Script\Camera.cpp" />
     <ClCompile Include="Script\DefferdRendering.cpp" />
@@ -34,6 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Script\BaseMaterial.h" />
+    <ClInclude Include="Script\BaseMesh.h" />
     <ClInclude Include="Script\BaseShader.h" />
     <ClInclude Include="Script\Camera.h" />
     <ClInclude Include="Script\DefferdRendering.h" />
@@ -158,6 +160,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
