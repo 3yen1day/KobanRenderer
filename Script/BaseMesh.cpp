@@ -44,35 +44,10 @@ namespace Koban {
 		loadVert(fp, pvCoord.get(), pvNormal.get(), pvUV.get());
 
 		//頂点バッファ・インデックスバッファの作成
-		unique_ptr<BaseMesh::MY_VERTEX[]> vertexBuffer;
-		auto pVert = createVtxBufAndIdxBuf(fp, pvCoord.get(), pvNormal.get(), pvUV.get());
-		vertexBuffer.reset(pVert);
+		createVtxBufAndIdxBuf(fp, pvCoord.get(), pvNormal.get(), pvUV.get());
 
 		fclose(fp);
 		//-------------------------------------------------------------
-
-		//バーテックスバッファーを作成
-		D3D11_BUFFER_DESC bd;
-		bd.Usage = D3D11_USAGE_DEFAULT;
-		bd.ByteWidth = sizeof(MY_VERTEX) * mVertCount.get()->polyCount * 3;
-		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		bd.CPUAccessFlags = 0;
-		bd.MiscFlags = 0;
-		D3D11_SUBRESOURCE_DATA InitData;
-		InitData.pSysMem = vertexBuffer.get();
-
-		if (FAILED(DEVICE->CreateBuffer(&bd, &InitData, &mpVertexBuffer)))
-			return FALSE;
-
-		//テクスチャー用サンプラー作成
-		D3D11_SAMPLER_DESC SamDesc;
-		ZeroMemory(&SamDesc, sizeof(D3D11_SAMPLER_DESC));
-
-		SamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-		SamDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-		SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-		SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-		DEVICE->CreateSamplerState(&SamDesc, &mpSampleLinear);
 
 		return S_OK;
 	}
@@ -237,8 +212,8 @@ namespace Koban {
 		}
 	}
 
-	BaseMesh::MY_VERTEX* BaseMesh::createVtxBufAndIdxBuf(FILE* fp, D3DXVECTOR3* pvCoord, D3DXVECTOR3* pvNormal, D3DXVECTOR2* pvUV) {
-		MY_VERTEX* vertexBuffer = new MY_VERTEX[mVertCount.get()->polyCount * 3];
+	void BaseMesh::createVtxBufAndIdxBuf(FILE* fp, D3DXVECTOR3* pvCoord, D3DXVECTOR3* pvNormal, D3DXVECTOR2* pvUV) {
+		BaseShader::MY_VERTEX* vertexBuffer = new BaseShader::MY_VERTEX[mVertCount.get()->polyCount * 3];
 		unique_ptr<int[]> materialIndexBuffer;
 
 		wchar_t key[200] = { 0 };
@@ -261,8 +236,7 @@ namespace Koban {
 			//フェイス 読み込み→頂点インデックスに
 			if (wcscmp(key, L"usemtl") == 0)
 			{
-				//virtualで子の関数を呼ぶ
-				setIndexBuffer(targetMatName, materialIndexBuffer.get(), indexCount);
+				setIndexBuffer(targetMatName, materialIndexBuffer.get(), indexCount * 3);
 
 				fwscanf_s(fp, L"%s ", key, _countof(key));
 				targetMatName = key;
@@ -300,25 +274,42 @@ namespace Koban {
 				indexCount++;
 			}
 		}
+
+		setVertexBuffer(vertexBuffer, polygonCount + 3);
 		setIndexBuffer(targetMatName, materialIndexBuffer.get(), indexCount);
 		materialIndexBuffer.release();
+
+		//indexBufferを生成
+		for (auto item : mShaderDic) {
+			auto matDic = item.second.getMaterials();
+			for (auto mat : matDic) {
+				mat->createIndexBuffer();
+			}
+		}
 	}
 
-	/// <summary>
-	/// MaterialにIndexBufferをセット
-	/// </summary>
-	/// <param name="shaderlName"></param>
-	/// <param name="materialName"></param>
-	/// <param name="indexBuffer"></param>
 	void BaseMesh::setIndexBuffer(std::wstring materialName, const int indexBuffer[], int bufferSize) {
+		if (materialName == L"" || bufferSize == 0)
+			return;
+
 		//shader名はMaterialが知ってるので、全shaderを探索して探す
 		for (auto pair : mShaderDic) {
 			auto baseShader = &pair.second;
 			auto baseMat = baseShader->getMaterial(materialName);
 			if (baseMat != nullptr) {
 				baseMat->addIndexBuffer(indexBuffer, bufferSize);
+				return;
 			}
 		}
 	}
+
+	void BaseMesh::setVertexBuffer(const BaseShader::MY_VERTEX* const vertBuf, int bufferSize) {
+		//全shaderで同じvertexBufferを用いる
+		for (auto pair : mShaderDic) {
+			auto baseShader = &pair.second;
+			baseShader->createVertexBuffer(vertBuf, bufferSize);
+		}
+	}
+
 #pragma endregion
 }

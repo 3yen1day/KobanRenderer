@@ -12,7 +12,7 @@ namespace Koban {
 		SAFE_RELEASE(mpConstantBuffer1);
 	}
 
-	///マテリアルの各要素をエフェクト（シェーダー）に渡す
+	///マテリアルの各要素をシェーダーに渡す
 	void TestShader::updateBuffer(SIMPLECONSTANT_BUFFER1 buffer) {
 		D3D11_MAPPED_SUBRESOURCE mappedSubResource;
 

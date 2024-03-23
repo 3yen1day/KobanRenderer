@@ -1,8 +1,5 @@
 #pragma once
-
-namespace Koban {
-	class BaseMaterial;
-}
+#include "BaseMaterial.h"
 
 namespace Koban {
 	class BaseShader {
@@ -11,6 +8,19 @@ namespace Koban {
 		BaseShader(std::wstring path);
 		~BaseShader();
 
+		/// <summary>
+		/// 頂点情報の構造体
+		/// </summary>
+		struct MY_VERTEX
+		{
+			D3DXVECTOR3 mPos;
+			D3DXVECTOR3 mNorm;
+			D3DXVECTOR2 mUV;
+		};
+
+		/// <summary>
+		/// 基本コンスタントバッファの構造体
+		/// </summary>
 		struct SIMPLECONSTANT_BUFFER0
 		{
 			D3DXMATRIX mW;//ワールド行列
@@ -30,6 +40,8 @@ namespace Koban {
 			const D3DXVECTOR3& eye
 		);
 
+		void createVertexBuffer(const MY_VERTEX* const vertexBuffer, int polyNum);
+
 		/// <summary>
 		/// Materialの追加
 		/// </summary>
@@ -43,13 +55,22 @@ namespace Koban {
 		/// <returns></returns>
 		const BaseMaterial* getMaterial(std::wstring matName);
 
+		const std::vector<BaseMaterial*> getMaterials();
+
 	private:
 		ID3D11InputLayout* mpVertexLayout;
 		ID3D11Buffer* mpConstantBuffer0;
 		ID3D11VertexShader* mpVertexShader;
 		ID3D11PixelShader* mpPixelShader;
-
+		/// <summary>
+		/// 頂点バッファ
+		/// </summary>
+		ID3D11Buffer* mpVertexBuffer;
+		/// <summary>
+		/// サンプラーステート
+		/// </summary>
+		ID3D11SamplerState* mpSampleLinear;
+		std::unordered_map<std::wstring, BaseMaterial*> mMaterialDic;
 		std::wstring mShaderPath;
-		std::unordered_map<std::wstring, unique_ptr<BaseMaterial>> mMaterialDic;
 	};
 }

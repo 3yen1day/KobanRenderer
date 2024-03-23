@@ -19,16 +19,13 @@ namespace Koban {
 		/// </summary>
 		/// <param name="materialPath"></param>
 		virtual void createMaterialFromFile(wstring materialPath) = 0;
+
+		/// <summary>
+		/// ShaderのDic。key:shaderPath, value:shader。
+		/// </summary>
+		std::unordered_map<std::wstring, BaseShader> mShaderDic;
 		
 	private:
-		//頂点の構造体
-		struct MY_VERTEX
-		{
-			D3DXVECTOR3 mPos;
-			D3DXVECTOR3 mNorm;
-			D3DXVECTOR2 mUV;
-		};
-
 		// 頂点カウント
 		struct VERTEX_COUNT
 		{
@@ -51,10 +48,6 @@ namespace Koban {
 		/// モデルのリソースパス
 		/// </summary>
 		std::wstring mModelPath;
-		/// <summary>
-		/// ShaderのDic。key:shaderPath, value:shader。
-		/// </summary>
-		std::unordered_map<std::wstring, BaseShader> mShaderDic;
 		/// <summary>
 		/// 頂点カウント
 		/// </summary>
@@ -86,14 +79,6 @@ namespace Koban {
 		/// </summary>
 		/// <param name="fp"></param>
 		void loadVert(FILE* fp, D3DXVECTOR3* pvCoord, D3DXVECTOR3* pvNormal, D3DXVECTOR2* pvUV);
-
-		/// <summary>
-		/// IndexBufferのセット
-		/// </summary>
-		/// <param name="shaderlName"></param>
-		/// <param name="materialName"></param>
-		/// <param name="indexBuffer"></param>
-		void setIndexBuffer(std::wstring materialName, const int indexBuffer[], int bufferSize);
 		
 		/// <summary>
 		/// shaderの頂点バッファを作成。
@@ -104,7 +89,20 @@ namespace Koban {
 		/// <param name="pvNormal"></param>
 		/// <param name="pvUV"></param>
 		/// <returns>VertexBuffer</returns>
-		MY_VERTEX* createVtxBufAndIdxBuf(FILE* fp, D3DXVECTOR3* pvCoord, D3DXVECTOR3* pvNormal, D3DXVECTOR2* pvUV);
+		void createVtxBufAndIdxBuf(FILE* fp, D3DXVECTOR3* pvCoord, D3DXVECTOR3* pvNormal, D3DXVECTOR2* pvUV);
+
+		/// <summary>
+		/// IndexBufferのセット
+		/// </summary>
+		/// <param name="shaderlName"></param>
+		/// <param name="materialName"></param>
+		/// <param name="indexBuffer"></param>
+		void setIndexBuffer(std::wstring materialName, const int indexBuffer[], int bufferSize);
+
+		/// <summary>
+		/// vertexBufferのセット
+		/// </summary>
+		void setVertexBuffer(const BaseShader::MY_VERTEX* const vertBuf, int bufferSize);
 #pragma endregion
 
 	};

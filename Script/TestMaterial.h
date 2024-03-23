@@ -4,7 +4,7 @@
 namespace Koban {
 	
 	
-	struct TestMaterial:BaseMaterial
+	struct TestMaterial:public BaseMaterial
 	{
 	public:
 		

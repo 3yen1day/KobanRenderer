@@ -1,6 +1,6 @@
+#include "BaseMaterial.h"
 #include"BaseShader.h"
 #include "Render.h"
-#include "BaseMaterial.h"
 
 namespace Koban {
 	BaseShader::BaseShader(std::wstring path) :
@@ -14,6 +14,7 @@ namespace Koban {
 	}
 
 	BaseShader::~BaseShader() {
+		mMaterialDic.clear();
 		SAFE_RELEASE(mpVertexLayout);
 		SAFE_RELEASE(mpConstantBuffer0);
 		SAFE_RELEASE(mpVertexShader);
@@ -140,8 +141,7 @@ namespace Koban {
 	}
 
 	void BaseShader::addMaterial(BaseMaterial* material) {
-
-		mMaterialDic[material->mName] = unique_ptr<BaseMaterial>(material);
+		mMaterialDic[material->mName] = material;
 
 		char c[110] = { 0 };
 		wcstombs(c, material->mTextureName.data(), material->mTextureName.length());
@@ -154,8 +154,43 @@ namespace Koban {
 
 	const BaseMaterial* BaseShader::getMaterial(std::wstring matName) {
 		if (mMaterialDic.contains(matName)) {
-			return mMaterialDic[matName].get();
+			return mMaterialDic[matName];
 		}
 		return nullptr;
+	}
+
+	 const std::vector<BaseMaterial*> BaseShader::getMaterials() {
+		//mMaterialDicの要素をvectorにコピーして返す
+		std::vector<BaseMaterial*> materials;
+		for (auto& mat : mMaterialDic) {
+			materials.push_back(mat.second);
+		}
+		return materials;
+	}
+
+	void BaseShader::createVertexBuffer(const MY_VERTEX* const vertexBuffer, int polyNum) {
+		//バーテックスバッファーを作成
+		D3D11_BUFFER_DESC bd;
+		bd.Usage = D3D11_USAGE_DEFAULT;
+		bd.ByteWidth = sizeof(MY_VERTEX) * polyNum * 3;
+		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		bd.CPUAccessFlags = 0;
+		bd.MiscFlags = 0;
+		D3D11_SUBRESOURCE_DATA InitData;
+		InitData.pSysMem = vertexBuffer;
+
+		if (FAILED(DEVICE->CreateBuffer(&bd, &InitData, &mpVertexBuffer)))
+			Koban::DebugLib::error(L"バッファの作成に失敗");
+
+		//テクスチャー用サンプラー作成
+		D3D11_SAMPLER_DESC SamDesc;
+		ZeroMemory(&SamDesc, sizeof(D3D11_SAMPLER_DESC));
+
+		SamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		SamDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		if FAILED(DEVICE->CreateSamplerState(&SamDesc, &mpSampleLinear))
+			Koban::DebugLib::error(L"サンプラーステートの設定に失敗");
 	}
 }
