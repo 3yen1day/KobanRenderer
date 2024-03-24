@@ -1,21 +1,19 @@
 #pragma once
 #include "BaseMaterial.h"
+#include "TestShader.h"
 
 namespace Koban {
-	
-	
 	struct TestMaterial:public BaseMaterial
 	{
 	public:
-		
-		D3DXVECTOR4 mKa;//アンビエント
-		D3DXVECTOR4 mKd;//ディフューズ
-		D3DXVECTOR4 mKs;//スペキュラー
-
-		TestMaterial()
-		{
-		}
-
+		TestMaterial();
 		~TestMaterial();
+		void update() override;
+
+		unique_ptr<TestShader::SIMPLECONSTANT_BUFFER1> mConstantBufferVal;
+
+	private:
+		//コンスタントバッファ
+		ID3D11Buffer* mpConstantBuffer;
 	};
 }

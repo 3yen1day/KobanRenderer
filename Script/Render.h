@@ -4,6 +4,7 @@ namespace Koban {
 	class RTTManager;
 	class Camera;
 	class RenderObject;
+	class Light;
 }
 
 namespace Koban {
@@ -14,8 +15,8 @@ namespace Koban {
 		~Render();
 
 		//void Awake(); //エントリーポイントで呼ぶ
-		void update();
-		void draw(); //毎フレ更新
+		void start();
+		void update(); //毎フレ更新
 		void destroy();
 		void createObjects();
 
@@ -49,6 +50,11 @@ namespace Koban {
 			return mpCamera.get();
 		}
 
+		static Light* getLight()
+		{
+			return mpLight.get();
+		}
+
 		static bool createVertexShader(const std::wstring& fileName, const std::wstring& shaderName, ID3D11VertexShader* vs);
 
 		static bool createPixelShader(const std::wstring& fileName, const std::wstring& shaderName, ID3D11PixelShader* ps);
@@ -65,6 +71,7 @@ namespace Koban {
 
 		static std::unique_ptr<RTTManager> mpRTTManager;
 		static std::unique_ptr<Camera> mpCamera;
+		static std::unique_ptr<Light> mpLight;
 
 		std::vector<std::unique_ptr<RenderObject>> mpRenderObjects;
 	};

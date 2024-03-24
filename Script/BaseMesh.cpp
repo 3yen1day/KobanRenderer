@@ -55,7 +55,7 @@ namespace Koban {
 	/// <summary>
 	/// todo:shaderの更新は継承先でやる必要がある
 	/// </summary>
-	void BaseMesh::draw()
+	void BaseMesh::update()
 	{
 		//auto camera = Render::getCamera();
 
@@ -280,34 +280,23 @@ namespace Koban {
 		materialIndexBuffer.release();
 
 		//indexBufferを生成
-		for (auto item : mShaderDic) {
-			auto matDic = item.second.getMaterials();
-			for (auto mat : matDic) {
-				mat->createIndexBuffer();
-			}
-		}
-	}
-
-	void BaseMesh::setIndexBuffer(std::wstring materialName, const int indexBuffer[], int bufferSize) {
-		if (materialName == L"" || bufferSize == 0)
-			return;
-
-		//shader名はMaterialが知ってるので、全shaderを探索して探す
-		for (auto pair : mShaderDic) {
-			auto baseShader = &pair.second;
-			auto baseMat = baseShader->getMaterial(materialName);
-			if (baseMat != nullptr) {
-				baseMat->addIndexBuffer(indexBuffer, bufferSize);
-				return;
-			}
+		for (auto& item : mShaderDic) {
+			item.second.createIndexBuffer();
 		}
 	}
 
 	void BaseMesh::setVertexBuffer(const BaseShader::MY_VERTEX* const vertBuf, int bufferSize) {
 		//全shaderで同じvertexBufferを用いる
-		for (auto pair : mShaderDic) {
+		for (auto& pair : mShaderDic) {
 			auto baseShader = &pair.second;
 			baseShader->createVertexBuffer(vertBuf, bufferSize);
+		}
+	}
+
+	void BaseMesh::setIndexBuffer(std::wstring materialName, const int indexBuffer[], int bufferSize) {
+		for (auto& pair : mShaderDic) {
+			auto baseShader = &pair.second;
+			baseShader->setIndexBuffer(materialName, indexBuffer, bufferSize);
 		}
 	}
 

@@ -16,9 +16,10 @@ namespace Koban {
 		};
 
 		void initShader() override;
-		void updateBuffer(SIMPLECONSTANT_BUFFER1 buffer);
+		void update() override;
+		void draw() override;
 
 	private:
-		ID3D11Buffer* mpConstantBuffer1;
+		
 	};
 }

@@ -5,13 +5,18 @@
 
 //マテリアル構造体
 namespace Koban {
-	class TestMesh:BaseMesh
+	class TestMesh : public BaseMesh
 	{
 	public:
 		TestMesh();
 		~TestMesh();
+		void update() override;
+
+		/// <summary>
+		/// materialPathからMaterialを作成する
+		/// </summary>
+		/// <param name="materialPath"></param>
 		void createMaterialFromFile(std::wstring FileName) override;
-		void Render(D3DXMATRIX& mViewMat, D3DXMATRIX& mProjMat, D3DXVECTOR3& vLight, D3DXVECTOR3& vEye);
 
 	private:
 		//頂点の構造体

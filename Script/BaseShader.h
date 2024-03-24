@@ -31,31 +31,30 @@ namespace Koban {
 
 		virtual void initShader();
 		virtual void update();
-		virtual void updateBaseConstantBuffer
-		(
-			const D3DXMATRIX& worldMat,
-			const D3DXMATRIX& viewMat,
-			const D3DXMATRIX& projMat,
-			const D3DXVECTOR3& light,
-			const D3DXVECTOR3& eye
-		);
+		virtual void draw();
 
 		void createVertexBuffer(const MY_VERTEX* const vertexBuffer, int polyNum);
 
+#pragma region material系
 		/// <summary>
 		/// Materialの追加
 		/// </summary>
 		/// <param name="material"></param>
 		void addMaterial(BaseMaterial* material);
 
-		/// <summary>
-		/// Materialの取得
-		/// </summary>
-		/// <param name="fileName"></param>
-		/// <returns></returns>
-		const BaseMaterial* getMaterial(std::wstring matName);
+		void updateBaseConstantBuffer
+		(
+			const D3DXMATRIX& worldMat
+		);
 
-		const std::vector<BaseMaterial*> getMaterials();
+		void setIndexBuffer(std::wstring materialName, const int indexBuffer[], int bufferSize);
+		void createIndexBuffer();
+
+#pragma endregion
+
+
+	protected:
+		std::unordered_map<std::wstring, BaseMaterial*> mMaterialDic;
 
 	private:
 		ID3D11InputLayout* mpVertexLayout;
@@ -66,11 +65,6 @@ namespace Koban {
 		/// 頂点バッファ
 		/// </summary>
 		ID3D11Buffer* mpVertexBuffer;
-		/// <summary>
-		/// サンプラーステート
-		/// </summary>
-		ID3D11SamplerState* mpSampleLinear;
-		std::unordered_map<std::wstring, BaseMaterial*> mMaterialDic;
 		std::wstring mShaderPath;
 	};
 }

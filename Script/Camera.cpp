@@ -12,10 +12,9 @@ namespace Koban {
 
 	void Camera::update() {
 		// ビュートランスフォーム（視点座標変換）
-		D3DXVECTOR3 mPosition(0.0f, 0.0f, -0.5f); //カメラ（視点）位置
 		D3DXVECTOR3 vLookatPt(0.0f, 0.0f, 0.0f);//注視位置
 		D3DXVECTOR3 vUpVec(0.0f, 1.0f, 0.0f);//上方位置
-		D3DXMatrixLookAtLH(&mViewMat, &mPosition, &vLookatPt, &vUpVec);
+		D3DXMatrixLookAtLH(&mViewMat, &mPostion, &vLookatPt, &vUpVec);
 		// プロジェクショントランスフォーム（射影変換）
 		D3DXMatrixPerspectiveFovLH(&mProjMat, D3DX_PI / 4, (FLOAT)WINDOW_WIDTH / (FLOAT)WINDOW_HEIGHT, 0.1f, 110.0f);
 	}

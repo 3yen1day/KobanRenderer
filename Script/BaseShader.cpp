@@ -1,6 +1,8 @@
 #include "BaseMaterial.h"
 #include"BaseShader.h"
 #include "Render.h"
+#include "Camera.h"
+#include "Light.h"
 
 namespace Koban {
 	BaseShader::BaseShader(std::wstring path) :
@@ -98,6 +100,10 @@ namespace Koban {
 	}
 
 	void BaseShader::update() {
+		//バーテックスバッファーをセット
+		UINT stride = sizeof(MY_VERTEX);
+		UINT offset = 0;
+		DEVICE_CONTEXT->IASetVertexBuffers(0, 1, &mpVertexBuffer, &stride, &offset);
 		//使用するシェーダーの登録	
 		DEVICE_CONTEXT->VSSetShader(mpVertexShader, NULL, 0);
 		DEVICE_CONTEXT->PSSetShader(mpPixelShader, NULL, 0);
@@ -108,17 +114,32 @@ namespace Koban {
 		DEVICE_CONTEXT->IASetInputLayout(mpVertexLayout);
 		//プリミティブ・トポロジーをセット
 		DEVICE_CONTEXT->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+		//material毎にupdateする
+		for (auto& mat : mMaterialDic)
+		{
+			mat.second->update();
+		}
+	}
+
+	void BaseShader::draw() {
+		//material毎にupdateする
+		for (auto& mat : mMaterialDic)
+		{
+			mat.second->draw();
+		}
 	}
 
 	void BaseShader::updateBaseConstantBuffer
 	(
-		const D3DXMATRIX& worldMat,
-		const D3DXMATRIX& viewMat,
-		const D3DXMATRIX& projMat,
-		const D3DXVECTOR3& light,
-		const D3DXVECTOR3& eye
+		const D3DXMATRIX& worldMat
 	) 
 	{
+		auto eye = Render::getCamera()->getPostion();
+		auto viewMat = Render::getCamera()->getViewMat();
+		auto projMat = Render::getCamera()->getProjMat();
+		auto light = Render::getLight()->getDirection();
+
 		SIMPLECONSTANT_BUFFER0 sg;
 		//ワールド行列を渡す
 		sg.mW = worldMat;
@@ -152,20 +173,19 @@ namespace Koban {
 		}
 	}
 
-	const BaseMaterial* BaseShader::getMaterial(std::wstring matName) {
-		if (mMaterialDic.contains(matName)) {
-			return mMaterialDic[matName];
+	void BaseShader::setIndexBuffer(std::wstring materialName, const int indexBuffer[], int bufferSize) {
+		if (materialName == L"" || bufferSize == 0)
+			return;
+
+		if (mMaterialDic.contains(materialName)) {
+			mMaterialDic[materialName]->addIndexBuffer(indexBuffer, bufferSize);
 		}
-		return nullptr;
 	}
 
-	 const std::vector<BaseMaterial*> BaseShader::getMaterials() {
-		//mMaterialDicの要素をvectorにコピーして返す
-		std::vector<BaseMaterial*> materials;
+	void BaseShader::createIndexBuffer() {
 		for (auto& mat : mMaterialDic) {
-			materials.push_back(mat.second);
+			mat.second->createIndexBuffer();
 		}
-		return materials;
 	}
 
 	void BaseShader::createVertexBuffer(const MY_VERTEX* const vertexBuffer, int polyNum) {
@@ -181,16 +201,5 @@ namespace Koban {
 
 		if (FAILED(DEVICE->CreateBuffer(&bd, &InitData, &mpVertexBuffer)))
 			Koban::DebugLib::error(L"バッファの作成に失敗");
-
-		//テクスチャー用サンプラー作成
-		D3D11_SAMPLER_DESC SamDesc;
-		ZeroMemory(&SamDesc, sizeof(D3D11_SAMPLER_DESC));
-
-		SamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-		SamDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-		SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-		SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-		if FAILED(DEVICE->CreateSamplerState(&SamDesc, &mpSampleLinear))
-			Koban::DebugLib::error(L"サンプラーステートの設定に失敗");
 	}
 }

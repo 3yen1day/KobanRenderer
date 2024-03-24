@@ -27,6 +27,7 @@
     <ClCompile Include="Script\RTTManager.cpp" />
     <ClCompile Include="Script\Main.cpp" />
     <ClCompile Include="Script\Render.cpp" />
+    <ClCompile Include="Script\TestMaterial.cpp" />
     <ClCompile Include="Script\TestMesh.cpp" />
     <ClCompile Include="Script\TestShader.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -42,6 +43,7 @@
     <ClInclude Include="Script\Include\DefaultInclude.h" />
     <ClInclude Include="Script\Library\DebugLib.h" />
     <ClInclude Include="Script\Library\StringLib.h" />
+    <ClInclude Include="Script\Light.h" />
     <ClInclude Include="Script\Object.h" />
     <ClInclude Include="Script\RenderObject.h" />
     <ClInclude Include="Script\RTTManager.h" />

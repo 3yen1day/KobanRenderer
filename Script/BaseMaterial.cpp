@@ -2,6 +2,26 @@
 #include "Render.h"
 
 namespace Koban {
+	BaseMaterial::BaseMaterial() :
+		mName{ L"" },
+		shaderPath{ L"" },
+		mFaceNum{ 0 },
+		mpIndexBuffer{},
+		mTextureName{ L"" },
+		mpTexture{ nullptr }
+	{
+		//テクスチャー用サンプラー作成
+		D3D11_SAMPLER_DESC SamDesc;
+		ZeroMemory(&SamDesc, sizeof(D3D11_SAMPLER_DESC));
+
+		SamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		SamDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		if FAILED(DEVICE->CreateSamplerState(&SamDesc, &mpSampleLinear))
+			Koban::DebugLib::error(L"サンプラーステートの設定に失敗");
+	}
+
 	BaseMaterial::~BaseMaterial() {
 		SAFE_RELEASE(mpIndexBuffer);
 		SAFE_RELEASE(mpTexture);
@@ -35,5 +55,25 @@ namespace Koban {
 			Koban::DebugLib::error(L"インデックスバッファの作成に失敗");
 		}
 		mpIndexBuffer_Tmp.reset();
+	}
+
+	void BaseMaterial::draw() {
+		//インデックスバッファーをセット
+		DEVICE_CONTEXT->IASetIndexBuffer(mpIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+		//テクスチャーをシェーダーに渡す
+		if (mpTexture != NULL)
+		{
+			DEVICE_CONTEXT->PSSetSamplers(0, 1, &mpSampleLinear);
+			DEVICE_CONTEXT->PSSetShaderResources(0, 1, &mpTexture);
+		}
+		else
+		{
+			ID3D11ShaderResourceView* Nothing[1] = { 0 };
+			DEVICE_CONTEXT->PSSetShaderResources(0, 1, Nothing);
+		}
+		//レンダリング
+		//プリミティブをレンダリング
+		DEVICE_CONTEXT->DrawIndexed(mFaceNum * 3, 0, 0);
 	}
 }

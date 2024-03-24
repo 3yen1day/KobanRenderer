@@ -46,6 +46,9 @@ void Main::Loop()
 	 // メッセージループ
 	MSG msg = { 0 };
 	ZeroMemory(&msg, sizeof(msg));
+	
+	// start
+	mpRender->start();
 	while (msg.message != WM_QUIT)
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -58,7 +61,7 @@ void Main::Loop()
 			//更新
 			update();
 			//描画
-			draw();
+			update();
 		}
 	}
 	//アプリケーションの終了
@@ -67,11 +70,6 @@ void Main::Loop()
 void Main::update()
 {
 	mpRender->update();
-}
-
-void Main::draw() 
-{
-	//mpRender->draw();
 }
 
 void Main::destroy()

@@ -1,6 +1,8 @@
 #include "Render.h"
 #include "RTTManager.h"
 #include "Camera.h"
+#include "TestMesh.h"
+#include "Light.h"
 
 //関数プロトタイプの宣言
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -10,6 +12,7 @@ ID3D11DeviceContext* Koban::Render::mpDeviceContext;
 IDXGISwapChain* Koban::Render::mpSwapChain;
 ID3D11RenderTargetView* Koban::Render::mpBackBuffer_RTV;
 std::unique_ptr<Koban::Camera> Koban::Render::mpCamera;
+std::unique_ptr<Koban::Light> Koban::Render::mpLight;
 std::unique_ptr<Koban::RTTManager> Koban::Render::mpRTTManager;
 
 /// <summary>
@@ -94,7 +97,7 @@ namespace Koban {
 		mpCamera.reset(new Camera());
 
 		//RenderObjectの初期化
-		//mpRenderObjects = { new TestDefferdRender() };
+		mpRenderObjects.push_back(std::make_unique<RenderObject>());
 	}
 
 	void Render::destroy()
@@ -113,27 +116,26 @@ namespace Koban {
 		SAFE_RELEASE(mpBackBuffer_RTV);
 	}
 
-	void Render::update() {
-		//カメラ更新
-		mpCamera->update();
-
+	void Render::start() {
+		mpCamera->start();
+		mpRTTManager->start();
 		for (const auto& e : mpRenderObjects) {
-			e->update();
+			e->start();
 		}
 	}
 
-	//シーンを画面にレンダリング
-	void Render::draw()
-	{
-		//ディファードレンダリング
+	void Render::update() {
+		//カメラ更新
+		mpCamera->update();
 		drawDefferd();
 	}
 
 	void Render::drawDefferd() {
+		mpRTTManager->update();
+
 		//RenderObjectの更新
-		//mpMesh->Render(mViewMat, mProjMat, D3DXVECTOR3(1, 1, -1), mPosition);
 		for (const auto& e : mpRenderObjects) {
-			e->draw();
+			e->update();
 		}
 
 		//// 描画されたRTTをもとに絵を描く

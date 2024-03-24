@@ -4,14 +4,14 @@
 #include "BaseMaterial.h"
 
 namespace Koban {
-	class BaseMesh :RenderObject
+	class BaseMesh : public RenderObject
 	{
 	public:
 		BaseMesh();
 		~BaseMesh();
 
 		void start() override;
-		void draw() override;
+		void update() override;
 
 	protected:
 		/// <summary>
