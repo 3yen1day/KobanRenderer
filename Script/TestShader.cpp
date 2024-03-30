@@ -32,8 +32,5 @@ namespace Koban {
 		{
 			static_cast<TestMaterial*>(mat.second)->draw();
 		}
-
-		//e‚Ìdraw‚ğŒÄ‚Ño‚·
-		BaseShader::draw();
 	}
 }

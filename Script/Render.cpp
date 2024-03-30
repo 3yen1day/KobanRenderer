@@ -49,6 +49,7 @@ namespace Koban {
 			pFeatureLevel, &mpDeviceContext)))
 		{
 			//なんか例外
+			DebugLib::error(L"デバイス作成失敗");
 			return;
 		}
 
@@ -90,14 +91,14 @@ namespace Koban {
 	/// </summary>
 	void Render::createObjects()
 	{
-		//RTTを作成するくん
-		mpRTTManager.reset(new RTTManager());
+		////RTTを作成するくん
+		//mpRTTManager.reset(new RTTManager());
 
-		//Cameraの作成
-		mpCamera.reset(new Camera());
+		////Cameraの作成
+		//mpCamera.reset(new Camera());
 
 		//RenderObjectの初期化
-		mpRenderObjects.push_back(std::make_unique<RenderObject>());
+		mpRenderObjects.push_back(std::make_unique<TestMesh>());
 	}
 
 	void Render::destroy()
@@ -117,8 +118,8 @@ namespace Koban {
 	}
 
 	void Render::start() {
-		mpCamera->start();
-		mpRTTManager->start();
+		/*mpCamera->start();
+		mpRTTManager->start();*/
 		for (const auto& e : mpRenderObjects) {
 			e->start();
 		}
@@ -126,21 +127,19 @@ namespace Koban {
 
 	void Render::update() {
 		//カメラ更新
-		mpCamera->update();
-		drawDefferd();
+		//mpCamera->update();
+
+		////RenderObjectの更新
+		//for (const auto& e : mpRenderObjects) {
+		//	e->update();
+		//}
 	}
 
-	void Render::drawDefferd() {
-		mpRTTManager->update();
-
+	void Render::draw() {
 		//RenderObjectの更新
-		for (const auto& e : mpRenderObjects) {
-			e->update();
-		}
-
-		//// 描画されたRTTをもとに絵を描く
-		//// GBufferのクリアとセット
-		//mpRTTManager->renderToScene();
+		/*for (const auto& e : mpRenderObjects) {
+			e->draw();
+		}*/
 
 		////画面更新（バックバッファをフロントバッファに）
 		//mpSwapChain->Present(0, 0);

@@ -1,12 +1,9 @@
 #pragma once
 #include "RenderObject.h"
 
-// NormalTextureやらを作成して、レンダーターゲットにする
-// Shader側では、レンダーターゲットに出力
-// 実際はSRVをShaderResourceとしても使いたい
-// RTTにせっていしつつ、Resourceにも設定できるならそうする
-// できないなら、二つ用意して、毎フレ入れ替える
-
+/// <summary>
+/// RTTの生成、管理を行うクラス
+/// </summary>
 namespace Koban {
 	class RTTManager : public RenderObject {
 	public:
@@ -21,11 +18,6 @@ namespace Koban {
 		~RTTManager() {};
 
 		void destroy() override;
-
-		/// <summary>
-		/// RTTを元にシーンへ描画
-		/// </summary>
-		void renderToScene();
 
 		/// <summary>
 		/// RTTのSRVを取得

@@ -9,6 +9,6 @@ namespace Koban {
 	public:
 		RenderObject() {};
 		~RenderObject() {};
-		virtual void update() {};
+		virtual void draw() {};
 	};
 }

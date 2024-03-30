@@ -1,18 +1,23 @@
 #pragma once
 #include "BaseMaterial.h"
+#include "RenderObject.h"
 
 namespace Koban {
-	class BaseShader {
+	class BaseShader:public RenderObject {
 	public:
 		BaseShader() {};
 		BaseShader(std::wstring path);
 		~BaseShader();
+		
+		void update() override;
+		void draw() override;
 
 		/// <summary>
 		/// í∏ì_èÓïÒÇÃç\ë¢ëÃ
 		/// </summary>
 		struct MY_VERTEX
 		{
+		public:
 			D3DXVECTOR3 mPos;
 			D3DXVECTOR3 mNorm;
 			D3DXVECTOR2 mUV;
@@ -30,8 +35,6 @@ namespace Koban {
 		};
 
 		virtual void initShader();
-		virtual void update();
-		virtual void draw();
 
 		void createVertexBuffer(const MY_VERTEX* const vertexBuffer, int polyNum);
 

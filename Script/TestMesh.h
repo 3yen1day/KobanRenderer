@@ -11,6 +11,7 @@ namespace Koban {
 		TestMesh();
 		~TestMesh();
 		void update() override;
+		void draw() override;
 
 		/// <summary>
 		/// materialPath‚©‚çMaterial‚ğì¬‚·‚é

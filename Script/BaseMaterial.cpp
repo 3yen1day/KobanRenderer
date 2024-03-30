@@ -1,5 +1,6 @@
 #include "BaseMaterial.h"
 #include "Render.h"
+#include "RenderObject.h"
 
 namespace Koban {
 	BaseMaterial::BaseMaterial() :

@@ -38,9 +38,9 @@ namespace Koban {
 		loadMaterial(fp);
 
 		//頂点情報のロード
-		unique_ptr<D3DXVECTOR3> pvCoord = unique_ptr<D3DXVECTOR3>(new D3DXVECTOR3[mVertCount.get()->vtCount]);
-		unique_ptr <D3DXVECTOR3> pvNormal = unique_ptr<D3DXVECTOR3>(new D3DXVECTOR3[mVertCount.get()->normCount]);
-		unique_ptr <D3DXVECTOR2> pvUV = unique_ptr <D3DXVECTOR2>(new D3DXVECTOR2[mVertCount.get()->uvCount]);
+		unique_ptr<D3DXVECTOR3> pvCoord = unique_ptr<D3DXVECTOR3>(new D3DXVECTOR3[mVertCount->vtCount]);
+		unique_ptr <D3DXVECTOR3> pvNormal = unique_ptr<D3DXVECTOR3>(new D3DXVECTOR3[mVertCount->normCount]);
+		unique_ptr <D3DXVECTOR2> pvUV = unique_ptr <D3DXVECTOR2>(new D3DXVECTOR2[mVertCount->uvCount]);
 		loadVert(fp, pvCoord.get(), pvNormal.get(), pvUV.get());
 
 		//頂点バッファ・インデックスバッファの作成
@@ -128,22 +128,23 @@ namespace Koban {
 			//頂点
 			if (wcscmp(key, L"v") == 0)
 			{
-				mVertCount.get()->vtCount++;
+				mVertCount->vtCount++;
 			}
 			//法線
 			if (wcscmp(key, L"vn") == 0)
 			{
-				mVertCount.get()->uvCount++;
+				//ここを消すとなぜか正常に動く
+				mVertCount->uvCount++;
 			}
 			//テクスチャー座標
 			if (wcscmp(key, L"vt") == 0)
 			{
-				mVertCount.get()->normCount++;
+				mVertCount->normCount++;
 			}
 			//フェイス（ポリゴン）
 			if (wcscmp(key, L"f") == 0)
 			{
-				mVertCount.get()->polyCount++;
+				mVertCount->polyCount++;
 			}
 		}
 	}
@@ -213,7 +214,8 @@ namespace Koban {
 	}
 
 	void BaseMesh::createVtxBufAndIdxBuf(FILE* fp, D3DXVECTOR3* pvCoord, D3DXVECTOR3* pvNormal, D3DXVECTOR2* pvUV) {
-		BaseShader::MY_VERTEX* vertexBuffer = new BaseShader::MY_VERTEX[mVertCount.get()->polyCount * 3];
+		auto count = mVertCount->polyCount * 3;
+		BaseShader::MY_VERTEX* vertexBuffer = new BaseShader::MY_VERTEX[16596];
 		unique_ptr<int[]> materialIndexBuffer;
 
 		wchar_t key[200] = { 0 };
@@ -240,7 +242,7 @@ namespace Koban {
 
 				fwscanf_s(fp, L"%s ", key, _countof(key));
 				targetMatName = key;
-				materialIndexBuffer.reset(new int[mVertCount.get()->polyCount * 3]);//３頂点ポリゴンなので、1フェイス=3頂点(3インデックス)
+				materialIndexBuffer.reset(new int[mVertCount->polyCount * 3]);//３頂点ポリゴンなので、1フェイス=3頂点(3インデックス)
 				indexCount = 0;
 			}
 			if (wcscmp(key, L"f") == 0 && boFlag == true)
@@ -278,7 +280,7 @@ namespace Koban {
 		setVertexBuffer(vertexBuffer, polygonCount + 3);
 		setIndexBuffer(targetMatName, materialIndexBuffer.get(), indexCount);
 		materialIndexBuffer.release();
-
+		delete vertexBuffer;
 		//indexBufferを生成
 		for (auto& item : mShaderDic) {
 			item.second.createIndexBuffer();

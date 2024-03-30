@@ -29,6 +29,7 @@ namespace Koban {
 		// 頂点カウント
 		struct VERTEX_COUNT
 		{
+		public:
 			int vtCount;
 			int polyCount;
 			int uvCount;
@@ -36,6 +37,7 @@ namespace Koban {
 		};
 
 #pragma region フィールド
+		BaseShader::MY_VERTEX* mVertexBuffer;
 		/// <summary>
 		/// 頂点バッファ
 		/// </summary>

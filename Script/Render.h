@@ -17,6 +17,7 @@ namespace Koban {
 		//void Awake(); //エントリーポイントで呼ぶ
 		void start();
 		void update(); //毎フレ更新
+		void draw();
 		void destroy();
 		void createObjects();
 
@@ -61,8 +62,6 @@ namespace Koban {
 
 
 	private:
-		void drawDefferd();
-
 		//unique_ptrを使うと解放時に例外
 		static ID3D11Device* mpDevice;
 		static ID3D11DeviceContext* mpDeviceContext;

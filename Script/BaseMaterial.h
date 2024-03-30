@@ -1,17 +1,18 @@
 #pragma once
+#include "RenderObject.h"
+
 namespace Koban {
+
 	/// <summary>
 	/// Material（データのみ）
 	/// </summary>
-	struct BaseMaterial
+	struct BaseMaterial:public RenderObject
 	{
 	public:
 		BaseMaterial();
-
 		~BaseMaterial();
 
-		virtual void update() = 0;
-		virtual void draw();
+		void draw() override;
 
 		/// <summary>
 		/// インデックスバッファに追加

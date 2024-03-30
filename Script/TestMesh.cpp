@@ -103,8 +103,9 @@ namespace Koban {
 			testShader->updateBaseConstantBuffer(worldMat);
 			testShader->update();
 		}
-		
-		//draw
+	}
+
+	void TestMesh::draw() {
 		for (auto& shader : mShaderDic) {
 			auto testShader = static_cast<TestShader*>(&shader.second);
 			testShader->draw();
