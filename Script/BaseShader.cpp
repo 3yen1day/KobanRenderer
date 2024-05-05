@@ -173,7 +173,7 @@ namespace Koban {
 		}
 	}
 
-	void BaseShader::setIndexBuffer(std::wstring materialName, const int indexBuffer[], int bufferSize) {
+	void BaseShader::setIndexBuffer(std::wstring materialName, const std::vector<int> indexBuffer, int bufferSize) {
 		if (materialName == L"" || bufferSize == 0)
 			return;
 
@@ -188,7 +188,7 @@ namespace Koban {
 		}
 	}
 
-	void BaseShader::createVertexBuffer(const MY_VERTEX* const vertexBuffer, int polyNum) {
+	void BaseShader::createVertexBuffer(const std::vector<BaseShader::MY_VERTEX> const vertexBuffer, int polyNum) {
 		//バーテックスバッファーを作成
 		D3D11_BUFFER_DESC bd;
 		bd.Usage = D3D11_USAGE_DEFAULT;
@@ -197,7 +197,7 @@ namespace Koban {
 		bd.CPUAccessFlags = 0;
 		bd.MiscFlags = 0;
 		D3D11_SUBRESOURCE_DATA InitData;
-		InitData.pSysMem = vertexBuffer;
+		InitData.pSysMem = vertexBuffer.data();
 
 		if (FAILED(DEVICE->CreateBuffer(&bd, &InitData, &mpVertexBuffer)))
 			Koban::DebugLib::error(L"バッファの作成に失敗");

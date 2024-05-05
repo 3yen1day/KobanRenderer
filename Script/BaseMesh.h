@@ -99,12 +99,12 @@ namespace Koban {
 		/// <param name="shaderlName"></param>
 		/// <param name="materialName"></param>
 		/// <param name="indexBuffer"></param>
-		void setIndexBuffer(std::wstring materialName, const int indexBuffer[], int bufferSize);
+		void setIndexBuffer(std::wstring materialName, const std::vector<int> indexBuffer, int bufferSize);
 
 		/// <summary>
 		/// vertexBuffer‚ÌƒZƒbƒg
 		/// </summary>
-		void setVertexBuffer(const BaseShader::MY_VERTEX* const vertBuf, int bufferSize);
+		void setVertexBuffer(const std::vector<BaseShader::MY_VERTEX> const vertBuf, int bufferSize);
 #pragma endregion
 
 	};

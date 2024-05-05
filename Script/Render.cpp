@@ -118,8 +118,8 @@ namespace Koban {
 	}
 
 	void Render::start() {
-		/*mpCamera->start();
-		mpRTTManager->start();*/
+		//mpCamera->start();
+		//mpRTTManager->start();
 		for (const auto& e : mpRenderObjects) {
 			e->start();
 		}

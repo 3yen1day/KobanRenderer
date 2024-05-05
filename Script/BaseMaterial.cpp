@@ -28,7 +28,7 @@ namespace Koban {
 		SAFE_RELEASE(mpTexture);
 	}
 
-	void BaseMaterial::addIndexBuffer(const int indexBuffer[], int size) const {
+	void BaseMaterial::addIndexBuffer(const std::vector<int> indexBuffer, int size) const {
 		//サイズ変更してぶち込む
 		auto nowSize = mpIndexBuffer_Tmp.get()->size();
 		mpIndexBuffer_Tmp.get()->resize(nowSize + size);

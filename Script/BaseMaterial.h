@@ -19,7 +19,7 @@ namespace Koban {
 		/// </summary>
 		/// <param name="indexBuffer"></param>
 		/// <param name="size"></param>
-		void addIndexBuffer(const int indexBuffer[], int size) const;
+		void addIndexBuffer(const std::vector<int> indexBuffer, int size) const;
 
 		/// <summary>
 		/// インデックスバッファを作成

@@ -215,8 +215,8 @@ namespace Koban {
 
 	void BaseMesh::createVtxBufAndIdxBuf(FILE* fp, D3DXVECTOR3* pvCoord, D3DXVECTOR3* pvNormal, D3DXVECTOR2* pvUV) {
 		auto count = mVertCount->polyCount * 3;
-		BaseShader::MY_VERTEX* vertexBuffer = new BaseShader::MY_VERTEX[16596];
-		unique_ptr<int[]> materialIndexBuffer;
+		std::vector<BaseShader::MY_VERTEX> vertexBuffer;
+		std::vector<int> materialIndexBuffer;
 
 		wchar_t key[200] = { 0 };
 		bool boFlag = false;
@@ -238,11 +238,12 @@ namespace Koban {
 			//フェイス 読み込み→頂点インデックスに
 			if (wcscmp(key, L"usemtl") == 0)
 			{
-				setIndexBuffer(targetMatName, materialIndexBuffer.get(), indexCount * 3);
+				setIndexBuffer(targetMatName, materialIndexBuffer, indexCount * 3);
 
 				fwscanf_s(fp, L"%s ", key, _countof(key));
 				targetMatName = key;
-				materialIndexBuffer.reset(new int[mVertCount->polyCount * 3]);//３頂点ポリゴンなので、1フェイス=3頂点(3インデックス)
+				materialIndexBuffer.clear();
+				materialIndexBuffer.resize(mVertCount->polyCount * 3);//３頂点ポリゴンなので、1フェイス=3頂点(3インデックス)
 				indexCount = 0;
 			}
 			if (wcscmp(key, L"f") == 0 && boFlag == true)
@@ -258,19 +259,27 @@ namespace Koban {
 					fwscanf_s(fp, L"%d//%d %d//%d %d//%d", &v1, &vn1, &v2, &vn2, &v3, &vn3);
 				}
 				//頂点構造体に代入
-				vertexBuffer[polygonCount * 3].mPos = pvCoord[v1 - 1];
-				vertexBuffer[polygonCount * 3].mNorm = pvNormal[vn1 - 1];
-				vertexBuffer[polygonCount * 3].mUV = pvUV[vt1 - 1];
-				vertexBuffer[polygonCount * 3 + 1].mPos = pvCoord[v2 - 1];
-				vertexBuffer[polygonCount * 3 + 1].mNorm = pvNormal[vn2 - 1];
-				vertexBuffer[polygonCount * 3 + 1].mUV = pvUV[vt2 - 1];
-				vertexBuffer[polygonCount * 3 + 2].mPos = pvCoord[v3 - 1];
-				vertexBuffer[polygonCount * 3 + 2].mNorm = pvNormal[vn3 - 1];
-				vertexBuffer[polygonCount * 3 + 2].mUV = pvUV[vt3 - 1];
+				auto d = new BaseShader::MY_VERTEX();
+				d->mPos = pvCoord[v1 - 1];
+				d->mNorm = pvNormal[vn1 - 1];
+				d->mUV = pvUV[vt1 - 1];
+				vertexBuffer.push_back(*d);
 
-				materialIndexBuffer.get()[indexCount * 3] = polygonCount * 3;
-				materialIndexBuffer.get()[indexCount * 3 + 1] = polygonCount * 3 + 1;
-				materialIndexBuffer.get()[indexCount * 3 + 2] = polygonCount * 3 + 2;
+				auto d1 = new BaseShader::MY_VERTEX();
+				d1->mPos = pvCoord[v2 - 1];
+				d1->mNorm = pvNormal[vn2 - 1];
+				d1->mUV = pvUV[vt2 - 1];
+				vertexBuffer.push_back(*d1);
+
+				auto d2 = new BaseShader::MY_VERTEX();
+				d2->mPos = pvCoord[v3 - 1];
+				d2->mNorm = pvNormal[vn3 - 1];
+				d2->mUV = pvUV[vt3 - 1];
+				vertexBuffer.push_back(*d2);
+
+				materialIndexBuffer[indexCount * 3] = polygonCount * 3;
+				materialIndexBuffer[indexCount * 3 + 1] = polygonCount * 3 + 1;
+				materialIndexBuffer[indexCount * 3 + 2] = polygonCount * 3 + 2;
 
 				polygonCount++;
 				indexCount++;
@@ -278,16 +287,15 @@ namespace Koban {
 		}
 
 		setVertexBuffer(vertexBuffer, polygonCount + 3);
-		setIndexBuffer(targetMatName, materialIndexBuffer.get(), indexCount);
-		materialIndexBuffer.release();
-		delete vertexBuffer;
+		setIndexBuffer(targetMatName, materialIndexBuffer, indexCount);
+
 		//indexBufferを生成
 		for (auto& item : mShaderDic) {
 			item.second.createIndexBuffer();
 		}
 	}
 
-	void BaseMesh::setVertexBuffer(const BaseShader::MY_VERTEX* const vertBuf, int bufferSize) {
+	void BaseMesh::setVertexBuffer(const std::vector<BaseShader::MY_VERTEX> const vertBuf, int bufferSize) {
 		//全shaderで同じvertexBufferを用いる
 		for (auto& pair : mShaderDic) {
 			auto baseShader = &pair.second;
@@ -295,7 +303,7 @@ namespace Koban {
 		}
 	}
 
-	void BaseMesh::setIndexBuffer(std::wstring materialName, const int indexBuffer[], int bufferSize) {
+	void BaseMesh::setIndexBuffer(std::wstring materialName, const std::vector<int> indexBuffer, int bufferSize) {
 		for (auto& pair : mShaderDic) {
 			auto baseShader = &pair.second;
 			baseShader->setIndexBuffer(materialName, indexBuffer, bufferSize);

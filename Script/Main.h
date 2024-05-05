@@ -9,6 +9,7 @@ public:
 	void Start();
 	void Loop();
 	void update();
+	void draw();
 	void destroy();
 
 	HWND mHwnd;

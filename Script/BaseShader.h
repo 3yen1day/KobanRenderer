@@ -18,6 +18,7 @@ namespace Koban {
 		struct MY_VERTEX
 		{
 		public:
+			MY_VERTEX() {};
 			D3DXVECTOR3 mPos;
 			D3DXVECTOR3 mNorm;
 			D3DXVECTOR2 mUV;
@@ -36,7 +37,7 @@ namespace Koban {
 
 		virtual void initShader();
 
-		void createVertexBuffer(const MY_VERTEX* const vertexBuffer, int polyNum);
+		void createVertexBuffer(const std::vector<BaseShader::MY_VERTEX> const vertexBuffer, int polyNum);
 
 #pragma region materialån
 		/// <summary>
@@ -50,7 +51,7 @@ namespace Koban {
 			const D3DXMATRIX& worldMat
 		);
 
-		void setIndexBuffer(std::wstring materialName, const int indexBuffer[], int bufferSize);
+		void setIndexBuffer(std::wstring materialName, const std::vector<int> indexBuffer, int bufferSize);
 		void createIndexBuffer();
 
 #pragma endregion

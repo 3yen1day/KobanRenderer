@@ -61,7 +61,7 @@ void Main::Loop()
 			//更新
 			update();
 			//描画
-			update();
+			draw();
 		}
 	}
 	//アプリケーションの終了
@@ -70,6 +70,11 @@ void Main::Loop()
 void Main::update()
 {
 	mpRender->update();
+}
+
+void Main::draw()
+{
+	mpRender->draw();
 }
 
 void Main::destroy()
