@@ -18,6 +18,7 @@ namespace Koban {
 		~RTTManager() {};
 
 		void destroy() override;
+		void update() override;
 
 		/// <summary>
 		/// RTT‚ÌSRV‚ðŽæ“¾

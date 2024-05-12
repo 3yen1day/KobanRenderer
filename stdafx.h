@@ -21,4 +21,5 @@
 //Library
 #include "Script/Library/StringLib.h"
 #include "Script/Library/DebugLib.h"
+#include "Script/Library/RenderLib.h"
 #include "Script/Include/DefaultInclude.h"

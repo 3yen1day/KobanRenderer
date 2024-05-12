@@ -8,8 +8,8 @@ namespace Koban {
 		// Shader
 		// ----------------------------------------
 		//égópÇ∑ÇÈShaderÇÃçÏê¨
-		Render::createVertexShader(mShaderFileName, mVSShaderName, mpVertexShader);
-		Render::createPixelShader(mShaderFileName, mPSShaderName, mpPixelShader);
+		//RenderLib::createVertexShader(DEVICE, mShaderFileName, mVSShaderName, mpVertexShader);
+		//RenderLib::createPixelShader(DEVICE, mShaderFileName, mPSShaderName, mpPixelShader);
 
 		// ----------------------------------------
 		// Buffer

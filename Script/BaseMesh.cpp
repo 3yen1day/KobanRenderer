@@ -1,6 +1,7 @@
 #include "BaseMesh.h"
 #include "Render.h"
 #include "Camera.h"
+#include "TestMaterial.h"
 #include <regex>
 
 namespace Koban {
@@ -27,27 +28,69 @@ namespace Koban {
 
 	HRESULT BaseMesh::loadResources(std::wstring meshFileName)
 	{
-		//--------------OBJファイルを開いて内容を読み込む-----------------
-		wchar_t key[200] = { 0 };
-		FILE* fp = NULL;
-		_wfopen_s(&fp, meshFileName.data(), L"rt");
+		////--------------OBJファイルを開いて内容を読み込む-----------------
+		//wchar_t key[200] = { 0 };
+		//FILE* fp = NULL;
+		//_wfopen_s(&fp, meshFileName.data(), L"rt");
+
+		////頂点数カウント
+		//loadVertCount(fp);
+		////マテリアルロード
+		//loadMaterial(fp);
+
+		////頂点情報のロード
+		//unique_ptr<D3DXVECTOR3> pvCoord = unique_ptr<D3DXVECTOR3>(new D3DXVECTOR3[mVertCount->vtCount]);
+		//unique_ptr <D3DXVECTOR3> pvNormal = unique_ptr<D3DXVECTOR3>(new D3DXVECTOR3[mVertCount->normCount]);
+		//unique_ptr <D3DXVECTOR2> pvUV = unique_ptr <D3DXVECTOR2>(new D3DXVECTOR2[mVertCount->uvCount]);
+		//loadVert(fp, pvCoord.get(), pvNormal.get(), pvUV.get());
+
+		////頂点バッファ・インデックスバッファの作成
+		//createVtxBufAndIdxBuf(fp, pvCoord.get(), pvNormal.get(), pvUV.get());
+
+		//fclose(fp);
+		////-------------------------------------------------------------
 
 		//頂点数カウント
-		loadVertCount(fp);
+		mVertCount->vtCount = 4;
+		mVertCount->uvCount = 4;
+		mVertCount->normCount = 4;
+		mVertCount->polyCount = 2;
 		//マテリアルロード
-		loadMaterial(fp);
+		auto pMaterial = new TestMaterial();
+		pMaterial->mName = L"chipis_fukuro_mae";
+		pMaterial->shaderPath = L"Shader\\MESH.hlsl";
+		pMaterial->mConstantBufferVal.get()->mAmbient = D3DXVECTOR4(0, 0, 0, 0);
+		pMaterial->mConstantBufferVal.get()->mDiffuse = D3DXVECTOR4(1, 1, 1, 0);
+		pMaterial->mConstantBufferVal.get()->mSpecular = D3DXVECTOR4(0.605, 0.605, 0.605, 0);
+		pMaterial->mTextureName = L"Resource\\Chips_Cover.jpg";
+
+		auto shaderPath = pMaterial->shaderPath;
+		//shader自体が無ければ追加
+		if (!mShaderDic.contains(shaderPath)) {
+			mShaderDic[shaderPath] = *(new TestShader());
+		}
+		//materialを追加
+		mShaderDic[shaderPath].addMaterial(pMaterial);
 
 		//頂点情報のロード
-		unique_ptr<D3DXVECTOR3> pvCoord = unique_ptr<D3DXVECTOR3>(new D3DXVECTOR3[mVertCount->vtCount]);
-		unique_ptr <D3DXVECTOR3> pvNormal = unique_ptr<D3DXVECTOR3>(new D3DXVECTOR3[mVertCount->normCount]);
-		unique_ptr <D3DXVECTOR2> pvUV = unique_ptr <D3DXVECTOR2>(new D3DXVECTOR2[mVertCount->uvCount]);
-		loadVert(fp, pvCoord.get(), pvNormal.get(), pvUV.get());
+		std::vector<BaseShader::MY_VERTEX> vert(4);
+		vert[0].mPos = D3DXVECTOR3(-0.5, -0.5, 0);
+		vert[1].mPos = D3DXVECTOR3(-0.5, 0.5, 0);
+		vert[2].mPos = D3DXVECTOR3(0.5, -0.5, 0);
+		vert[3].mPos = D3DXVECTOR3(0.5, 0.5, 0);
+
+		vert[0].mNorm = D3DXVECTOR3(0, 0, 1);
+		vert[1].mNorm = D3DXVECTOR3(0, 0, 1);
+		vert[2].mNorm = D3DXVECTOR3(0, 0, 1);
+		vert[3].mNorm = D3DXVECTOR3(0, 0, 1);
+
+		vert[0].mUV = D3DXVECTOR2(0, 1);
+		vert[1].mUV = D3DXVECTOR2(0, 0);
+		vert[2].mUV = D3DXVECTOR2(1, 1);
+		vert[3].mUV = D3DXVECTOR2(1, 0);
 
 		//頂点バッファ・インデックスバッファの作成
-		createVtxBufAndIdxBuf(fp, pvCoord.get(), pvNormal.get(), pvUV.get());
-
-		fclose(fp);
-		//-------------------------------------------------------------
+		setVertexBuffer(vert, 4);
 
 		return S_OK;
 	}
@@ -215,7 +258,7 @@ namespace Koban {
 
 	void BaseMesh::createVtxBufAndIdxBuf(FILE* fp, D3DXVECTOR3* pvCoord, D3DXVECTOR3* pvNormal, D3DXVECTOR2* pvUV) {
 		auto count = mVertCount->polyCount * 3;
-		std::vector<BaseShader::MY_VERTEX> vertexBuffer;
+		std::vector<BaseShader::MY_VERTEX> vertexBuffer(count);
 		std::vector<int> materialIndexBuffer;
 
 		wchar_t key[200] = { 0 };
@@ -259,23 +302,17 @@ namespace Koban {
 					fwscanf_s(fp, L"%d//%d %d//%d %d//%d", &v1, &vn1, &v2, &vn2, &v3, &vn3);
 				}
 				//頂点構造体に代入
-				auto d = new BaseShader::MY_VERTEX();
-				d->mPos = pvCoord[v1 - 1];
-				d->mNorm = pvNormal[vn1 - 1];
-				d->mUV = pvUV[vt1 - 1];
-				vertexBuffer.push_back(*d);
+				vertexBuffer[indexCount * 3].mPos = pvCoord[v1 - 1];
+				vertexBuffer[indexCount * 3].mNorm = pvNormal[vn1 - 1];
+				vertexBuffer[indexCount * 3].mUV = pvUV[vt1 - 1];
 
-				auto d1 = new BaseShader::MY_VERTEX();
-				d1->mPos = pvCoord[v2 - 1];
-				d1->mNorm = pvNormal[vn2 - 1];
-				d1->mUV = pvUV[vt2 - 1];
-				vertexBuffer.push_back(*d1);
+				vertexBuffer[indexCount * 3 + 1].mPos = pvCoord[v2 - 1];
+				vertexBuffer[indexCount * 3 + 1].mNorm = pvNormal[vn2 - 1];
+				vertexBuffer[indexCount * 3 + 1].mUV = pvUV[vt2 - 1];
 
-				auto d2 = new BaseShader::MY_VERTEX();
-				d2->mPos = pvCoord[v3 - 1];
-				d2->mNorm = pvNormal[vn3 - 1];
-				d2->mUV = pvUV[vt3 - 1];
-				vertexBuffer.push_back(*d2);
+				vertexBuffer[indexCount * 3 + 2].mPos = pvCoord[v3 - 1];
+				vertexBuffer[indexCount * 3 + 2].mNorm = pvNormal[vn3 - 1];
+				vertexBuffer[indexCount * 3 + 2].mUV = pvUV[vt3 - 1];
 
 				materialIndexBuffer[indexCount * 3] = polygonCount * 3;
 				materialIndexBuffer[indexCount * 3 + 1] = polygonCount * 3 + 1;

@@ -27,6 +27,7 @@
     <ClCompile Include="Script\RTTManager.cpp" />
     <ClCompile Include="Script\Main.cpp" />
     <ClCompile Include="Script\Render.cpp" />
+    <ClCompile Include="Script\SimpleSquare.cpp" />
     <ClCompile Include="Script\TestMaterial.cpp" />
     <ClCompile Include="Script\TestMesh.cpp" />
     <ClCompile Include="Script\TestShader.cpp" />
@@ -43,6 +44,7 @@
     <ClInclude Include="Script\DefferdRendering.h" />
     <ClInclude Include="Script\Include\DefaultInclude.h" />
     <ClInclude Include="Script\Library\DebugLib.h" />
+    <ClInclude Include="Script\Library\RenderLib.h" />
     <ClInclude Include="Script\Library\StringLib.h" />
     <ClInclude Include="Script\Light.h" />
     <ClInclude Include="Script\Object.h" />
@@ -51,6 +53,7 @@
     <ClInclude Include="Script\Main.h" />
     <ClInclude Include="Script\Render.h" />
     <ClInclude Include="Script\ShaderObject.h" />
+    <ClInclude Include="Script\SimpleSquare.h" />
     <ClInclude Include="Script\TestMaterial.h" />
     <ClInclude Include="Script\TestMesh.h" />
     <ClInclude Include="Script\TestShader.h" />
@@ -58,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Deferred.hlsl" />
+    <FxCompile Include="Shader\Simple.hlsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D79A3495-6C0F-46E6-BCD7-4465C6DE11C8}</ProjectGuid>

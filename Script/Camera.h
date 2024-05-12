@@ -16,15 +16,15 @@ namespace Koban {
 		/// </summary>
 		/// <returns></returns>
 		D3DXVECTOR3 const &getPostion() {
-			return mPostion;
+			return mPosition;
 		}
 
 		/// <summary>
 		/// positionMatrixŽæ“¾
 		/// </summary>
 		/// <returns></returns>
-		D3DXMATRIX const &getPositionMat(){
-			return mPositionMat;
+		D3DXMATRIX const &getWorldMat(){
+			return mWorldMat;
 		};
 
 		/// <summary>
@@ -52,10 +52,10 @@ namespace Koban {
 		}
 
 	private:
-		D3DXMATRIX mPositionMat;
+		D3DXMATRIX mWorldMat;
 		D3DXMATRIX mViewMat;
 		D3DXMATRIX mProjMat;
-		const D3DXVECTOR3 mPostion = D3DXVECTOR3(0.0f, 0.0f, -0.5f);
-		const D3DXVECTOR3 mEyeVec = D3DXVECTOR3(1, 1, -1);
+		D3DXVECTOR3 mPosition;
+		D3DXVECTOR3 mEyeVec;
 	};
 }

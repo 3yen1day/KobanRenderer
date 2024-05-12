@@ -48,7 +48,7 @@ void Main::Loop()
 	ZeroMemory(&msg, sizeof(msg));
 	
 	// start
-	mpRender->start();
+	//mpRender->start();
 	while (msg.message != WM_QUIT)
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))

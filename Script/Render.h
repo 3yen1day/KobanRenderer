@@ -3,8 +3,8 @@
 namespace Koban {
 	class RTTManager;
 	class Camera;
-	class RenderObject;
 	class Light;
+	class SimpleSquare;
 }
 
 namespace Koban {
@@ -15,7 +15,7 @@ namespace Koban {
 		~Render();
 
 		//void Awake(); //エントリーポイントで呼ぶ
-		void start();
+		//void start();
 		void update(); //毎フレ更新
 		void draw();
 		void destroy();
@@ -62,6 +62,7 @@ namespace Koban {
 
 
 	private:
+		//アプリに一つ必要
 		//unique_ptrを使うと解放時に例外
 		static ID3D11Device* mpDevice;
 		static ID3D11DeviceContext* mpDeviceContext;
@@ -72,6 +73,6 @@ namespace Koban {
 		static std::unique_ptr<Camera> mpCamera;
 		static std::unique_ptr<Light> mpLight;
 
-		std::vector<std::unique_ptr<RenderObject>> mpRenderObjects;
+		std::unique_ptr<SimpleSquare> mpSimpleSquare;
 	};
 }

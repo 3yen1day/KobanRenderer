@@ -90,6 +90,11 @@ namespace Koban {
 		SAFE_RELEASE(mpPosition_SRV);
 	}
 
+	void RTTManager::update() {
+		//深度バッファクリア
+		DEVICE_CONTEXT->ClearDepthStencilView(mpDepthStencil_SRV, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	}
+
 	ID3D11ShaderResourceView* const Koban::RTTManager::getRTTSRV(RTT_TYPE type) {
 		switch (type)
 		{

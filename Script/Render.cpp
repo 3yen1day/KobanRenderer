@@ -1,8 +1,8 @@
 #include "Render.h"
 #include "RTTManager.h"
 #include "Camera.h"
-#include "TestMesh.h"
 #include "Light.h"
+#include "SimpleSquare.h"
 
 //関数プロトタイプの宣言
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -91,24 +91,38 @@ namespace Koban {
 	/// </summary>
 	void Render::createObjects()
 	{
-		////RTTを作成するくん
-		//mpRTTManager.reset(new RTTManager());
+		//RTTを作成するくん
+		mpRTTManager.reset(new RTTManager());
+		//Cameraの作成
+		mpCamera.reset(new Camera());
+		//シンプルな四角形描画
+		mpSimpleSquare.reset(new SimpleSquare());
+	}
 
-		////Cameraの作成
-		//mpCamera.reset(new Camera());
+	void Render::update() {
+		mpCamera->update();
+		mpRTTManager->update();
+	}
 
-		//RenderObjectの初期化
-		mpRenderObjects.push_back(std::make_unique<TestMesh>());
+	void Render::draw() {
+		//画面クリア（実際は単色で画面を塗りつぶす処理）
+		float ClearColor[4] = { 0,0,1,1 };// クリア色作成　RGBAの順
+		mpDeviceContext->ClearRenderTargetView(mpBackBuffer_RTV, ClearColor);//画面クリア
+		
+		mpSimpleSquare->draw();
+
+		////画面更新（バックバッファをフロントバッファに）
+		mpSwapChain->Present(0, 0);
 	}
 
 	void Render::destroy()
 	{
 		mpRTTManager->destroy();
 
-		//unique_ptrはコピー不可なので、&をつけて参照型にする必要がある
-		for (const auto& e : mpRenderObjects) {
-			e->destroy();
-		}
+		////unique_ptrはコピー不可なので、&をつけて参照型にする必要がある
+		//for (const auto& e : mpRenderObjects) {
+		//	e->destroy();
+		//}
 
 		//リソース所有権の破棄
 		SAFE_RELEASE(mpSwapChain);
@@ -116,79 +130,4 @@ namespace Koban {
 		SAFE_RELEASE(mpDeviceContext);
 		SAFE_RELEASE(mpBackBuffer_RTV);
 	}
-
-	void Render::start() {
-		//mpCamera->start();
-		//mpRTTManager->start();
-		for (const auto& e : mpRenderObjects) {
-			e->start();
-		}
-	}
-
-	void Render::update() {
-		//カメラ更新
-		//mpCamera->update();
-
-		////RenderObjectの更新
-		//for (const auto& e : mpRenderObjects) {
-		//	e->update();
-		//}
-	}
-
-	void Render::draw() {
-		//RenderObjectの更新
-		/*for (const auto& e : mpRenderObjects) {
-			e->draw();
-		}*/
-
-		////画面更新（バックバッファをフロントバッファに）
-		//mpSwapChain->Present(0, 0);
-	}
-
-#pragma region static関数
-	bool Render::createVertexShader(const std::wstring& fileName, const std::wstring& shaderName, ID3D11VertexShader* vs) {
-		//hlslファイル読み込み ブロブ作成　ブロブとはシェーダーの塊みたいなもの。XXシェーダーとして特徴を持たない。後で各種シェーダーに成り得る。
-		std::unique_ptr<ID3D10Blob> upCompiledShader = NULL;
-		std::unique_ptr<ID3D10Blob> upErrors = NULL;
-		ID3D10Blob* pCompiledShader = upCompiledShader.get();
-		ID3D10Blob* pErrors = upErrors.get();
-		auto shaderName_s = StringLib::wstr2str(shaderName);
-		
-		//ブロブからバーテックスシェーダー作成
-		if (FAILED(D3DX11CompileFromFile(fileName.data(), NULL, NULL, shaderName_s->data(), "vs_5_0", 0, 0, NULL, &pCompiledShader, &pErrors, NULL)))
-		{
-			MessageBox(0, L"hlsl読み込み失敗", NULL, MB_OK);
-			return false;
-		}
-		if (FAILED(mpDevice->CreateVertexShader(pCompiledShader->GetBufferPointer(), pCompiledShader->GetBufferSize(), NULL, &vs)))
-		{
-			MessageBox(0, L"バーテックスシェーダー作成失敗", NULL, MB_OK);
-			return false;
-		}
-
-		return true;
-	}
-
-	bool Render::createPixelShader(const std::wstring& fileName, const std::wstring& shaderName, ID3D11PixelShader* ps) {
-		//hlslファイル読み込み ブロブ作成　ブロブとはシェーダーの塊みたいなもの。XXシェーダーとして特徴を持たない。後で各種シェーダーに成り得る。
-		std::unique_ptr<ID3D10Blob> upCompiledShader = NULL;
-		std::unique_ptr<ID3D10Blob> upErrors = NULL;
-		ID3D10Blob* pCompiledShader = upCompiledShader.get();
-		ID3D10Blob* pErrors = upErrors.get();
-		auto shaderName_s = StringLib::wstr2str(shaderName);
-
-		if (FAILED(D3DX11CompileFromFile(fileName.data(), NULL, NULL, shaderName_s->data(), "ps_5_0", 0, 0, NULL, &pCompiledShader, &pErrors, NULL)))
-		{
-			MessageBox(0, L"hlsl読み込み失敗", NULL, MB_OK);
-			return false;
-		}
-
-		if (FAILED(mpDevice->CreatePixelShader(pCompiledShader->GetBufferPointer(), pCompiledShader->GetBufferSize(), NULL, &ps)))
-		{
-			MessageBox(0, L"ピクセルシェーダー作成失敗", NULL, MB_OK);
-			return false;
-		}
-		return true;
-	}
-#pragma endregion
 }
