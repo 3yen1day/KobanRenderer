@@ -24,10 +24,11 @@
     <ClCompile Include="Script\BaseShader.cpp" />
     <ClCompile Include="Script\Camera.cpp" />
     <ClCompile Include="Script\DefferdRendering.cpp" />
+    <ClCompile Include="Script\Render3DModel.cpp" />
     <ClCompile Include="Script\RTTManager.cpp" />
     <ClCompile Include="Script\Main.cpp" />
     <ClCompile Include="Script\Render.cpp" />
-    <ClCompile Include="Script\SimpleSquare.cpp" />
+    <ClCompile Include="Script\RenderSquare.cpp" />
     <ClCompile Include="Script\TestMaterial.cpp" />
     <ClCompile Include="Script\TestMesh.cpp" />
     <ClCompile Include="Script\TestShader.cpp" />
@@ -48,12 +49,13 @@
     <ClInclude Include="Script\Library\StringLib.h" />
     <ClInclude Include="Script\Light.h" />
     <ClInclude Include="Script\Object.h" />
+    <ClInclude Include="Script\Render3DModel.h" />
     <ClInclude Include="Script\RenderObject.h" />
     <ClInclude Include="Script\RTTManager.h" />
     <ClInclude Include="Script\Main.h" />
     <ClInclude Include="Script\Render.h" />
     <ClInclude Include="Script\ShaderObject.h" />
-    <ClInclude Include="Script\SimpleSquare.h" />
+    <ClInclude Include="Script\RenderSquare.h" />
     <ClInclude Include="Script\TestMaterial.h" />
     <ClInclude Include="Script\TestMesh.h" />
     <ClInclude Include="Script\TestShader.h" />

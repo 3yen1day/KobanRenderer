@@ -1,9 +1,9 @@
-#include "SimpleSquare.h"
+#include "Render3DModel.h"
 #include "Render.h"
 #include "Camera.h"
 
 namespace Koban {
-	SimpleSquare::SimpleSquare()
+	Render3DModel::Render3DModel()
 	{
 		//shader初期化
 		//頂点インプットレイアウトを定義	
@@ -11,6 +11,7 @@ namespace Koban {
 		{
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		};
+
 
 		ID3DBlob* compiledShader = NULL;
 		RenderLib::createShader(
@@ -44,7 +45,7 @@ namespace Koban {
 		RenderLib::createTexture(DEVICE, L"Resource\\sprite.jpg", &m_pTexture);
 	}
 
-	void SimpleSquare::draw() {
+	void Render3DModel::draw() {
 		//使用するシェーダーの登録	
 		DEVICE_CONTEXT->VSSetShader(m_pVertexShader, NULL, 0);
 		DEVICE_CONTEXT->PSSetShader(m_pPixelShader, NULL, 0);

@@ -34,9 +34,6 @@ void Main::Awake() {
 }
 
 
-void Main::Start() {
-}
-
 //メッセージループとアプリケーション処理の入り口
 void Main::Loop()
 {

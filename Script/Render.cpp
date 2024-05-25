@@ -2,7 +2,7 @@
 #include "RTTManager.h"
 #include "Camera.h"
 #include "Light.h"
-#include "SimpleSquare.h"
+#include "Render3DModel.h"
 
 //関数プロトタイプの宣言
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -96,7 +96,7 @@ namespace Koban {
 		//Cameraの作成
 		mpCamera.reset(new Camera());
 		//シンプルな四角形描画
-		mpSimpleSquare.reset(new SimpleSquare());
+		mpRender3DModel.reset(new Render3DModel());
 	}
 
 	void Render::update() {
@@ -109,7 +109,7 @@ namespace Koban {
 		float ClearColor[4] = { 0,0,1,1 };// クリア色作成　RGBAの順
 		mpDeviceContext->ClearRenderTargetView(mpBackBuffer_RTV, ClearColor);//画面クリア
 		
-		mpSimpleSquare->draw();
+		mpRender3DModel->draw();
 
 		////画面更新（バックバッファをフロントバッファに）
 		mpSwapChain->Present(0, 0);

@@ -1,10 +1,10 @@
 #pragma once
 namespace Koban {
-	class SimpleSquare
+	class RenderSquare
 	{
 	public:
-		SimpleSquare();
-		~SimpleSquare() {};
+		RenderSquare();
+		~RenderSquare() {};
 
 		void draw();
 

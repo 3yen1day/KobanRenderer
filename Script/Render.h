@@ -4,7 +4,7 @@ namespace Koban {
 	class RTTManager;
 	class Camera;
 	class Light;
-	class SimpleSquare;
+	class Render3DModel;
 }
 
 namespace Koban {
@@ -73,6 +73,7 @@ namespace Koban {
 		static std::unique_ptr<Camera> mpCamera;
 		static std::unique_ptr<Light> mpLight;
 
-		std::unique_ptr<SimpleSquare> mpSimpleSquare;
+		//std::unique_ptr<RenderSquare> mpRenderSquare;
+		std::unique_ptr<Render3DModel> mpRender3DModel;
 	};
 }
