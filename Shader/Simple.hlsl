@@ -4,19 +4,28 @@ cbuffer global
 {
 	matrix g_mWVP; //ワールド、ビュー、射影の合成変換行列
 };
-//
+
+//構造体
+struct VS_OUTPUT
+{
+    float4 Pos : SV_POSITION;
+	float4 Normal : NORMAL;
+    float2 UV : TEXCOORD;
+};
+
 //バーテックスシェーダー
 //
-float4 VS( float4 Pos : POSITION ) : SV_POSITION
+VS_OUTPUT VS( float4 Pos : POSITION ,float4 Normal : NORMAL,float2 UV : TEXCOORD )
 {
-	Pos=mul(Pos,g_mWVP);
-	return Pos;
+	VS_OUTPUT output = (VS_OUTPUT)0;
+	output.Pos = mul(Pos,g_mWVP);
+	return output;
 }
 //
 //ピクセルシェーダー
 //
-float4 PS( float4 Pos : SV_POSITION ) : SV_Target
+float4 PS(VS_OUTPUT input) : SV_Target
 {
-	float4 color=float4(0,1,0,0);
+	float4 color=float4(0,0.5,0,0);
 	return color;
 }

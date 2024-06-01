@@ -10,6 +10,8 @@ namespace Koban {
 		vector<D3D11_INPUT_ELEMENT_DESC> layout =
 		{
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		};
 
 
@@ -29,14 +31,16 @@ namespace Koban {
 		//コンスタントバッファ初期化
 		RenderLib::createConstantBuffer<D3DXMATRIX>(DEVICE, &m_pConstantBuffer);
 
+		//fbxのロード
+		if (!FbxLoader::Load("Resource/saikoro.fbx", &mFbxVertexInfo)) {
+			DebugLib::error(L"ファイル読み込み失敗");
+		}
+
 		//バーテックスバッファ初期化
-		vector<SimpleVertex> vertices = {
-			{D3DXVECTOR3(-0.5,-0.5,0),D3DXVECTOR2(0,1)},//頂点1,
-			{D3DXVECTOR3(-0.5,0.5,0), D3DXVECTOR2(0,0)},//頂点2
-			{D3DXVECTOR3(0.5,-0.5,0),D3DXVECTOR2(1,1)}, //頂点3
-			{D3DXVECTOR3(0.5,0.5,0),D3DXVECTOR2(1,0)}, //頂点4
-		};
-		RenderLib::createVertexBffer<SimpleVertex>(DEVICE, DEVICE_CONTEXT, vertices, &m_pVertexBuffer);
+		RenderLib::createVertexBffer<FbxLoader::Vertex>(DEVICE, DEVICE_CONTEXT, mFbxVertexInfo.vertices, &m_pVertexBuffer);
+
+		//インデックスバッファ初期化
+		RenderLib::createIndexBuffer(DEVICE, DEVICE_CONTEXT, mFbxVertexInfo.indices, &m_pIndexBuffer);
 
 		//テクスチャ用サンプラ作成
 		RenderLib::createSamplerState(DEVICE, &m_pSampleLinear);
@@ -53,9 +57,28 @@ namespace Koban {
 		//シェーダーのコンスタントバッファーに各種データ（位置と色）を渡す	
 		D3D11_MAPPED_SUBRESOURCE pData;
 		SIMPLESHADER_CONSTANT_BUFFER cb;
+
+		// スケール行列
+		D3DXMATRIX matScale;
+		D3DXMatrixScaling(&matScale, 1.0f, 1.0f, 1.0f);
+
+		// 回転行列
+		D3DXQUATERNION quat;
+		D3DXVECTOR3 vec3(0, 1, 0);
+		static float angle = 0;
+		static float speed = 0.0001;
+		angle += speed;
+		angle = std::fmod(angle, 6.28f);
+		D3DXQuaternionRotationAxis(&quat, &vec3, angle);
+		D3DXMATRIX matRotation;
+		D3DXMatrixRotationQuaternion(&matRotation, &quat);
+
+		//平行移動行列
 		auto pos = D3DXVECTOR3(0.0f, 0.0f, -0.5f);
-		D3DXMATRIX wMat;
-		D3DXMatrixTranslation(&wMat, pos.x, pos.y, pos.z);
+		D3DXMATRIX matTrans;
+		D3DXMatrixTranslation(&matTrans, pos.x, pos.y, pos.z);
+
+		D3DXMATRIX wMat = matScale * matRotation * matTrans;
 
 		//ワールド、カメラ、射影行列を渡す
 		D3DXMATRIX m = wMat * Render::getCamera()->getViewMat() * Render::getCamera()->getProjMat();
@@ -79,11 +102,18 @@ namespace Koban {
 		//頂点インプットレイアウトをセット
 		DEVICE_CONTEXT->IASetInputLayout(m_pVertexLayout);
 		//プリミティブ・トポロジーをセット
-		DEVICE_CONTEXT->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		DEVICE_CONTEXT->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+		//バーテックスバッファーをセット todo:毎フレ必要？
+		UINT stride = sizeof(FbxLoader::Vertex);
+		UINT offset = 0;
+		DEVICE_CONTEXT->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
+		//インデックスバッファをセット todo:毎フレ必要？
+		DEVICE_CONTEXT->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 		//テクスチャーをシェーダーに渡す
 		DEVICE_CONTEXT->PSSetSamplers(0, 1, &m_pSampleLinear);
 		DEVICE_CONTEXT->PSSetShaderResources(0, 1, &m_pTexture);
 		//プリミティブをレンダリング
-		DEVICE_CONTEXT->Draw(4, 0);
+		DEVICE_CONTEXT->DrawIndexed(mFbxVertexInfo.indices.size(), 0, 0);
 	}
 }

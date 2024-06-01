@@ -89,7 +89,7 @@ namespace Koban {
 		 template <typename T> static void createVertexBffer(ID3D11Device* device, ID3D11DeviceContext* deviceContext, vector<T> vertices, ID3D11Buffer** vertexBuffer) {
 			 D3D11_BUFFER_DESC bd;
 			 bd.Usage = D3D11_USAGE_DEFAULT;
-			 bd.ByteWidth = sizeof(T) * 4;
+			 bd.ByteWidth = sizeof(T) * vertices.size();
 			 bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 			 bd.CPUAccessFlags = 0;
 			 bd.MiscFlags = 0;
@@ -97,14 +97,27 @@ namespace Koban {
 			 D3D11_SUBRESOURCE_DATA InitData;
 			 InitData.pSysMem = vertices.data();
 			 if (FAILED(device->CreateBuffer(&bd, &InitData, vertexBuffer)))
-			 {
 				 DebugLib::error(L"バッファ作成失敗");
-			 }
+		 }
 
-			 //バーテックスバッファーをセット
-			 UINT stride = sizeof(T);
-			 UINT offset = 0;
-			 deviceContext->IASetVertexBuffers(0, 1, vertexBuffer, &stride, &offset);
+		 /// <summary>
+		 /// インデックスバッファを作成
+		 /// </summary>
+		 /// <param name="deviceContext"></param>
+		 /// <param name="indexBuffer"></param>
+		 static void createIndexBuffer(ID3D11Device* device, ID3D11DeviceContext* deviceContext, vector<int> indexis, ID3D11Buffer** indexBuffer) {
+			 //インデックスバッファーを作成
+			 D3D11_BUFFER_DESC bd;
+			 bd.Usage = D3D11_USAGE_DEFAULT;
+			 bd.ByteWidth = sizeof(int) * indexis.size();
+			 bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+			 bd.CPUAccessFlags = 0;
+			 bd.MiscFlags = 0;
+
+			 D3D11_SUBRESOURCE_DATA InitData;
+			 InitData.pSysMem = indexis.data();
+			 if (FAILED(device->CreateBuffer(&bd, &InitData, indexBuffer)))
+				 DebugLib::error(L"バッファ作成失敗");
 		 }
 
 		/// <summary>

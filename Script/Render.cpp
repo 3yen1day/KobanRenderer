@@ -106,7 +106,7 @@ namespace Koban {
 
 	void Render::draw() {
 		//画面クリア（実際は単色で画面を塗りつぶす処理）
-		float ClearColor[4] = { 0,0,1,1 };// クリア色作成　RGBAの順
+		float ClearColor[4] = { 0,0,0.5,1 };// クリア色作成　RGBAの順
 		mpDeviceContext->ClearRenderTargetView(mpBackBuffer_RTV, ClearColor);//画面クリア
 		
 		mpRender3DModel->draw();

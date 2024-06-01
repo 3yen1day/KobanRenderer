@@ -10,6 +10,7 @@
 #include <d3dx11.h>
 #include <d3dCompiler.h>
 #include <string>
+#include <algorithm>
 
 //必要なライブラリファイルのロード
 #pragma comment(lib,"winmm.lib")
