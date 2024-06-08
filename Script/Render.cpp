@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "Light.h"
 #include "Render3DModel.h"
+#include "DefferdRendering.h"
 
 //関数プロトタイプの宣言
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -97,6 +98,8 @@ namespace Koban {
 		mpCamera.reset(new Camera());
 		//シンプルな四角形描画
 		mpRender3DModel.reset(new Render3DModel());
+		//GBufferを元に描画
+		mpDefferdShader.reset(new DefferdShader());
 	}
 
 	void Render::update() {
@@ -110,7 +113,7 @@ namespace Koban {
 		mpDeviceContext->ClearRenderTargetView(mpBackBuffer_RTV, ClearColor);//画面クリア
 		
 		mpRender3DModel->draw();
-
+		mpDefferdShader->draw();
 		////画面更新（バックバッファをフロントバッファに）
 		mpSwapChain->Present(0, 0);
 	}
@@ -118,11 +121,7 @@ namespace Koban {
 	void Render::destroy()
 	{
 		mpRTTManager->destroy();
-
-		////unique_ptrはコピー不可なので、&をつけて参照型にする必要がある
-		//for (const auto& e : mpRenderObjects) {
-		//	e->destroy();
-		//}
+		mpDefferdShader->destroy();
 
 		//リソース所有権の破棄
 		SAFE_RELEASE(mpSwapChain);

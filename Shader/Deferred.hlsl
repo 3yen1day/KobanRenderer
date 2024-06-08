@@ -1,4 +1,3 @@
-#define MAX_LIGHT 100
 #define ATTENU 2
 
 Texture2D g_tex: register(t0);
@@ -12,7 +11,7 @@ cbuffer global_0:register(b0)
 {
 	matrix g_mW;//ワールド行列
 	matrix g_mWVP; //ワールドから射影までの変換行列
-	float4 g_vLightPos[MAX_LIGHT];//ポイントライト情報（ライトの位置）
+	float4 g_vLightPos;//ポイントライト情報（ライトの位置）
 	float4 g_vEye;//カメラ位置
 };
 
@@ -119,13 +118,11 @@ float4 PS_From_Tex( VS_OUTPUT input ) : SV_Target
 	float3 vWorldPos=g_texPosition.Sample( g_samLinear, input.UV ).xyz;
 	//取り出した情報をもとにフォンシェーディングを計算
 	float4 FinalColor=vDiffuse*g_Ambient;
-	for(int i=0;i<MAX_LIGHT;i++)
+
+	//ここが重要！　この点を、このライトが照らしているかどうかチェック
+	if(length(g_vLightPos-vWorldPos)<ATTENU*2)
 	{
-		//ここが重要！　この点を、このライトが照らしているかどうかチェック
-		if(length(g_vLightPos[i]-vWorldPos)<ATTENU*2)
-		{
-			FinalColor+=PLight(vDiffuse,vWorldPos,vWorldNormal,g_vLightPos[i],normalize(g_vEye-vWorldPos),input.UV.yxy);
-		}
+		FinalColor+=PLight(vDiffuse,vWorldPos,vWorldNormal,g_vLightPos,normalize(g_vEye-vWorldPos),input.UV.yxy);
 	}
 	return FinalColor;
 }

@@ -1,6 +1,7 @@
 #include "DefferdRendering.h"
 #include "Render.h"
 #include "RTTManager.h"
+#include "FbxLoader.h"
 
 namespace Koban {
 	DefferdShader::DefferdShader() {
@@ -8,8 +9,14 @@ namespace Koban {
 		// Shader
 		// ----------------------------------------
 		//Žg—p‚·‚éShader‚Ìì¬
-		//RenderLib::createVertexShader(DEVICE, mShaderFileName, mVSShaderName, mpVertexShader);
-		//RenderLib::createPixelShader(DEVICE, mShaderFileName, mPSShaderName, mpPixelShader);
+		RenderLib::createShader(
+			DEVICE,
+			L"Shader/Deferred.hlsl",
+			L"VS_From_Tex",
+			L"PS_From_Tex",
+			&mpVertexShader,
+			&mpPixelShader
+		);
 
 		// ----------------------------------------
 		// Buffer
@@ -49,7 +56,7 @@ namespace Koban {
 		}
 	}
 	
-	void DefferdShader::updateShader() {
+	void DefferdShader::draw() {
 		auto pDepthStencil = Render::getRTTManager()->getDepthStensilSRV();
 		auto pBackBuffer = Render::getBackBuffer();
 

@@ -10,7 +10,7 @@ namespace Koban {
 	public:
 		DefferdShader();
 		~DefferdShader() {};
-		void updateShader() override;
+		void draw() override;
 		void destroy() override;
 
 	private:

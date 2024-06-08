@@ -5,6 +5,7 @@ namespace Koban {
 	class Camera;
 	class Light;
 	class Render3DModel;
+	class DefferdShader;
 }
 
 namespace Koban {
@@ -73,7 +74,7 @@ namespace Koban {
 		static std::unique_ptr<Camera> mpCamera;
 		static std::unique_ptr<Light> mpLight;
 
-		//std::unique_ptr<RenderSquare> mpRenderSquare;
+		std::unique_ptr<DefferdShader> mpDefferdShader;
 		std::unique_ptr<Render3DModel> mpRender3DModel;
 	};
 }

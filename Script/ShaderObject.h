@@ -5,7 +5,7 @@ namespace Koban {
 	public:
 		ShaderObject() {};
 		~ShaderObject() {};
-		virtual void updateShader() {};
+		virtual void draw() {};
 		virtual void destroy() {
 			SAFE_RELEASE(mpVertexShader);
 			SAFE_RELEASE(mpPixelShader);

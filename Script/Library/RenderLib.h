@@ -17,19 +17,69 @@ namespace Koban {
 		static void createShader(
 			ID3D11Device* device,
 			const std::wstring& fileName,
-			const vector<D3D11_INPUT_ELEMENT_DESC>& vertLayout,
 			const std::wstring& vsName,
 			const std::wstring& psName,
-			ID3D11InputLayout** vl,
 			ID3D11VertexShader** vs,
-			ID3D11PixelShader** ps) {
-
+			ID3D11PixelShader** ps) 
+		{
 			//hlslファイル読み込み ブロブ作成　ブロブとはシェーダーの塊みたいなもの。XXシェーダーとして特徴を持たない。後で各種シェーダーに成り得る。
 			std::unique_ptr<ID3D10Blob> upCompiledShader = NULL;
 			std::unique_ptr<ID3D10Blob> upErrors = NULL;
 			ID3D10Blob* pCompiledShader = upCompiledShader.get();
 			ID3D10Blob* pErrors = upErrors.get();
-			
+
+			//vertexShader
+			auto shaderName_s = StringLib::wstr2str(vsName);
+			//ブロブからvertexShader作成
+			if (FAILED(D3DX11CompileFromFile(fileName.data(), NULL, NULL, shaderName_s->data(), "vs_5_0", 0, 0, NULL, &pCompiledShader, &pErrors, NULL)))
+			{
+				DebugLib::error(L"hlsl読み込み失敗");
+			}
+			if (FAILED(device->CreateVertexShader(pCompiledShader->GetBufferPointer(), pCompiledShader->GetBufferSize(), NULL, vs)))
+			{
+				DebugLib::error(L"バーテックスシェーダー作成失敗");
+			}
+
+			//pixcelShader
+			shaderName_s = StringLib::wstr2str(psName);
+			//ブロブからpixcelShader作成
+			if (FAILED(D3DX11CompileFromFile(fileName.data(), NULL, NULL, shaderName_s->data(), "ps_5_0", 0, 0, NULL, &pCompiledShader, &pErrors, NULL)))
+			{
+				DebugLib::error(L"hlsl読み込み失敗");
+			}
+			if (FAILED(device->CreatePixelShader(pCompiledShader->GetBufferPointer(), pCompiledShader->GetBufferSize(), NULL, ps)))
+			{
+				DebugLib::error(L"ピクセルシェーダー作成失敗");
+			}
+		}
+
+		/// <summary>
+		/// Shaderの生成
+		/// </summary>
+		/// <param name="device"></param>
+		/// <param name="fileName"></param>
+		/// <param name="vsName"></param>
+		/// <param name="vertLayout"></param>
+		/// <param name="psName"></param>
+		/// <param name="vs"></param>
+		/// <param name="vl"></param>
+		/// <param name="ps"></param>
+		static void createShader(
+			ID3D11Device* device,
+			const std::wstring& fileName,
+			const vector<D3D11_INPUT_ELEMENT_DESC>& vertLayout,
+			const std::wstring& vsName,
+			const std::wstring& psName,
+			ID3D11InputLayout** vl,
+			ID3D11VertexShader** vs,
+			ID3D11PixelShader** ps) 
+		{
+			//hlslファイル読み込み ブロブ作成　ブロブとはシェーダーの塊みたいなもの。XXシェーダーとして特徴を持たない。後で各種シェーダーに成り得る。
+			std::unique_ptr<ID3D10Blob> upCompiledShader = NULL;
+			std::unique_ptr<ID3D10Blob> upErrors = NULL;
+			ID3D10Blob* pCompiledShader = upCompiledShader.get();
+			ID3D10Blob* pErrors = upErrors.get();
+
 			//vertexShader
 			auto shaderName_s = StringLib::wstr2str(vsName);
 
@@ -74,7 +124,6 @@ namespace Koban {
 			cb.ByteWidth = sizeof(T);
 			cb.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 			cb.MiscFlags = 0;
-			cb.StructureByteStride = 0;
 			cb.Usage = D3D11_USAGE_DYNAMIC;
 
 			if (FAILED(device->CreateBuffer(&cb, NULL, buffer)))
