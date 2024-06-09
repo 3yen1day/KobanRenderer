@@ -1,15 +1,14 @@
 #pragma once
-#include "Object.h"
 
 namespace Koban {
 
-	class Camera : public Object
+	class Camera
 	{
 	public:
 		Camera();
 		~Camera();
 
-		void update() override;
+		void update();
 
 		/// <summary>
 		/// ˆÊ’uÀ•Wæ“¾

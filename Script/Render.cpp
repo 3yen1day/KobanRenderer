@@ -96,7 +96,7 @@ namespace Koban {
 		mpRTTManager.reset(new RTTManager());
 		//Camera‚Ìì¬
 		mpCamera.reset(new Camera());
-		//ƒVƒ“ƒvƒ‹‚ÈlŠpŒ`•`‰æ
+		//3Dƒ‚ƒfƒ‹•`‰æ
 		mpRender3DModel.reset(new Render3DModel());
 		//GBuffer‚ğŒ³‚É•`‰æ
 		mpDefferdShader.reset(new DefferdShader());

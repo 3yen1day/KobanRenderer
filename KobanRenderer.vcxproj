@@ -19,9 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Script\BaseMaterial.cpp" />
-    <ClCompile Include="Script\BaseMesh.cpp" />
-    <ClCompile Include="Script\BaseShader.cpp" />
     <ClCompile Include="Script\Camera.cpp" />
     <ClCompile Include="Script\DefferdRendering.cpp" />
     <ClCompile Include="Script\FbxLoader.cpp" />
@@ -30,18 +27,12 @@
     <ClCompile Include="Script\Main.cpp" />
     <ClCompile Include="Script\Render.cpp" />
     <ClCompile Include="Script\RenderSquare.cpp" />
-    <ClCompile Include="Script\TestMaterial.cpp" />
-    <ClCompile Include="Script\TestMesh.cpp" />
-    <ClCompile Include="Script\TestShader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Script\BaseMaterial.h" />
-    <ClInclude Include="Script\BaseMesh.h" />
-    <ClInclude Include="Script\BaseShader.h" />
     <ClInclude Include="Script\Camera.h" />
     <ClInclude Include="Script\DefferdRendering.h" />
     <ClInclude Include="Script\FbxLoader.h" />
@@ -50,17 +41,11 @@
     <ClInclude Include="Script\Library\RenderLib.h" />
     <ClInclude Include="Script\Library\StringLib.h" />
     <ClInclude Include="Script\Light.h" />
-    <ClInclude Include="Script\Object.h" />
     <ClInclude Include="Script\Render3DModel.h" />
-    <ClInclude Include="Script\RenderObject.h" />
     <ClInclude Include="Script\RTTManager.h" />
     <ClInclude Include="Script\Main.h" />
     <ClInclude Include="Script\Render.h" />
-    <ClInclude Include="Script\ShaderObject.h" />
     <ClInclude Include="Script\RenderSquare.h" />
-    <ClInclude Include="Script\TestMaterial.h" />
-    <ClInclude Include="Script\TestMesh.h" />
-    <ClInclude Include="Script\TestShader.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>

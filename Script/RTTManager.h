@@ -1,11 +1,10 @@
 #pragma once
-#include "RenderObject.h"
 
 /// <summary>
 /// RTTの生成、管理を行うクラス
 /// </summary>
 namespace Koban {
-	class RTTManager : public RenderObject {
+	class RTTManager{
 	public:
 		enum RTT_TYPE
 		{
@@ -17,8 +16,8 @@ namespace Koban {
 		RTTManager();
 		~RTTManager() {};
 
-		void destroy() override;
-		void update() override;
+		void destroy();
+		void update();
 
 		/// <summary>
 		/// RTTのSRVを取得

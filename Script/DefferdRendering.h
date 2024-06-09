@@ -1,5 +1,4 @@
 #pragma once
-#include "ShaderObject.h"
 
 /// <summary>
 /// GBuffer‚Ìî•ñ‚ğBuckBuffer‚ÉƒŒƒ“ƒ_ƒŠƒ“ƒO‚·‚é

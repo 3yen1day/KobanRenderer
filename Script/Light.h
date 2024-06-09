@@ -1,8 +1,7 @@
 #pragma once
-#include "Object.h"
 
 namespace Koban {
-	class Light : public Object
+	class Light
 	{
 	public:
 		Light():mDirection(*new D3DXVECTOR4(0,-1,0,1)){};
