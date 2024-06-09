@@ -5,13 +5,14 @@
 /// GBufferの情報をBuckBufferにレンダリングする
 /// </summary>
 namespace Koban {
-	class DefferdShader : public ShaderObject
+	class DefferdShader
 	{
 	public:
 		DefferdShader();
 		~DefferdShader() {};
-		void draw() override;
-		void destroy() override;
+		void update();
+		void draw();
+		void destroy();
 
 	private:
 		//vertexBuffer用構造体
@@ -35,6 +36,9 @@ namespace Koban {
 		//screen描画用頂点バッファ
 		std::unique_ptr<ID3D11Buffer> mpVertexBuffer;
 		std::unique_ptr <ID3D11Buffer> mpConstantBuffer;
+
+		ID3D11VertexShader* mpVertexShader = NULL;
+		ID3D11PixelShader* mpPixelShader = NULL;
 
 		const std::wstring mShaderFileName = L"Deferred.hlsl";
 		const std::wstring mVSShaderName = L"VS_From_Tex";

@@ -34,11 +34,6 @@ namespace Koban {
 			return mpDeviceContext;
 		}
 
-		static IDXGISwapChain* getSwapChain()
-		{
-			return mpSwapChain;
-		}
-
 		static ID3D11RenderTargetView* getBackBuffer() {
 			return mpBackBuffer_RTV;
 		}

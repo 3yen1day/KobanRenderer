@@ -77,7 +77,7 @@ namespace Koban {
 		//バックバッファーテクスチャーを取得（既にあるので作成ではない）
 		mpBackBuffer_RTV = nullptr;
 		ID3D11Texture2D* pBackBuffer_Tex;
-		Koban::Render::getSwapChain()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer_Tex);
+		mpSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer_Tex);
 		DEVICE->CreateRenderTargetView(pBackBuffer_Tex, NULL, &mpBackBuffer_RTV);
 		SAFE_RELEASE(pBackBuffer_Tex);
 
@@ -108,11 +108,16 @@ namespace Koban {
 	}
 
 	void Render::draw() {
-		//画面クリア（実際は単色で画面を塗りつぶす処理）
-		float ClearColor[4] = { 0,0,0.5,1 };// クリア色作成　RGBAの順
-		mpDeviceContext->ClearRenderTargetView(mpBackBuffer_RTV, ClearColor);//画面クリア
-		
+		//GBufferへの描画
 		mpRender3DModel->draw();
+
+		//レンダーターゲットを通常に戻す
+		DEVICE_CONTEXT->OMSetRenderTargets(1, &mpBackBuffer_RTV, mpRTTManager->getDepthStensilSRV());
+		//クリア
+		float ClearColor[4] = { 0,1,0,1 };
+		DEVICE_CONTEXT->ClearRenderTargetView(mpBackBuffer_RTV, ClearColor);
+
+		//GBufferから描画
 		mpDefferdShader->draw();
 		////画面更新（バックバッファをフロントバッファに）
 		mpSwapChain->Present(0, 0);
@@ -121,6 +126,7 @@ namespace Koban {
 	void Render::destroy()
 	{
 		mpRTTManager->destroy();
+		//mpRender3DModel->
 		mpDefferdShader->destroy();
 
 		//リソース所有権の破棄

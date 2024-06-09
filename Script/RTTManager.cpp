@@ -91,7 +91,17 @@ namespace Koban {
 	}
 
 	void RTTManager::update() {
-		//深度バッファクリア
+		//全てのテクスチャーをレンダーターゲットにセット
+		ID3D11RenderTargetView* pViews[3];
+		pViews[0] = mpColor_RTV;
+		pViews[1] = mpNormal_RTV;
+		pViews[2] = mpPosition_RTV;
+		DEVICE_CONTEXT->OMSetRenderTargets(3, pViews, mpDepthStencil_SRV);//深度ステンシルビューは全てに共通の1つだけを使う
+		//クリア
+		float ClearColor[4] = { 0,0,1,1 };
+		DEVICE_CONTEXT->ClearRenderTargetView(mpColor_RTV, ClearColor);
+		DEVICE_CONTEXT->ClearRenderTargetView(mpNormal_RTV, ClearColor);
+		DEVICE_CONTEXT->ClearRenderTargetView(mpPosition_RTV, ClearColor);
 		DEVICE_CONTEXT->ClearDepthStencilView(mpDepthStencil_SRV, D3D11_CLEAR_DEPTH, 1.0f, 0);
 	}
 

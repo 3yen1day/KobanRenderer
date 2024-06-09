@@ -47,7 +47,7 @@ namespace Koban {
 		RenderLib::createSamplerState(DEVICE, &mpSampleLinear);
 
 		//テクスチャ作成
-		RenderLib::createTexture(DEVICE, L"Resource\\sprite.jpg", &mpTexture);
+		RenderLib::createTexture(DEVICE, L"Resource\\tex_saikoro.png", &mpTexture);
 	}
 
 	void Render3DModel::draw() {

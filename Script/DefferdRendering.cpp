@@ -37,10 +37,11 @@ namespace Koban {
 		bd.MiscFlags = 0;
 		D3D11_SUBRESOURCE_DATA sd;
 		sd.pSysMem = VertexData;
-		auto vb_p = mpVertexBuffer.get();
+		ID3D11Buffer* vb_p = nullptr;
 		if (FAILED(DEVICE->CreateBuffer(&bd, &sd, &vb_p))) {
 			return;
 		}
+		mpVertexBuffer.reset(vb_p);
 
 		//コンスタントバッファー作成　
 		D3D11_BUFFER_DESC cb;
@@ -56,17 +57,11 @@ namespace Koban {
 		}
 	}
 	
+	void DefferdShader::update() {
+
+	}
+
 	void DefferdShader::draw() {
-		auto pDepthStencil = Render::getRTTManager()->getDepthStensilSRV();
-		auto pBackBuffer = Render::getBackBuffer();
-
-		//RenderTargetを通常に戻す
-		DEVICE_CONTEXT->OMSetRenderTargets(1, &pBackBuffer, Render::getRTTManager()->getDepthStensilSRV());
-		//RTTのクリア
-		float clearColor[4] = { 0,1,0,1 };
-		DEVICE_CONTEXT->ClearRenderTargetView(pBackBuffer, clearColor);
-		//DEVICE_CONTEXT->ClearDepthStencilView(pDepthStencil, D3D11_CLEAR_DEPTH, 1.0f, 0);
-
 		//シェーダーのセット
 		DEVICE_CONTEXT->VSSetShader(mpVertexShader, NULL, 0);
 		DEVICE_CONTEXT->PSSetShader(mpPixelShader, NULL, 0);
@@ -89,6 +84,7 @@ namespace Koban {
 	}
 
 	void DefferdShader::destroy() {
-		ShaderObject::destroy();
+		SAFE_RELEASE(mpVertexShader);
+		SAFE_RELEASE(mpPixelShader);
 	}
 }
