@@ -18,5 +18,19 @@ namespace Koban {
 			assert(false);
 #endif
 		}
+
+		/// <summary>
+		/// ƒGƒ‰[‚ğ•\¦
+		/// </summary>
+		/// <param name="str"></param>
+		static void error(const std::string& str) {
+			//wprintf(L"%ls", str.data());
+			MessageBoxA(0, str.data(), NULL, MB_OK);
+#ifdef _DEBUG
+			__debugbreak();
+#else
+			assert(false);
+#endif
+		}
 	};
 }
