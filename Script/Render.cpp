@@ -85,7 +85,7 @@ namespace Koban {
 		createObjects();
 	}
 
-	Render::~Render() = default; // デストラクタを非インライン化
+	Render::~Render() {};// = default; // デストラクタを非インライン化
 
 	/// <summary>
 	/// Objectの作成

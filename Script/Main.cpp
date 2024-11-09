@@ -76,6 +76,7 @@ void Main::draw()
 
 void Main::destroy()
 {
+	mpRender->destroy();
 }
 #pragma endregion ƒƒCƒ“ˆ—
 

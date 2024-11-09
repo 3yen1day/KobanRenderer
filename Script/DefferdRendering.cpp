@@ -37,11 +37,9 @@ namespace Koban {
 		bd.MiscFlags = 0;
 		D3D11_SUBRESOURCE_DATA sd;
 		sd.pSysMem = VertexData;
-		ID3D11Buffer* vb_p = nullptr;
-		if (FAILED(DEVICE->CreateBuffer(&bd, &sd, &vb_p))) {
+		if (FAILED(DEVICE->CreateBuffer(&bd, &sd, &mpVertexBuffer))) {
 			return;
 		}
-		mpVertexBuffer.reset(vb_p);
 
 		//コンスタントバッファー作成　
 		D3D11_BUFFER_DESC cb;
@@ -77,8 +75,7 @@ namespace Koban {
 		//頂点バッファのセット
 		UINT stride = sizeof(MY_VERTEX);
 		UINT offset = 0;
-		auto vb_p = mpVertexBuffer.get();
-		DEVICE_CONTEXT->IASetVertexBuffers(0, 1, &vb_p, &stride, &offset);
+		DEVICE_CONTEXT->IASetVertexBuffers(0, 1, &mpVertexBuffer, &stride, &offset);
 		//バックバッファにDraw!
 		DEVICE_CONTEXT->Draw(4, 0);
 	}

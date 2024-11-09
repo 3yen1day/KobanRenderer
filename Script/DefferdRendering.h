@@ -33,7 +33,7 @@ namespace Koban {
 
 		//ConstantBuffer
 		//screen描画用頂点バッファ
-		std::unique_ptr<ID3D11Buffer> mpVertexBuffer;
+		ID3D11Buffer* mpVertexBuffer; //unique_ptrにするとデストラクトでのヒープの解放で例外
 		std::unique_ptr <ID3D11Buffer> mpConstantBuffer;
 
 		ID3D11VertexShader* mpVertexShader = NULL;
