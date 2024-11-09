@@ -14,7 +14,7 @@ namespace Koban {
 		{
 			D3DXMATRIX mW;//ワールド行列
 			D3DXMATRIX mWVP;//ワールドから射影までの変換行列
-			D3DXVECTOR4 vLightPos;//ライト位置
+			D3DXVECTOR4 vLightDir;//ライト位置
 			D3DXVECTOR4 vEye;//カメラ位置
 		};
 

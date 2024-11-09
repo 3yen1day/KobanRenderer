@@ -1,6 +1,7 @@
 #include "Render3DModel.h"
 #include "Render.h"
 #include "Camera.h"
+#include "Light.h"
 
 namespace Koban {
 	Render3DModel::Render3DModel()
@@ -33,7 +34,7 @@ namespace Koban {
 		RenderLib::createConstantBuffer<CONSTANT_BUFFER_MATERIAL>(DEVICE, &mpConstantBuffer_Material);
 
 		//fbxのロード
-		if (!FbxLoader::Load("Resource/saikoro.fbx", &mFbxVertexInfo)) {
+		if (!FbxLoader::Load("Resource/Chips.obj", &mFbxVertexInfo)) {
 			DebugLib::error(L"ファイル読み込み失敗");
 		}
 
@@ -46,8 +47,8 @@ namespace Koban {
 		//テクスチャ用サンプラ作成
 		RenderLib::createSamplerState(DEVICE, &mpSampleLinear);
 
-		//テクスチャ作成
-		RenderLib::createTexture(DEVICE, L"Resource\\tex_saikoro.png", &mpTexture);
+		////テクスチャ作成
+		//RenderLib::createTexture(DEVICE, L"Resource\\Chips_Cover.jpg", &mpTexture);
 	}
 
 	void Render3DModel::draw() {
@@ -64,9 +65,9 @@ namespace Koban {
 			//MVP行列を渡す
 			cb_default.mWVP = getMVPMatrix(cb_default.mW);
 			//ライトの位置を渡す
-			cb_default.vLightPos = D3DXVECTOR4(0, 1, 0, 1.0f);
+			cb_default.vLightDir = Render::getLight()->getDirection();
 			//視点位置を渡す
-			cb_default.vEye = D3DXVECTOR4(Render::getCamera()->getPostion(), 0);
+			cb_default.vEye = D3DXVECTOR4(Render::getCamera()->getEyeDir(), 0);
 			if (memcpy_s(pData_default.pData, sizeof(CONSTANT_BUFFER_DEFAULT), (void*)(&cb_default), sizeof(cb_default))) {
 				DebugLib::error(L"memCopy時にエラー");
 			}
@@ -102,8 +103,8 @@ namespace Koban {
 		//インデックスバッファをセット todo:毎フレ必要？
 		DEVICE_CONTEXT->IASetIndexBuffer(mpIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 		//テクスチャーをシェーダーに渡す
-		DEVICE_CONTEXT->PSSetSamplers(0, 1, &mpSampleLinear);
-		DEVICE_CONTEXT->PSSetShaderResources(0, 1, &mpTexture);
+		//DEVICE_CONTEXT->PSSetSamplers(0, 1, &mpSampleLinear);
+		//DEVICE_CONTEXT->PSSetShaderResources(0, 1, &mpTexture);
 		//プリミティブをレンダリング
 		DEVICE_CONTEXT->DrawIndexed(mFbxVertexInfo.indices.size(), 0, 0);
 	}
@@ -121,7 +122,7 @@ namespace Koban {
 		D3DXQUATERNION quat;
 		D3DXVECTOR3 vec3(0, 1, 0);
 		static float angle = 0;
-		static float speed = 0.0001;
+		static float speed = 0.00005;
 		angle += speed;
 		angle = std::fmod(angle, 6.28f);
 		D3DXQuaternionRotationAxis(&quat, &vec3, angle);
@@ -129,7 +130,7 @@ namespace Koban {
 		D3DXMatrixRotationQuaternion(&matRotation, &quat);
 
 		//平行移動行列
-		auto pos = D3DXVECTOR3(0.0f, 0.0f, -0.5f);
+		auto pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		D3DXMATRIX matTrans;
 		D3DXMatrixTranslation(&matTrans, pos.x, pos.y, pos.z);
 
@@ -154,9 +155,9 @@ namespace Koban {
 	/// <returns></returns>
 	Render3DModel::CONSTANT_BUFFER_MATERIAL Render3DModel::getMaterialVal() {
 		auto cBuffer = CONSTANT_BUFFER_MATERIAL();
-		cBuffer.vAmbient = D3DXVECTOR4(0, 0, 0, 0);
+		cBuffer.vAmbient = D3DXVECTOR4(0.5f, 0, 0, 0);
 		cBuffer.vDiffuse = D3DXVECTOR4(1, 1, 1, 0);
-		cBuffer.vSpecular = D3DXVECTOR4(0.605, 0.605, 0.605, 0);
+		cBuffer.vSpecular = D3DXVECTOR4(2, 2, 2, 0);
 		return cBuffer;
 	}
 }

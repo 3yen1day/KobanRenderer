@@ -11,7 +11,7 @@ namespace Koban {
 	}
 
 	void Camera::update() {
-		mPosition = D3DXVECTOR3(0.0f, 0.0f, -5.0f);
+		mPosition = D3DXVECTOR3(0.0f, 0, -1.0f);
 		D3DXVECTOR3 vLookatPt(0.0f, 0.0f, 0.0f);//íçéãà íu
 		D3DXVECTOR3 vUpVec(0.0f, 1.0f, 0.0f);//è„ï˚à íu
 		auto pos2look = vLookatPt - mPosition;

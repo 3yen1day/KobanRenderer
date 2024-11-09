@@ -1,5 +1,6 @@
 #define ATTENU 2
 
+
 Texture2D g_tex: register(t0);
 Texture2D g_texColor: register(t1);
 Texture2D g_texNormal: register(t2);
@@ -11,7 +12,7 @@ cbuffer global_0:register(b0)
 {
 	matrix g_mW;//ワールド行列
 	matrix g_mWVP; //ワールドから射影までの変換行列
-	float4 g_vLightPos;//ポイントライト情報（ライトの位置）
+	float4 g_vLightDir;//ディレクショナルライトの方向
 	float4 g_vEye;//カメラ位置
 };
 
@@ -21,6 +22,7 @@ cbuffer global_1:register(b1)
 	float4 g_Diffuse=float4(1,0,0,0); //拡散反射(色）
 	float4 g_Specular=float4(1,1,1,1);//鏡面反射
 };
+
 
 //バーテックスバッファー出力
 struct VS_OUTPUT
@@ -87,42 +89,29 @@ VS_OUTPUT VS_From_Tex( float4 Pos : POSITION ,float4 Norm : NORMAL,float2 UV : T
 
 	return output;
 }
-//
-//
-//
-float4 PLight(float3 vDiffuse,float3 vWorldPos,float3 vWorldNormal,float3 vLightPos,float3 vEyeVector,float3 LightColor)
-{
-	float3 vLightDir = vLightPos-vWorldPos;
-	float Distance=length(vLightDir);
-	vLightDir=normalize(vLightDir);
 
-	float3 vDiffuseIntensity=saturate(dot(vLightDir,vWorldNormal));
-	float3 vSpecularIntensity=pow(max(0, dot(vEyeVector, reflect(-vLightDir, vWorldNormal))), 2);
-
-	float4 FinalColor;
-	FinalColor.rgb=vDiffuseIntensity*(vDiffuse+LightColor) + vSpecularIntensity*g_Specular;
-	FinalColor.a=1;
-	//減衰	
-	FinalColor*=pow(saturate(ATTENU / Distance),4);//減衰開始
-	
-	return FinalColor;
-}
 //
 //テクスチャーを参照してレンダー　ピクセルシェーダー
 //
 float4 PS_From_Tex( VS_OUTPUT input ) : SV_Target
 {
 	//テクスチャーから情報を取り出す
-	float4 vDiffuse=g_texColor.Sample( g_samLinear, input.UV );
+	float4 vTexColor=g_texColor.Sample( g_samLinear, input.UV );
 	float3 vWorldNormal=g_texNormal.Sample( g_samLinear, input.UV ).xyz;
 	float3 vWorldPos=g_texPosition.Sample( g_samLinear, input.UV ).xyz;
-	//取り出した情報をもとにフォンシェーディングを計算
-	float4 FinalColor=vDiffuse*g_Ambient;
-
-	//ここが重要！　この点を、このライトが照らしているかどうかチェック
-	if(length(g_vLightPos-vWorldPos)<ATTENU*2)
-	{
-		FinalColor+=PLight(vDiffuse,vWorldPos,vWorldNormal,g_vLightPos,normalize(g_vEye-vWorldPos),input.UV.yxy);
-	}
-    return FinalColor;
+    float3 lightDir = normalize(g_vLightDir.xyz);
+    float3 eyeDir = normalize(g_vEye.xyz);
+	
+	//取り出した情報をもとに計算
+	//環境光　項
+    float4 ambient = g_Ambient;
+	//拡散反射光　項
+    float NL = saturate(dot(vWorldNormal, lightDir));
+    float4 diffuse = (g_Diffuse / 2 + vTexColor / 2) * NL;
+	//鏡面反射光　項
+    float3 reflect = normalize(2 * NL * vWorldNormal - lightDir);
+    float4 specular = pow(saturate(dot(reflect, eyeDir)), 4) * g_Specular;
+	
+    float4 color = diffuse + specular;
+    return color;
 }
