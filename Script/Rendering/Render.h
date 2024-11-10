@@ -4,7 +4,7 @@ namespace Koban {
 	class RTTManager;
 	class Camera;
 	class Light;
-	class Render3DModel;
+	class Mesh;
 	class GBufferToBackBuffer;
 }
 
@@ -61,10 +61,13 @@ namespace Koban {
 		static ID3D11RenderTargetView* mpBackBuffer_RTV;
 
 		static std::unique_ptr<RTTManager> mpRTTManager;
-		static std::unique_ptr<Camera> mpCamera;
-		static std::unique_ptr<Light> mpLight;
 		static std::unique_ptr<GBufferToBackBuffer> mpGBufferToBackBuffer;
 		
-		std::unique_ptr<Render3DModel> mpRender3DModel;
+		/// <summary>
+		/// GameObject‚É‚·‚é
+		/// </summary>
+		static std::unique_ptr<Camera> mpCamera;
+		static std::unique_ptr<Light> mpLight;
+		std::unique_ptr<Mesh> mpMesh;
 	};
 }

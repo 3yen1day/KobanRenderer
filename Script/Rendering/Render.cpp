@@ -1,8 +1,8 @@
 #include "Render.h"
 #include "RTTManager.h"
-#include "Camera.h"
-#include "Light.h"
-#include "Render3DModel.h"
+#include "../Component/Camera.h"
+#include "../Component/Light.h"
+#include "../Component/Mesh.h"
 #include "GBufferToBackBuffer.h"
 
 //関数プロトタイプの宣言
@@ -100,7 +100,7 @@ namespace Koban {
 		//Lightの作成
 		mpLight.reset(new Light());
 		//3Dモデル描画
-		mpRender3DModel.reset(new Render3DModel());
+		mpMesh.reset(new Mesh());
 		//GBufferを元に描画
 		mpGBufferToBackBuffer.reset(new GBufferToBackBuffer());
 	}
@@ -112,7 +112,7 @@ namespace Koban {
 
 	void Render::draw() {
 		//GBufferへの描画
-		mpRender3DModel->draw();
+		mpMesh->draw();
 
 		//レンダーターゲットを通常に戻す
 		DEVICE_CONTEXT->OMSetRenderTargets(1, &mpBackBuffer_RTV, mpRTTManager->getDepthStensilSRV());

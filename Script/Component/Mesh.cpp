@@ -1,10 +1,10 @@
-#include "Render3DModel.h"
-#include "Render.h"
+#include "Mesh.h"
+#include "../Rendering/Render.h"
 #include "Camera.h"
 #include "Light.h"
 
 namespace Koban {
-	Render3DModel::Render3DModel()
+	Mesh::Mesh()
 	{
 		//shader初期化
 		//頂点インプットレイアウトを定義	
@@ -51,7 +51,7 @@ namespace Koban {
 		//RenderLib::createTexture(DEVICE, L"Resource\\Chips_Cover.jpg", &mpTexture);
 	}
 
-	void Render3DModel::draw() {
+	void Mesh::draw() {
 		//使用するシェーダーの登録	
 		DEVICE_CONTEXT->VSSetShader(mpVertexShader, NULL, 0);
 		DEVICE_CONTEXT->PSSetShader(mpPixelShader, NULL, 0);
@@ -113,7 +113,7 @@ namespace Koban {
 	/// Model行列を取得する
 	/// </summary>
 	/// <returns></returns>
-	D3DXMATRIX Render3DModel::getModelMatrix() {
+	D3DXMATRIX Mesh::getModelMatrix() {
 		// スケール行列
 		D3DXMATRIX matScale;
 		D3DXMatrixScaling(&matScale, 1.0f, 1.0f, 1.0f);
@@ -141,7 +141,7 @@ namespace Koban {
 	/// MVP行列を取得する
 	/// </summary>
 	/// <returns></returns>
-	D3DXMATRIX Render3DModel::getMVPMatrix(const D3DXMATRIX& modelMat) {
+	D3DXMATRIX Mesh::getMVPMatrix(const D3DXMATRIX& modelMat) {
 		//ワールド、カメラ、射影行列を渡す
 		D3DXMATRIX m = modelMat * Render::getCamera()->getViewMat() * Render::getCamera()->getProjMat();
 		D3DXMatrixTranspose(&m, &m); //GPUの行列計算方法とDirectXのそれが異なるため転置する
@@ -153,7 +153,7 @@ namespace Koban {
 	/// Materialの値を取得する（todo:テキストファイルから読むようにする）
 	/// </summary>
 	/// <returns></returns>
-	Render3DModel::CONSTANT_BUFFER_MATERIAL Render3DModel::getMaterialVal() {
+	Mesh::CONSTANT_BUFFER_MATERIAL Mesh::getMaterialVal() {
 		auto cBuffer = CONSTANT_BUFFER_MATERIAL();
 		cBuffer.vAmbient = D3DXVECTOR4(0.5f, 0, 0, 0);
 		cBuffer.vDiffuse = D3DXVECTOR4(1, 1, 1, 0);

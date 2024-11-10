@@ -1,11 +1,11 @@
 #pragma once
-#include "FbxLoader.h"
+#include "../Rendering/FbxLoader.h"
 namespace Koban {
-	class Render3DModel
+	class Mesh
 	{
 	public:
-		Render3DModel();
-		~Render3DModel() {};
+		Mesh();
+		~Mesh() {};
 
 		void draw();
 

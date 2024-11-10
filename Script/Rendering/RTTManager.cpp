@@ -1,6 +1,6 @@
 #include "RTTManager.h"
 #include "Render.h"
-#include "Camera.h"
+#include "../Component/Camera.h"
 
 namespace Koban {
 	RTTManager::RTTManager() :
