@@ -3,7 +3,7 @@
 #include "Camera.h"
 #include "Light.h"
 #include "Render3DModel.h"
-#include "DefferdRendering.h"
+#include "GBufferToBackBuffer.h"
 
 //関数プロトタイプの宣言
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -15,6 +15,7 @@ ID3D11RenderTargetView* Koban::Render::mpBackBuffer_RTV;
 std::unique_ptr<Koban::Camera> Koban::Render::mpCamera;
 std::unique_ptr<Koban::Light> Koban::Render::mpLight;
 std::unique_ptr<Koban::RTTManager> Koban::Render::mpRTTManager;
+std::unique_ptr<Koban::GBufferToBackBuffer> Koban::Render::mpGBufferToBackBuffer;
 
 /// <summary>
 /// コンストラクタ
@@ -101,7 +102,7 @@ namespace Koban {
 		//3Dモデル描画
 		mpRender3DModel.reset(new Render3DModel());
 		//GBufferを元に描画
-		mpDefferdShader.reset(new DefferdShader());
+		mpGBufferToBackBuffer.reset(new GBufferToBackBuffer());
 	}
 
 	void Render::update() {
@@ -120,7 +121,7 @@ namespace Koban {
 		DEVICE_CONTEXT->ClearRenderTargetView(mpBackBuffer_RTV, ClearColor);
 
 		//GBufferから描画
-		mpDefferdShader->draw();
+		mpGBufferToBackBuffer->draw();
 		////画面更新（バックバッファをフロントバッファに）
 		mpSwapChain->Present(0, 0);
 	}
@@ -129,7 +130,7 @@ namespace Koban {
 	{
 		mpRTTManager->destroy();
 		//mpRender3DModel->
-		mpDefferdShader->destroy();
+		mpGBufferToBackBuffer->destroy();
 
 		//リソース所有権の破棄
 		SAFE_RELEASE(mpSwapChain);

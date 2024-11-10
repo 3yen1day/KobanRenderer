@@ -4,11 +4,11 @@
 /// GBuffer‚Ìî•ñ‚ğBuckBuffer‚ÉƒŒƒ“ƒ_ƒŠƒ“ƒO‚·‚é
 /// </summary>
 namespace Koban {
-	class DefferdShader
+	class GBufferToBackBuffer
 	{
 	public:
-		DefferdShader();
-		~DefferdShader() {};
+		GBufferToBackBuffer();
+		~GBufferToBackBuffer() {};
 		void update();
 		void draw();
 		void destroy();

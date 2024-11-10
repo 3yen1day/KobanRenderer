@@ -5,7 +5,7 @@ namespace Koban {
 	class Camera;
 	class Light;
 	class Render3DModel;
-	class DefferdShader;
+	class GBufferToBackBuffer;
 }
 
 namespace Koban {
@@ -52,11 +52,6 @@ namespace Koban {
 			return mpLight.get();
 		}
 
-		static bool createVertexShader(const std::wstring& fileName, const std::wstring& shaderName, ID3D11VertexShader* vs);
-
-		static bool createPixelShader(const std::wstring& fileName, const std::wstring& shaderName, ID3D11PixelShader* ps);
-
-
 	private:
 		//アプリに一つ必要
 		//unique_ptrを使うと解放時に例外
@@ -68,8 +63,8 @@ namespace Koban {
 		static std::unique_ptr<RTTManager> mpRTTManager;
 		static std::unique_ptr<Camera> mpCamera;
 		static std::unique_ptr<Light> mpLight;
-
-		std::unique_ptr<DefferdShader> mpDefferdShader;
+		static std::unique_ptr<GBufferToBackBuffer> mpGBufferToBackBuffer;
+		
 		std::unique_ptr<Render3DModel> mpRender3DModel;
 	};
 }

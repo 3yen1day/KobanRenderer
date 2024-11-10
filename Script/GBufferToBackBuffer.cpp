@@ -1,10 +1,10 @@
-#include "DefferdRendering.h"
+#include "GBufferToBackBuffer.h"
 #include "Render.h"
 #include "RTTManager.h"
 #include "FbxLoader.h"
 
 namespace Koban {
-	DefferdShader::DefferdShader() {
+	GBufferToBackBuffer::GBufferToBackBuffer() {
 		// ----------------------------------------
 		// Shader
 		// ----------------------------------------
@@ -55,11 +55,11 @@ namespace Koban {
 		}
 	}
 	
-	void DefferdShader::update() {
+	void GBufferToBackBuffer::update() {
 
 	}
 
-	void DefferdShader::draw() {
+	void GBufferToBackBuffer::draw() {
 		//シェーダーのセット
 		DEVICE_CONTEXT->VSSetShader(mpVertexShader, NULL, 0);
 		DEVICE_CONTEXT->PSSetShader(mpPixelShader, NULL, 0);
@@ -80,7 +80,7 @@ namespace Koban {
 		DEVICE_CONTEXT->Draw(4, 0);
 	}
 
-	void DefferdShader::destroy() {
+	void GBufferToBackBuffer::destroy() {
 		SAFE_RELEASE(mpVertexShader);
 		SAFE_RELEASE(mpPixelShader);
 	}

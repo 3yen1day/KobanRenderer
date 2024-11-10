@@ -19,8 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GUIManager.cpp" />
     <ClCompile Include="Script\Camera.cpp" />
-    <ClCompile Include="Script\DefferdRendering.cpp" />
+    <ClCompile Include="Script\GBufferToBackBuffer.cpp" />
     <ClCompile Include="Script\FbxLoader.cpp" />
     <ClCompile Include="Script\Render3DModel.cpp" />
     <ClCompile Include="Script\RTTManager.cpp" />
@@ -33,8 +34,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GUIManager.h" />
+    <ClInclude Include="ObjectBase.h" />
     <ClInclude Include="Script\Camera.h" />
-    <ClInclude Include="Script\DefferdRendering.h" />
+    <ClInclude Include="Script\GBufferToBackBuffer.h" />
     <ClInclude Include="Script\FbxLoader.h" />
     <ClInclude Include="Script\Include\DefaultInclude.h" />
     <ClInclude Include="Script\Library\DebugUtil.h" />
