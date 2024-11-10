@@ -37,9 +37,9 @@
     <ClInclude Include="Script\DefferdRendering.h" />
     <ClInclude Include="Script\FbxLoader.h" />
     <ClInclude Include="Script\Include\DefaultInclude.h" />
-    <ClInclude Include="Script\Library\DebugLib.h" />
-    <ClInclude Include="Script\Library\RenderLib.h" />
-    <ClInclude Include="Script\Library\StringLib.h" />
+    <ClInclude Include="Script\Library\DebugUtil.h" />
+    <ClInclude Include="Script\Library\RenderUtil.h" />
+    <ClInclude Include="Script\Library\StringUtil.h" />
     <ClInclude Include="Script\Light.h" />
     <ClInclude Include="Script\Render3DModel.h" />
     <ClInclude Include="Script\RTTManager.h" />

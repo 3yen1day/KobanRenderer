@@ -3,7 +3,7 @@
 #include <cassert>
 using namespace std;
 namespace Koban {
-	static class DebugLib {
+	static class DebugUtil {
 	public:
 		/// <summary>
 		/// ƒGƒ‰[‚ğ•\¦

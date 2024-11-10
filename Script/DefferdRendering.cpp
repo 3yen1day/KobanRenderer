@@ -9,7 +9,7 @@ namespace Koban {
 		// Shader
 		// ----------------------------------------
 		//g—p‚·‚éShader‚Ìì¬
-		RenderLib::createShader(
+		RenderUtil::createShader(
 			DEVICE,
 			L"Shader/Deferred.hlsl",
 			L"VS_From_Tex",

@@ -19,8 +19,9 @@
 #pragma comment(lib,"d3dx11.lib")
 #pragma comment(lib,"d3dCompiler.lib")
 
-//Library
-#include "Script/Library/StringLib.h"
-#include "Script/Library/DebugLib.h"
-#include "Script/Library/RenderLib.h"
+//Utillity
+#include "Script/Utillity/StringUtil.h"
+#include "Script/Utillity/DebugUtil.h"
+#include "Script/Utillity/RenderUtil.h"
+
 #include "Script/Include/DefaultInclude.h"

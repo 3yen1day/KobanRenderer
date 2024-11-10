@@ -3,13 +3,13 @@ using namespace std;
 
 namespace Koban {
 	/// <summary>
-	/// string用ライブラリ
+	/// string用Utilクラス
 	/// </summary>
-	static class StringLib
+	static class StringUtil
 	{
 	public:
-		StringLib() {};
-		~StringLib() {};
+		StringUtil() {};
+		~StringUtil() {};
 
 		/// <summary>
 		/// wstr→str

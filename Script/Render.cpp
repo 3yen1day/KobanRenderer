@@ -50,7 +50,7 @@ namespace Koban {
 			pFeatureLevel, &mpDeviceContext)))
 		{
 			//なんか例外
-			DebugLib::error(L"デバイス作成失敗");
+			DebugUtil::error(L"デバイス作成失敗");
 			return;
 		}
 

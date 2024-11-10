@@ -17,7 +17,7 @@ namespace Koban {
 
 
 		ID3DBlob* compiledShader = NULL;
-		RenderLib::createShader(
+		RenderUtil::createShader(
 			DEVICE,
 			L"Shader/Deferred.hlsl",
 			layout,
@@ -30,22 +30,22 @@ namespace Koban {
 		SAFE_RELEASE(compiledShader);
 
 		//コンスタントバッファ初期化
-		RenderLib::createConstantBuffer<CONSTANT_BUFFER_DEFAULT>(DEVICE, &mpConstantBuffer_Default);
-		RenderLib::createConstantBuffer<CONSTANT_BUFFER_MATERIAL>(DEVICE, &mpConstantBuffer_Material);
+		RenderUtil::createConstantBuffer<CONSTANT_BUFFER_DEFAULT>(DEVICE, &mpConstantBuffer_Default);
+		RenderUtil::createConstantBuffer<CONSTANT_BUFFER_MATERIAL>(DEVICE, &mpConstantBuffer_Material);
 
 		//fbxのロード
 		if (!FbxLoader::Load("Resource/Chips.obj", &mFbxVertexInfo)) {
-			DebugLib::error(L"ファイル読み込み失敗");
+			DebugUtil::error(L"ファイル読み込み失敗");
 		}
 
 		//バーテックスバッファ初期化
-		RenderLib::createVertexBffer<FbxLoader::Vertex>(DEVICE, DEVICE_CONTEXT, mFbxVertexInfo.vertices, &mpVertexBuffer);
+		RenderUtil::createVertexBffer<FbxLoader::Vertex>(DEVICE, DEVICE_CONTEXT, mFbxVertexInfo.vertices, &mpVertexBuffer);
 
 		//インデックスバッファ初期化
-		RenderLib::createIndexBuffer(DEVICE, DEVICE_CONTEXT, mFbxVertexInfo.indices, &mpIndexBuffer);
+		RenderUtil::createIndexBuffer(DEVICE, DEVICE_CONTEXT, mFbxVertexInfo.indices, &mpIndexBuffer);
 
 		//テクスチャ用サンプラ作成
-		RenderLib::createSamplerState(DEVICE, &mpSampleLinear);
+		RenderUtil::createSamplerState(DEVICE, &mpSampleLinear);
 
 		////テクスチャ作成
 		//RenderLib::createTexture(DEVICE, L"Resource\\Chips_Cover.jpg", &mpTexture);
@@ -69,7 +69,7 @@ namespace Koban {
 			//視点位置を渡す
 			cb_default.vEye = D3DXVECTOR4(Render::getCamera()->getEyeDir(), 0);
 			if (memcpy_s(pData_default.pData, sizeof(CONSTANT_BUFFER_DEFAULT), (void*)(&cb_default), sizeof(cb_default))) {
-				DebugLib::error(L"memCopy時にエラー");
+				DebugUtil::error(L"memCopy時にエラー");
 			}
 			DEVICE_CONTEXT->Unmap(mpConstantBuffer_Default, 0);
 		}
@@ -80,7 +80,7 @@ namespace Koban {
 		{
 			cb_material = getMaterialVal();
 			if (memcpy_s(pData_material.pData, sizeof(CONSTANT_BUFFER_MATERIAL), (void*)(&cb_material), sizeof(cb_material))) {
-				DebugLib::error(L"memCopy時にエラー");
+				DebugUtil::error(L"memCopy時にエラー");
 			}
 			DEVICE_CONTEXT->Unmap(mpConstantBuffer_Material, 0);
 		}

@@ -14,7 +14,7 @@ namespace Koban {
 
 
 		ID3DBlob* compiledShader = NULL;
-		RenderLib::createShader(
+		RenderUtil::createShader(
 			DEVICE,
 			L"Shader//Simple.hlsl",
 			layout,
@@ -27,7 +27,7 @@ namespace Koban {
 		SAFE_RELEASE(compiledShader);
 
 		//コンスタントバッファ初期化
-		RenderLib::createConstantBuffer<D3DXMATRIX>(DEVICE, &m_pConstantBuffer);
+		RenderUtil::createConstantBuffer<D3DXMATRIX>(DEVICE, &m_pConstantBuffer);
 
 		//バーテックスバッファ初期化
 		vector<SimpleVertex> vertices = {
@@ -36,13 +36,13 @@ namespace Koban {
 			{D3DXVECTOR3(0.5,-0.5,0),D3DXVECTOR2(1,1)}, //頂点3
 			{D3DXVECTOR3(0.5,0.5,0),D3DXVECTOR2(1,0)}, //頂点4
 		};
-		RenderLib::createVertexBffer<SimpleVertex>(DEVICE, DEVICE_CONTEXT, vertices, &m_pVertexBuffer);
+		RenderUtil::createVertexBffer<SimpleVertex>(DEVICE, DEVICE_CONTEXT, vertices, &m_pVertexBuffer);
 
 		//テクスチャ用サンプラ作成
-		RenderLib::createSamplerState(DEVICE, &m_pSampleLinear);
+		RenderUtil::createSamplerState(DEVICE, &m_pSampleLinear);
 
 		//テクスチャ作成
-		RenderLib::createTexture(DEVICE, L"Resource\\sprite.jpg", &m_pTexture);
+		RenderUtil::createTexture(DEVICE, L"Resource\\sprite.jpg", &m_pTexture);
 	}
 
 	void RenderSquare::draw() {
@@ -68,7 +68,7 @@ namespace Koban {
 		if (SUCCEEDED(DEVICE_CONTEXT->Map(m_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))//pData.pDataにm_pConstantBufferのアドレス
 		{
 			if (memcpy_s(pData.pData, sizeof(SIMPLESHADER_CONSTANT_BUFFER), (void*)(&cb), sizeof(cb))) {
-				DebugLib::error(L"memCopy時にエラー");
+				DebugUtil::error(L"memCopy時にエラー");
 			}
 			DEVICE_CONTEXT->Unmap(m_pConstantBuffer, 0);
 		}

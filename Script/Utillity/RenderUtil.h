@@ -1,7 +1,7 @@
 #pragma once
 
 namespace Koban {
-	static class RenderLib {
+	static class RenderUtil {
 	public:
 		/// <summary>
 		/// Shaderの生成
@@ -70,7 +70,7 @@ namespace Koban {
 			{
 				string info = "インプットレイアウト作成失敗";
 				string error = (char*)pErrors->GetBufferPointer();
-				DebugLib::error(info + error);
+				DebugUtil::error(info + error);
 			}
 
 			//pixcelShader
@@ -91,7 +91,7 @@ namespace Koban {
 
 			if (FAILED(device->CreateBuffer(&cb, NULL, buffer)))
 			{
-				DebugLib::error(L"バッファ作成失敗");
+				DebugUtil::error(L"バッファ作成失敗");
 			}
 		}
 
@@ -109,7 +109,7 @@ namespace Koban {
 			 D3D11_SUBRESOURCE_DATA InitData;
 			 InitData.pSysMem = vertices.data();
 			 if (FAILED(device->CreateBuffer(&bd, &InitData, vertexBuffer)))
-				 DebugLib::error(L"バッファ作成失敗");
+				 DebugUtil::error(L"バッファ作成失敗");
 		 }
 
 		 /// <summary>
@@ -129,7 +129,7 @@ namespace Koban {
 			 D3D11_SUBRESOURCE_DATA InitData;
 			 InitData.pSysMem = indexis.data();
 			 if (FAILED(device->CreateBuffer(&bd, &InitData, indexBuffer)))
-				 DebugLib::error(L"バッファ作成失敗");
+				 DebugUtil::error(L"バッファ作成失敗");
 		 }
 
 		/// <summary>
@@ -151,7 +151,7 @@ namespace Koban {
 		 static void createTexture(ID3D11Device* device, wstring filePath, ID3D11ShaderResourceView** texture) {
 			 if (FAILED(D3DX11CreateShaderResourceViewFromFile(device, filePath.c_str(), NULL, NULL, texture, NULL)))
 			 {
-				DebugLib::error(L"テクスチャの作成に失敗");
+				DebugUtil::error(L"テクスチャの作成に失敗");
 			 }
 		 }
 
@@ -173,20 +173,20 @@ namespace Koban {
 			 ID3D10Blob** pErrors)
 		 {
 			 //vertexShader
-			 auto shaderName_s = StringLib::wstr2str(vsName);
+			 auto shaderName_s = StringUtil::wstr2str(vsName);
 
 			 //ブロブからvertexShader作成
 			 if (FAILED(D3DX11CompileFromFile(fileName.data(), NULL, NULL, shaderName_s->data(), "vs_5_0", 0, 0, NULL, pCompiledShader, pErrors, NULL)))
 			 {
 				 string info = "hlsl読み込み失敗";
 				 string error = (char*)(*pErrors)->GetBufferPointer();
-				 DebugLib::error(info + error);
+				 DebugUtil::error(info + error);
 			 }
 			 if (FAILED(device->CreateVertexShader((*pCompiledShader)->GetBufferPointer(), (*pCompiledShader)->GetBufferSize(), NULL, vs)))
 			 {
 				 string info = "バーテックスシェーダー作成失敗";
 				 string error = (char*)(*pErrors)->GetBufferPointer();
-				 DebugLib::error(info + error);
+				 DebugUtil::error(info + error);
 			 }
 		 }
 
@@ -208,20 +208,20 @@ namespace Koban {
 			 ID3D10Blob** pErrors)
 		 {
 			 //vertexShader
-			 auto shaderName_s = StringLib::wstr2str(psName);
+			 auto shaderName_s = StringUtil::wstr2str(psName);
 
 			 //ブロブからpixcelShader作成
 			 if (FAILED(D3DX11CompileFromFile(fileName.data(), NULL, NULL, shaderName_s->data(), "ps_5_0", 0, 0, NULL, pCompiledShader, pErrors, NULL)))
 			 {
 				 string info = "hlsl読み込み失敗";
 				 string error = (char*)(*pErrors)->GetBufferPointer();
-				 DebugLib::error(info + error);
+				 DebugUtil::error(info + error);
 			 }
 			 if (FAILED(device->CreatePixelShader((*pCompiledShader)->GetBufferPointer(), (*pCompiledShader)->GetBufferSize(), NULL, ps)))
 			 {
 				 string info = "ピクセルシェーダー作成失敗";
 				 string error = (char*)(*pErrors)->GetBufferPointer();
-				 DebugLib::error(info + error);
+				 DebugUtil::error(info + error);
 			 }
 		 }
 	};
