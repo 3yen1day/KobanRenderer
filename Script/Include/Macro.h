@@ -6,5 +6,11 @@
 #define SAFE_DELETE(x) if(x){delete x; x=0;}
 #define SAFE_DELETE_ARRAY(x) if(x){delete[] x; x=0;}
 #define MAX_Light 100
-#define DEVICE Koban::Render::getDevice()
-#define DEVICE_CONTEXT Koban::Render::getDeviceContext()
+
+//GlobalAccessŒn
+#define GA Koban::GlobalAccess
+#define RENDER GA::getRender()
+#define DEVICE RENDER->getDevice()
+#define DEVICE_CONTEXT RENDER->getDeviceContext()
+
+#define SCENE GA::getScene()

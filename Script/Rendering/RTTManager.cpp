@@ -40,7 +40,7 @@ namespace Koban {
 		//そのテクスチャーに対しデプスステンシルビュー(DSV)を作成
 		DEVICE->CreateDepthStencilView(mpDepthStencil_Tex, NULL, &mpDepthStencil_SRV);
 		//レンダーターゲットビューと深度ステンシルビューをパイプラインにバインド
-		auto backBuffer = Render::getBackBuffer();
+		auto backBuffer = RENDER->getBackBuffer();
 		DEVICE_CONTEXT->OMSetRenderTargets(1, &backBuffer, mpDepthStencil_SRV);
 
 		//カラーマップ

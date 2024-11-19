@@ -24,4 +24,5 @@
 #include "Script/Utillity/DebugUtil.h"
 #include "Script/Utillity/RenderUtil.h"
 
-#include "Script/Include/DefaultInclude.h"
+#include "Script/Include/Macro.h"
+#include "Script/Core/GlobalAccess.h"

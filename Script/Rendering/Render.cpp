@@ -8,22 +8,12 @@
 //関数プロトタイプの宣言
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-ID3D11Device* Koban::Render::mpDevice;
-ID3D11DeviceContext* Koban::Render::mpDeviceContext;
-IDXGISwapChain* Koban::Render::mpSwapChain;
-ID3D11RenderTargetView* Koban::Render::mpBackBuffer_RTV;
-std::unique_ptr<Koban::Camera> Koban::Render::mpCamera;
-std::unique_ptr<Koban::Light> Koban::Render::mpLight;
-std::unique_ptr<Koban::RTTManager> Koban::Render::mpRTTManager;
-std::unique_ptr<Koban::GBufferToBackBuffer> Koban::Render::mpGBufferToBackBuffer;
-
 /// <summary>
 /// コンストラクタ
 /// </summary>
 /// <param name="pHWnd">ウィンドウのハンドラ</param>
 namespace Koban {
-	Render::Render(HWND* pHWnd) :
-		mHwnd(pHWnd)
+	Render::Render(HWND* pHWnd)
 	{
 		// デバイスとスワップチェーンの作成
 		DXGI_SWAP_CHAIN_DESC sd;
@@ -35,7 +25,7 @@ namespace Koban {
 		sd.BufferDesc.RefreshRate.Numerator = 60;
 		sd.BufferDesc.RefreshRate.Denominator = 1;
 		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		sd.OutputWindow = *mHwnd;
+		sd.OutputWindow = *pHWnd;
 		sd.SampleDesc.Count = 1;
 		sd.SampleDesc.Quality = 0;
 		sd.Windowed = TRUE;
@@ -79,21 +69,14 @@ namespace Koban {
 		mpBackBuffer_RTV = nullptr;
 		ID3D11Texture2D* pBackBuffer_Tex;
 		mpSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer_Tex);
-		DEVICE->CreateRenderTargetView(pBackBuffer_Tex, NULL, &mpBackBuffer_RTV);
+		mpDevice->CreateRenderTargetView(pBackBuffer_Tex, NULL, &mpBackBuffer_RTV);
 		SAFE_RELEASE(pBackBuffer_Tex);
-
-		//Objectの作成
-		createObjects();
 	}
 
 	Render::~Render() {};// = default; // デストラクタを非インライン化
 
-	/// <summary>
-	/// Objectの作成
-	/// </summary>
-	void Render::createObjects()
-	{
-		//RTTを作成するくん
+	void Render::awake() {
+		//RTTを管理
 		mpRTTManager.reset(new RTTManager());
 		//Cameraの作成
 		mpCamera.reset(new Camera());

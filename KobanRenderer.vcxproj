@@ -21,6 +21,10 @@
   <ItemGroup>
     <ClCompile Include="Script\Component\Camera.cpp" />
     <ClCompile Include="Script\Component\Mesh.cpp" />
+    <ClCompile Include="Script\Core\Component.cpp" />
+    <ClCompile Include="Script\Core\GameObject.cpp" />
+    <ClCompile Include="Script\Core\GlobalAccess.cpp" />
+    <ClCompile Include="Script\Core\Scene.cpp" />
     <ClCompile Include="Script\Main.cpp" />
     <ClCompile Include="Script\Rendering\FbxLoader.cpp" />
     <ClCompile Include="Script\Rendering\GBufferToBackBuffer.cpp" />
@@ -36,17 +40,21 @@
     <ClInclude Include="Script\Component\Camera.h" />
     <ClInclude Include="Script\Component\Light.h" />
     <ClInclude Include="Script\Component\Mesh.h" />
-    <ClInclude Include="Script\Include\DefaultInclude.h" />
-    <ClInclude Include="Script\Library\DebugUtil.h" />
-    <ClInclude Include="Script\Library\RenderUtil.h" />
-    <ClInclude Include="Script\Library\StringUtil.h" />
+    <ClInclude Include="Script\Core\Component.h" />
+    <ClInclude Include="Script\Core\GameObject.h" />
+    <ClInclude Include="Script\Core\GlobalAccess.h" />
+    <ClInclude Include="Script\Core\Module.h" />
+    <ClInclude Include="Script\Core\Scene.h" />
+    <ClInclude Include="Script\Include\Macro.h" />
     <ClInclude Include="Script\Main.h" />
     <ClInclude Include="Script\Rendering\FbxLoader.h" />
     <ClInclude Include="Script\Rendering\GBufferToBackBuffer.h" />
     <ClInclude Include="Script\Rendering\Render.h" />
     <ClInclude Include="Script\Rendering\RTTManager.h" />
-    <ClInclude Include="Script\Runtime\ObjectBase.h" />
     <ClInclude Include="Script\UI\GUIManager.h" />
+    <ClInclude Include="Script\Utillity\DebugUtil.h" />
+    <ClInclude Include="Script\Utillity\RenderUtil.h" />
+    <ClInclude Include="Script\Utillity\StringUtil.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>

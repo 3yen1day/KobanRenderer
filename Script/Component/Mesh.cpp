@@ -65,9 +65,9 @@ namespace Koban {
 			//MVP行列を渡す
 			cb_default.mWVP = getMVPMatrix(cb_default.mW);
 			//ライトの位置を渡す
-			cb_default.vLightDir = Render::getLight()->getDirection();
+			cb_default.vLightDir = RENDER->getLight()->getDirection();
 			//視点位置を渡す
-			cb_default.vEye = D3DXVECTOR4(Render::getCamera()->getEyeDir(), 0);
+			cb_default.vEye = D3DXVECTOR4(RENDER->getCamera()->getEyeDir(), 0);
 			if (memcpy_s(pData_default.pData, sizeof(CONSTANT_BUFFER_DEFAULT), (void*)(&cb_default), sizeof(cb_default))) {
 				DebugUtil::error(L"memCopy時にエラー");
 			}
@@ -143,7 +143,8 @@ namespace Koban {
 	/// <returns></returns>
 	D3DXMATRIX Mesh::getMVPMatrix(const D3DXMATRIX& modelMat) {
 		//ワールド、カメラ、射影行列を渡す
-		D3DXMATRIX m = modelMat * Render::getCamera()->getViewMat() * Render::getCamera()->getProjMat();
+		auto camera = RENDER->getCamera();
+		D3DXMATRIX m = modelMat * camera->getViewMat() * camera->getProjMat();
 		D3DXMatrixTranspose(&m, &m); //GPUの行列計算方法とDirectXのそれが異なるため転置する
 
 		return m;

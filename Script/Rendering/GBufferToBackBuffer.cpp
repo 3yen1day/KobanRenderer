@@ -64,9 +64,9 @@ namespace Koban {
 		DEVICE_CONTEXT->VSSetShader(mpVertexShader, NULL, 0);
 		DEVICE_CONTEXT->PSSetShader(mpPixelShader, NULL, 0);
 		//テクスチャセット
-		auto col = Render::getRTTManager()->getRTTSRV(Koban::RTTManager::COLOR);
-		auto normal = Render::getRTTManager()->getRTTSRV(Koban::RTTManager::NORMAL);
-		auto pos = Render::getRTTManager()->getRTTSRV(Koban::RTTManager::POSITION);
+		auto col = RENDER->getRTTManager()->getRTTSRV(Koban::RTTManager::COLOR);
+		auto normal = RENDER->getRTTManager()->getRTTSRV(Koban::RTTManager::NORMAL);
+		auto pos = RENDER->getRTTManager()->getRTTSRV(Koban::RTTManager::POSITION);
 		DEVICE_CONTEXT->PSSetShaderResources(1, 1, &col);
 		DEVICE_CONTEXT->PSSetShaderResources(2, 1, &normal);
 		DEVICE_CONTEXT->PSSetShaderResources(3, 1, &pos);

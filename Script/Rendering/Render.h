@@ -1,4 +1,5 @@
 #pragma once
+#include "../Core/Module.h"
 
 namespace Koban {
 	class RTTManager;
@@ -9,65 +10,66 @@ namespace Koban {
 }
 
 namespace Koban {
-	class Render
+	/// <summary>
+	/// Renderモジュール
+	/// </summary>
+	class Render:Module
 	{
 	public:
 		Render(HWND* pHWnd);
 		~Render();
 
-		//void Awake(); //エントリーポイントで呼ぶ
-		//void start();
-		void update(); //毎フレ更新
-		void draw();
-		void destroy();
-		void createObjects();
+		void awake() override;
+		void update() override;
+		void draw() override;
+		void destroy() override;
 
-		HWND* mHwnd;
-
-		static ID3D11Device* getDevice()
+		ID3D11Device* getDevice()
 		{
 			return mpDevice;
 		}
 
-		static ID3D11DeviceContext* getDeviceContext()
+		ID3D11DeviceContext* getDeviceContext()
 		{
 			return mpDeviceContext;
 		}
 
-		static ID3D11RenderTargetView* getBackBuffer() {
+		ID3D11RenderTargetView* getBackBuffer() {
 			return mpBackBuffer_RTV;
 		}
 
-		static RTTManager* const getRTTManager() {
+		RTTManager* const getRTTManager() {
 			return mpRTTManager.get();
 		}
 
-		static Camera* getCamera()
+		Camera* getCamera()
 		{
 			return mpCamera.get();
 		}
 
-		static Light* getLight()
+		Light* getLight()
 		{
 			return mpLight.get();
 		}
 
 	private:
+		void createObjects();
+
 		//アプリに一つ必要
 		//unique_ptrを使うと解放時に例外
-		static ID3D11Device* mpDevice;
-		static ID3D11DeviceContext* mpDeviceContext;
-		static IDXGISwapChain* mpSwapChain;
-		static ID3D11RenderTargetView* mpBackBuffer_RTV;
+		ID3D11Device* mpDevice;
+		ID3D11DeviceContext* mpDeviceContext;
+		IDXGISwapChain* mpSwapChain;
+		ID3D11RenderTargetView* mpBackBuffer_RTV;
 
-		static std::unique_ptr<RTTManager> mpRTTManager;
-		static std::unique_ptr<GBufferToBackBuffer> mpGBufferToBackBuffer;
+		std::unique_ptr<RTTManager> mpRTTManager;
+		std::unique_ptr<GBufferToBackBuffer> mpGBufferToBackBuffer;
 		
 		/// <summary>
 		/// GameObjectにする
 		/// </summary>
-		static std::unique_ptr<Camera> mpCamera;
-		static std::unique_ptr<Light> mpLight;
+		std::unique_ptr<Camera> mpCamera;
+		std::unique_ptr<Light> mpLight;
 		std::unique_ptr<Mesh> mpMesh;
 	};
 }

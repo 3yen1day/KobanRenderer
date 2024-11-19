@@ -1,4 +1,5 @@
 #include "Main.h"
+#include "Rendering/Render.h"
 
 //グローバル変数
 Main* g_pMain = NULL;
@@ -30,22 +31,21 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, INT)
 
 
 void Main::Awake() {
-	mpRender.reset(new Koban::Render(&mHwnd));
-}
+	//初期化
+	mpGlobalAccess.reset(new Koban::GlobalAccess(&mHwnd));
 
+	//awake
+	RENDER->awake();
+}
 
 //メッセージループとアプリケーション処理の入り口
 void Main::Loop()
 {
-
-	//メッシュ作成　終わり
-
 	 // メッセージループ
 	MSG msg = { 0 };
 	ZeroMemory(&msg, sizeof(msg));
 	
 	// start
-	//mpRender->start();
 	while (msg.message != WM_QUIT)
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -66,17 +66,17 @@ void Main::Loop()
 
 void Main::update()
 {
-	mpRender->update();
+	RENDER->update();
 }
 
 void Main::draw()
 {
-	mpRender->draw();
+	RENDER->draw();
 }
 
 void Main::destroy()
 {
-	mpRender->destroy();
+	RENDER->destroy();
 }
 #pragma endregion メイン処理
 
