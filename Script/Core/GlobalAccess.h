@@ -1,6 +1,6 @@
 #pragma once
 namespace Koban {
-	class Render;
+	class Rendering;
 	class Scene;
 }
 
@@ -9,7 +9,7 @@ namespace Koban {
 	public:
 		GlobalAccess(HWND* pHWnd);
 
-		static Render* const getRender() {
+		static Rendering* const getRender() {
 			return mpRender.get();
 		}
 
@@ -18,7 +18,8 @@ namespace Koban {
 		}
 
 	private:
-		static std::unique_ptr<Render> mpRender;
+		//Šeƒ‚ƒWƒ…[ƒ‹‚ÌManager‚ÍGA
+		static std::unique_ptr<Rendering> mpRender;
 		static std::unique_ptr<Scene> mpScene;
 	};
 }

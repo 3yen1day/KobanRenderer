@@ -13,13 +13,13 @@ namespace Koban {
 	/// <summary>
 	/// Renderモジュール
 	/// </summary>
-	class Render:Module
+	class Rendering:ModuleManager
 	{
 	public:
-		Render(HWND* pHWnd);
-		~Render();
+		Rendering(HWND* pHWnd);
+		~Rendering();
 
-		void awake() override;
+		void start() override;
 		void update() override;
 		void draw() override;
 		void destroy() override;
@@ -42,19 +42,17 @@ namespace Koban {
 			return mpRTTManager.get();
 		}
 
-		Camera* getCamera()
+		Camera* const getCamera()
 		{
-			return mpCamera.get();
+			return mpMainCamera;
 		}
 
-		Light* getLight()
+		Light* const getLight()
 		{
-			return mpLight.get();
+			return mpLight;
 		}
 
 	private:
-		void createObjects();
-
 		//アプリに一つ必要
 		//unique_ptrを使うと解放時に例外
 		ID3D11Device* mpDevice;
@@ -68,8 +66,8 @@ namespace Koban {
 		/// <summary>
 		/// GameObjectにする
 		/// </summary>
-		std::unique_ptr<Camera> mpCamera;
-		std::unique_ptr<Light> mpLight;
-		std::unique_ptr<Mesh> mpMesh;
+		Camera* mpMainCamera;
+		Light* mpLight;
+		Mesh* mpMesh;
 	};
 }

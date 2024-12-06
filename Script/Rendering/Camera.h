@@ -1,14 +1,18 @@
 #pragma once
+#include "../Core/Component.h"
 
 namespace Koban {
 
-	class Camera
+	class Camera : public Component
 	{
 	public:
 		Camera();
 		~Camera();
 
-		void update();
+		void start() override {};
+		void update() override;
+		void draw() override {};
+		void destroy() override {};
 
 		/// <summary>
 		/// ˆÊ’uÀ•Wæ“¾

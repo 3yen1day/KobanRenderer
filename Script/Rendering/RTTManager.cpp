@@ -1,6 +1,6 @@
 #include "RTTManager.h"
-#include "Render.h"
-#include "../Component/Camera.h"
+#include "Rendering.h"
+#include "Camera.h"
 
 namespace Koban {
 	RTTManager::RTTManager() :
@@ -14,6 +14,9 @@ namespace Koban {
 		mpPosition_RTV(nullptr),
 		mpPosition_SRV(nullptr)
 	{
+	}
+
+	void RTTManager::start() {
 		D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc;
 		D3D11_RENDER_TARGET_VIEW_DESC RTVDesc;
 		D3D11_TEXTURE2D_DESC texDesc;
@@ -21,9 +24,6 @@ namespace Koban {
 		ZeroMemory(&SRVDesc, sizeof(SRVDesc));
 		ZeroMemory(&RTVDesc, sizeof(RTVDesc));
 
-		// ----------------------------------------
-		// RTT
-		// ----------------------------------------
 		//デプスステンシルビュー
 		texDesc.Width = WINDOW_WIDTH;
 		texDesc.Height = WINDOW_HEIGHT;

@@ -19,16 +19,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Script\Component\Camera.cpp" />
-    <ClCompile Include="Script\Component\Mesh.cpp" />
     <ClCompile Include="Script\Core\Component.cpp" />
     <ClCompile Include="Script\Core\GameObject.cpp" />
     <ClCompile Include="Script\Core\GlobalAccess.cpp" />
     <ClCompile Include="Script\Core\Scene.cpp" />
+    <ClCompile Include="Script\Core\SceneInitializer.cpp" />
     <ClCompile Include="Script\Main.cpp" />
+    <ClCompile Include="Script\Rendering\Camera.cpp" />
     <ClCompile Include="Script\Rendering\FbxLoader.cpp" />
     <ClCompile Include="Script\Rendering\GBufferToBackBuffer.cpp" />
-    <ClCompile Include="Script\Rendering\Render.cpp" />
+    <ClCompile Include="Script\Rendering\Mesh.cpp" />
+    <ClCompile Include="Script\Rendering\Rendering.cpp" />
     <ClCompile Include="Script\Rendering\RTTManager.cpp" />
     <ClCompile Include="Script\UI\GUIManager.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -37,19 +38,20 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Script\Component\Camera.h" />
-    <ClInclude Include="Script\Component\Light.h" />
-    <ClInclude Include="Script\Component\Mesh.h" />
     <ClInclude Include="Script\Core\Component.h" />
     <ClInclude Include="Script\Core\GameObject.h" />
     <ClInclude Include="Script\Core\GlobalAccess.h" />
     <ClInclude Include="Script\Core\Module.h" />
     <ClInclude Include="Script\Core\Scene.h" />
+    <ClInclude Include="Script\Core\SceneInitializer.h" />
     <ClInclude Include="Script\Include\Macro.h" />
     <ClInclude Include="Script\Main.h" />
+    <ClInclude Include="Script\Rendering\Camera.h" />
     <ClInclude Include="Script\Rendering\FbxLoader.h" />
     <ClInclude Include="Script\Rendering\GBufferToBackBuffer.h" />
-    <ClInclude Include="Script\Rendering\Render.h" />
+    <ClInclude Include="Script\Rendering\Light.h" />
+    <ClInclude Include="Script\Rendering\Mesh.h" />
+    <ClInclude Include="Script\Rendering\Rendering.h" />
     <ClInclude Include="Script\Rendering\RTTManager.h" />
     <ClInclude Include="Script\UI\GUIManager.h" />
     <ClInclude Include="Script\Utillity\DebugUtil.h" />

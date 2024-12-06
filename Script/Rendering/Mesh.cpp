@@ -1,11 +1,14 @@
 #include "Mesh.h"
-#include "../Rendering/Render.h"
+#include "../Rendering/Rendering.h"
 #include "Camera.h"
 #include "Light.h"
 
 namespace Koban {
 	Mesh::Mesh()
 	{
+	}
+
+	void Mesh::start() {
 		//shader初期化
 		//頂点インプットレイアウトを定義	
 		vector<D3D11_INPUT_ELEMENT_DESC> layout =
@@ -14,7 +17,6 @@ namespace Koban {
 			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		};
-
 
 		ID3DBlob* compiledShader = NULL;
 		RenderUtil::createShader(

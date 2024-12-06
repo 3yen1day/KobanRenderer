@@ -1,52 +1,31 @@
 #include "Scene.h"
+#include "GameObject.h"
+#include "SceneInitializer.h"
 
 namespace Koban {
-#pragma region GameObject
-	UINT16 Scene::createGameObject(const string& name) {
-		mGameObjectMap.emplace(_GameObjectHashMax, std::make_unique<GameObject>(_GameObjectHashMax, name));
-		UINT16 retVal = _GameObjectHashMax;
-		_GameObjectHashMax++;
-		return retVal;
+#pragma region ModuleMethod
+	void Scene::start() {
+		SceneInitializer::initializeScene();
 	}
 
-	GameObject* const Scene::findGameObject(UINT16 key) {
-		auto val = mGameObjectMap.find(key);
-		if (val == mGameObjectMap.end())
-			return nullptr;
-		return val->second.get();
-	}
-
-	void Scene::destroyGameObject(UINT16 key) {
-		mGameObjectMap.erase(key);
+	void Scene::destroy() {
+		for (auto i = mGameObjectMap.begin(); i != mGameObjectMap.end(); i++) {
+			delete i->second;
+		}
 	}
 #pragma endregion
 
-#pragma region Component
-	template<DerivationOfComponent T>
-	T* Scene::addComponent() {
-		auto key = typeid(T);
-		std::vector<unique_ptr<Component>> vec = mComponentMap.find(key);
-		if (vec == mComponentMap.end()) {
-			//コンポーネントがシーンに存在しないので、新しく追加
-			mComponentMap[key] = std::vector<unique_ptr<Component>>();
-		}
-		mComponentMap[key].push_back(std::make_unique<T>)();
+#pragma region GameObject
+	GameObject* const Scene::createGameObject(const string& name) {
+		GameObject* pGo = new GameObject(_GameObjectHashMax, name);
+		mGameObjectMap.emplace(_GameObjectHashMax, pGo);
+		UINT16 retVal = _GameObjectHashMax;
+		_GameObjectHashMax++;
+		return pGo;
 	}
 
-	template<DerivationOfComponent T>
-	void Scene::removeComponent(T* instance) {
-		auto key = typeid(T);
-		std::vector<unique_ptr<Component>> vec = mComponentMap.find(key);
-		if (vec != mComponentMap.end()) {
-			for (auto it = vec.begin(); it != vec.end(); it++) {
-				//iteraterはポインタのように利用できる
-				//*演算子で要素にアクセス可能
-				if ((*it).get() == instance) {
-					vec.erase(it);
-					return;
-				}
-			}
-		}
+	void Scene::destroyGameObject(GameObject& go) {
+		mGameObjectMap.erase(go.getID());
 	}
 #pragma endregion
 }

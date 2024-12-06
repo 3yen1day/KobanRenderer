@@ -1,9 +1,10 @@
-#include "Render.h"
+#include "Rendering.h"
 #include "RTTManager.h"
-#include "../Component/Camera.h"
-#include "../Component/Light.h"
-#include "../Component/Mesh.h"
+#include "Camera.h"
+#include "Light.h"
+#include "Mesh.h"
 #include "GBufferToBackBuffer.h"
+#include "../Core/Scene.h"
 
 //関数プロトタイプの宣言
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -13,7 +14,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 /// </summary>
 /// <param name="pHWnd">ウィンドウのハンドラ</param>
 namespace Koban {
-	Render::Render(HWND* pHWnd)
+	Rendering::Rendering(HWND* pHWnd)
 	{
 		// デバイスとスワップチェーンの作成
 		DXGI_SWAP_CHAIN_DESC sd;
@@ -71,29 +72,46 @@ namespace Koban {
 		mpSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer_Tex);
 		mpDevice->CreateRenderTargetView(pBackBuffer_Tex, NULL, &mpBackBuffer_RTV);
 		SAFE_RELEASE(pBackBuffer_Tex);
-	}
 
-	Render::~Render() {};// = default; // デストラクタを非インライン化
-
-	void Render::awake() {
 		//RTTを管理
-		mpRTTManager.reset(new RTTManager());
-		//Cameraの作成
-		mpCamera.reset(new Camera());
-		//Lightの作成
-		mpLight.reset(new Light());
-		//3Dモデル描画
-		mpMesh.reset(new Mesh());
+		mpRTTManager = std::make_unique<RTTManager>();
 		//GBufferを元に描画
-		mpGBufferToBackBuffer.reset(new GBufferToBackBuffer());
+		mpGBufferToBackBuffer = std::make_unique<GBufferToBackBuffer>();
 	}
 
-	void Render::update() {
-		mpCamera->update();
+	Rendering::~Rendering() {};// = default; // デストラクタを非インライン化
+
+	void Rendering::start()
+	{
+		mpRTTManager->start();
+		mpGBufferToBackBuffer->start();
+
+		SCENE->doStart<Mesh>();
+	}
+
+	void Rendering::update() {
+		//コンポーネントの更新
+		SCENE->doUpdate<Camera>();
+		std::vector<Camera*> cameras = SCENE->findComponents<Camera>();
+		if (!cameras.empty()) {
+			mpMainCamera = cameras[0];
+		}
+
+		std::vector<Light*> lights = SCENE->findComponents<Light>();
+		if (!lights.empty()) {
+			mpLight = lights[0];
+		}
+
+		SCENE->doUpdate<Mesh>();
+		std::vector<Mesh*> meshes = SCENE->findComponents<Mesh>();
+		if (!meshes.empty()) {
+			mpMesh = meshes[0];
+		}
+
 		mpRTTManager->update();
 	}
 
-	void Render::draw() {
+	void Rendering::draw() {
 		//GBufferへの描画
 		mpMesh->draw();
 
@@ -109,7 +127,7 @@ namespace Koban {
 		mpSwapChain->Present(0, 0);
 	}
 
-	void Render::destroy()
+	void Rendering::destroy()
 	{
 		mpRTTManager->destroy();
 		//mpRender3DModel->

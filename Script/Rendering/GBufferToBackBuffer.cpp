@@ -1,10 +1,13 @@
 #include "GBufferToBackBuffer.h"
-#include "Render.h"
+#include "Rendering.h"
 #include "RTTManager.h"
 #include "FbxLoader.h"
 
 namespace Koban {
 	GBufferToBackBuffer::GBufferToBackBuffer() {
+	}
+	
+	void GBufferToBackBuffer::start() {
 		// ----------------------------------------
 		// Shader
 		// ----------------------------------------
@@ -53,10 +56,6 @@ namespace Koban {
 		{
 			return;
 		}
-	}
-	
-	void GBufferToBackBuffer::update() {
-
 	}
 
 	void GBufferToBackBuffer::draw() {

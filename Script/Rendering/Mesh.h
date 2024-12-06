@@ -1,13 +1,18 @@
 #pragma once
 #include "../Rendering/FbxLoader.h"
+#include "../Core/Component.h"
+
 namespace Koban {
-	class Mesh
+	class Mesh : public Component
 	{
 	public:
 		Mesh();
 		~Mesh() {};
 
-		void draw();
+		void start() override ;
+		void update() override {};
+		void draw() override ;
+		void destroy() override {};
 
 		//Simpleシェーダー用のコンスタントバッファーのアプリ側構造体 もちろんシェーダー内のコンスタントバッファーと一致している必要あり
 		struct CONSTANT_BUFFER_DEFAULT

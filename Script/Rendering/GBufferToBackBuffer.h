@@ -9,7 +9,7 @@ namespace Koban {
 	public:
 		GBufferToBackBuffer();
 		~GBufferToBackBuffer() {};
-		void update();
+		void start();
 		void draw();
 		void destroy();
 

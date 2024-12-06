@@ -1,7 +1,8 @@
 #pragma once
+#include "../Core/Component.h"
 
 namespace Koban {
-	class Light
+	class Light : public Component
 	{
 	public:
 		Light():
@@ -9,6 +10,11 @@ namespace Koban {
 			mPosition(*new D3DXVECTOR4(2, 2, 0, 1))
 		{};
 		~Light() {};
+
+		void start() override {};
+		void update() override {};
+		void draw() override {};
+		void destroy() override {};
 
 		//Direction‚ðŽæ“¾
 		D3DXVECTOR4 getDirection() { return mDirection; }

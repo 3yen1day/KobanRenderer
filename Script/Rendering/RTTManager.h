@@ -16,8 +16,9 @@ namespace Koban {
 		RTTManager();
 		~RTTManager() {};
 
-		void destroy();
+		void start();
 		void update();
+		void destroy();
 
 		/// <summary>
 		/// RTT‚ÌSRV‚ðŽæ“¾

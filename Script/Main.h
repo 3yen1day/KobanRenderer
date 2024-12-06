@@ -5,6 +5,7 @@ public:
 	LRESULT MsgProc(HWND, UINT, WPARAM, LPARAM);
 	void Awake();
 	void Loop();
+	void start();
 	void update();
 	void draw();
 	void destroy();
