@@ -1,11 +1,17 @@
 #include "Main.h"
+#include "Core/GlobalAccess.h"
 #include "Rendering/Rendering.h"
 #include "Core/Scene.h"
+#include "GUI/GUI.h"
+
+#include "../../lib/imgui/imgui.h"
 
 //グローバル変数
 Main* g_pMain = NULL;
 //関数プロトタイプの宣言
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 #pragma region メイン処理
 //アプリケーションのエントリー関数 
@@ -67,22 +73,26 @@ void Main::start()
 {
 	SCENE->start();
 	RENDER->start();
+	GA::getGUI()->start();
 }
 
 void Main::update()
 {
 	RENDER->update();
+	GA::getGUI()->update();
 }
 
 void Main::draw()
 {
 	RENDER->draw();
+	GA::getGUI()->draw();
 }
 
 void Main::destroy()
 {
 	SCENE->destroy();
 	RENDER->destroy();
+	GA::getGUI()->destroy();
 }
 #pragma endregion メイン処理
 
@@ -91,6 +101,10 @@ void Main::destroy()
 //OSから見たウィンドウプロシージャー（実際の処理はMAINクラスのプロシージャーで処理）
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	//imguiのウィンドウプロシージャ
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
+		return true;
+
 	return g_pMain->MsgProc(hWnd, uMsg, wParam, lParam);
 }
 

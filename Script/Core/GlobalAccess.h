@@ -2,6 +2,7 @@
 namespace Koban {
 	class Rendering;
 	class Scene;
+	class GUI;
 }
 
 namespace Koban {
@@ -17,9 +18,14 @@ namespace Koban {
 			return mpScene.get();
 		}
 
+		static GUI* const getGUI() {
+			return mpGUI.get();
+		}
+
 	private:
 		//Šeƒ‚ƒWƒ…[ƒ‹‚ÌManager‚ÍGA
 		static std::unique_ptr<Rendering> mpRender;
 		static std::unique_ptr<Scene> mpScene;
+		static std::unique_ptr<GUI> mpGUI;
 	};
 }

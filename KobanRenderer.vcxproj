@@ -19,11 +19,20 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="lib\imgui\imgui.cpp" />
+    <ClCompile Include="lib\imgui\imgui_demo.cpp" />
+    <ClCompile Include="lib\imgui\imgui_draw.cpp" />
+    <ClCompile Include="lib\imgui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="lib\imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="lib\imgui\imgui_stdlib.cpp" />
+    <ClCompile Include="lib\imgui\imgui_tables.cpp" />
+    <ClCompile Include="lib\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Script\Core\Component.cpp" />
     <ClCompile Include="Script\Core\GameObject.cpp" />
     <ClCompile Include="Script\Core\GlobalAccess.cpp" />
     <ClCompile Include="Script\Core\Scene.cpp" />
     <ClCompile Include="Script\Core\SceneInitializer.cpp" />
+    <ClCompile Include="Script\GUI\GUI.cpp" />
     <ClCompile Include="Script\Main.cpp" />
     <ClCompile Include="Script\Rendering\Camera.cpp" />
     <ClCompile Include="Script\Rendering\FbxLoader.cpp" />
@@ -31,19 +40,28 @@
     <ClCompile Include="Script\Rendering\Mesh.cpp" />
     <ClCompile Include="Script\Rendering\Rendering.cpp" />
     <ClCompile Include="Script\Rendering\RTTManager.cpp" />
-    <ClCompile Include="Script\UI\GUIManager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="lib\imgui\imconfig.h" />
+    <ClInclude Include="lib\imgui\imgui.h" />
+    <ClInclude Include="lib\imgui\imgui_impl_dx11.h" />
+    <ClInclude Include="lib\imgui\imgui_impl_win32.h" />
+    <ClInclude Include="lib\imgui\imgui_internal.h" />
+    <ClInclude Include="lib\imgui\imgui_stdlib.h" />
+    <ClInclude Include="lib\imgui\imstb_rectpack.h" />
+    <ClInclude Include="lib\imgui\imstb_textedit.h" />
+    <ClInclude Include="lib\imgui\imstb_truetype.h" />
     <ClInclude Include="Script\Core\Component.h" />
     <ClInclude Include="Script\Core\GameObject.h" />
     <ClInclude Include="Script\Core\GlobalAccess.h" />
     <ClInclude Include="Script\Core\Module.h" />
     <ClInclude Include="Script\Core\Scene.h" />
     <ClInclude Include="Script\Core\SceneInitializer.h" />
+    <ClInclude Include="Script\GUI\GUI.h" />
     <ClInclude Include="Script\Include\Macro.h" />
     <ClInclude Include="Script\Main.h" />
     <ClInclude Include="Script\Rendering\Camera.h" />
@@ -53,7 +71,6 @@
     <ClInclude Include="Script\Rendering\Mesh.h" />
     <ClInclude Include="Script\Rendering\Rendering.h" />
     <ClInclude Include="Script\Rendering\RTTManager.h" />
-    <ClInclude Include="Script\UI\GUIManager.h" />
     <ClInclude Include="Script\Utillity\DebugUtil.h" />
     <ClInclude Include="Script\Utillity\RenderUtil.h" />
     <ClInclude Include="Script\Utillity\StringUtil.h" />
@@ -62,6 +79,12 @@
   <ItemGroup>
     <FxCompile Include="Shader\Deferred.hlsl" />
     <FxCompile Include="Shader\Simple.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lib\imgui\imgui.natstepfilter" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="lib\imgui\imgui.natvis" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D79A3495-6C0F-46E6-BCD7-4465C6DE11C8}</ProjectGuid>
