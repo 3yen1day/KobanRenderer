@@ -124,7 +124,7 @@ namespace Koban {
 		D3DXQUATERNION quat;
 		D3DXVECTOR3 vec3(0, 1, 0);
 		static float angle = 0;
-		static float speed = 0.00005;
+		static float speed = 0.01;
 		angle += speed;
 		angle = std::fmod(angle, 6.28f);
 		D3DXQuaternionRotationAxis(&quat, &vec3, angle);

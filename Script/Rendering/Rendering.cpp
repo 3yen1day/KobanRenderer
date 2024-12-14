@@ -6,6 +6,7 @@
 #include "GBufferToBackBuffer.h"
 #include "../Core/Scene.h"
 #include <d3d11.h>
+#include <tchar.h>
 
 //関数プロトタイプの宣言
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -20,7 +21,7 @@ namespace Koban {
 		// デバイスとスワップチェーンの作成
 		DXGI_SWAP_CHAIN_DESC sd;
 		ZeroMemory(&sd, sizeof(sd));
-		sd.BufferCount = 2;
+		sd.BufferCount = 1;
 		sd.BufferDesc.Width = WINDOW_WIDTH;
 		sd.BufferDesc.Height = WINDOW_HEIGHT;
 		sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -31,17 +32,15 @@ namespace Koban {
 		sd.SampleDesc.Count = 1;
 		sd.SampleDesc.Quality = 0;
 		sd.Windowed = TRUE;
-		sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
-		sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
-		const D3D_FEATURE_LEVEL featureLevelArray[2] = { D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_0, };
+		D3D_FEATURE_LEVEL pFeatureLevels = D3D_FEATURE_LEVEL_11_0;
 		D3D_FEATURE_LEVEL* pFeatureLevel = NULL;
 
 		mpSwapChain = nullptr;
 		mpDevice = nullptr;
 		mpDeviceContext = nullptr;
 		if (FAILED(D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL,
-			0, featureLevelArray, 2, D3D11_SDK_VERSION, &sd, &mpSwapChain, &mpDevice,
+			0, &pFeatureLevels, 1, D3D11_SDK_VERSION, &sd, &mpSwapChain, &mpDevice,
 			pFeatureLevel, &mpDeviceContext)))
 		{
 			//なんか例外
@@ -68,13 +67,9 @@ namespace Koban {
 		mpDeviceContext->RSSetState(pIr);
 		SAFE_RELEASE(pIr);
 
-		//バックバッファ
-		//バックバッファーテクスチャーを取得（既にあるので作成ではない）
+		//バックバッファの作成
 		mpBackBuffer_RTV = nullptr;
-		ID3D11Texture2D* pBackBuffer_Tex;
-		mpSwapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer_Tex));
-		mpDevice->CreateRenderTargetView(pBackBuffer_Tex, NULL, &mpBackBuffer_RTV);
-		SAFE_RELEASE(pBackBuffer_Tex);
+		createBackBuffer_RTV();
 
 		//RTTを管理
 		mpRTTManager = std::make_unique<RTTManager>();
@@ -121,7 +116,6 @@ namespace Koban {
 		//レンダーターゲットを通常に戻す
 		DEVICE_CONTEXT->OMSetRenderTargets(1, &mpBackBuffer_RTV, mpRTTManager->getDepthStensilSRV());
 		//クリア
-		float ClearColor[4] = { 0.97, 0.71, 0, 1 };
 		DEVICE_CONTEXT->ClearRenderTargetView(mpBackBuffer_RTV, ClearColor);
 
 		//GBufferから描画
@@ -139,5 +133,19 @@ namespace Koban {
 		SAFE_RELEASE(mpDevice);
 		SAFE_RELEASE(mpDeviceContext);
 		SAFE_RELEASE(mpBackBuffer_RTV);
+	}
+
+	void Rendering::resizeWindow(UINT width, UINT height) {
+		SAFE_RELEASE(mpBackBuffer_RTV);
+		mpSwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
+		createBackBuffer_RTV();
+	}
+
+	void Rendering::createBackBuffer_RTV() {
+		//バックバッファーテクスチャーを取得（既にあるので作成ではない）
+		ID3D11Texture2D* pBackBuffer_Tex;
+		mpSwapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer_Tex));
+		mpDevice->CreateRenderTargetView(pBackBuffer_Tex, NULL, &mpBackBuffer_RTV);
+		SAFE_RELEASE(pBackBuffer_Tex);
 	}
 }
