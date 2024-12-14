@@ -42,6 +42,10 @@ namespace Koban {
 			return mpBackBuffer_RTV;
 		}
 
+		IDXGISwapChain* getSwapChain() {
+			return mpSwapChain;
+		}
+
 		RTTManager* const getRTTManager() {
 			return mpRTTManager.get();
 		}
