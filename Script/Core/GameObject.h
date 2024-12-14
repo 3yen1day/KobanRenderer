@@ -37,39 +37,45 @@ namespace Koban {
 		};
 
 #pragma region プロパティ
-		bool getIsUpdate() {
+		bool& getIsUpdate() {
 			return mIsUpdate;
 		}
 
-		bool setIsUpdate(bool isUpdate) {
+		void setIsUpdate(bool isUpdate) {
 			for (int i = 0, length = mComponents.size(); i < length; i++)
 			{
 				auto cmp_p = mComponents[i];
 				if (cmp_p != nullptr)
 					cmp_p->setIsUpdate(isUpdate);
 			}
+			mIsUpdate = isUpdate;
 		}
 
-		bool getIsDraw() {
+		bool& getIsDraw() {
 			return mIsDraw;
 		}
 
-		bool setIsDraw(bool isDraw) {
+		void setIsDraw(bool isDraw) {
 			for (int i = 0, length = mComponents.size(); i < length; i++)
 			{
 				auto cmp_p = mComponents[i];
 				if (cmp_p != nullptr)
 					cmp_p->setIsDraw(isDraw);
 			}
+			mIsDraw = isDraw;
 		}
 
 		UINT16 getID(){
 			return mID;
 		}
+
+		string getName() {
+			return mName;
+		}
 #pragma endregion
 
 	private:
-		bool mIsUpdate = false;
+		bool mIsUpdate = true;
 		bool mIsDraw = true;
 		UINT16 mID = 0;
 		string mName = "GameObject";

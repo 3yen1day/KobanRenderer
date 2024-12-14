@@ -28,4 +28,15 @@ namespace Koban {
 		mGameObjectMap.erase(go.getID());
 	}
 #pragma endregion
+
+#pragma region UI—p
+	std::vector<GameObject*> Scene::getAllGameObjects() {
+		std::vector<GameObject*> result;
+		for (auto it = mGameObjectMap.begin(); it != mGameObjectMap.end(); it++)
+		{
+			result.push_back(it->second);
+		}
+		return result;
+	}
+#pragma endregion
 }

@@ -12,24 +12,24 @@ namespace Koban {
 		virtual void draw() = 0;
 		virtual void destroy() = 0;
 
-		bool getIsUpdate() {
+		bool& getIsUpdate() {
 			return mIsUpdate;
 		}
 
-		bool setIsUpdate(bool isUpdate) {
+		void setIsUpdate(bool isUpdate) {
 			mIsUpdate = isUpdate;
 		}
 
-		bool getIsDraw() {
+		bool& getIsDraw() {
 			return mIsDraw;
 		}
 
-		bool setIsDraw(bool isDraw) {
+		void setIsDraw(bool isDraw) {
 			mIsDraw = isDraw;
 		}
 
 	protected:
-		bool mIsUpdate = false;
+		bool mIsUpdate = true;
 		bool mIsDraw = true;
 		UINT16 mGameObjectID = 0;
 	};

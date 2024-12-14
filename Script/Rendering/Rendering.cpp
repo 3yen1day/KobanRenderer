@@ -111,7 +111,7 @@ namespace Koban {
 
 	void Rendering::draw() {
 		//GBufferへの描画
-		mpMesh->draw();
+		SCENE->doDraw<Mesh>();
 
 		//レンダーターゲットを通常に戻す
 		DEVICE_CONTEXT->OMSetRenderTargets(1, &mpBackBuffer_RTV, mpRTTManager->getDepthStensilSRV());

@@ -18,7 +18,7 @@ namespace Koban {
         void draw() override {};
         void destroy() override;
 
-#pragma region Call Component Method
+#pragma region Component用関数呼び出し
         template<DerivationOfComponent T>
         void doStart() {
             std::vector<T*> cmps = findComponents<T>();
@@ -37,7 +37,22 @@ namespace Koban {
                 return;
 
             for (T* const cmp : cmps) {
-                cmp->update();
+                if (cmp->getIsUpdate()) {
+                    cmp->update();
+                }
+            }
+        };
+
+        template<DerivationOfComponent T>
+        void doDraw() {
+            std::vector<T*> cmps = findComponents<T>();
+            if (cmps.empty())
+                return;
+
+            for (T* const cmp : cmps) {
+                if (cmp->getIsDraw()) {
+                    cmp->draw();
+                }
             }
         };
 
@@ -61,7 +76,7 @@ namespace Koban {
         void destroyGameObject(GameObject& go);
 #pragma endregion
 
-#pragma region コンポーネント
+#pragma region Component
         //コンポーネントをシーンに追加。
         //GameObjectからアクセスする（friendにするとincludeで循環参照が起きる）。
         template<DerivationOfComponent T>
@@ -113,6 +128,9 @@ namespace Koban {
         };
 #pragma endregion
 
+#pragma region UI用
+        std::vector<GameObject*> getAllGameObjects();
+#pragma endregion
 	private:
 		// 型ごとのvectorを保持するコンテナ
 		std::unordered_map<std::type_index , std::vector<unique_ptr<Component>>> mComponentMap;

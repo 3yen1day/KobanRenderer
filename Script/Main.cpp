@@ -156,12 +156,7 @@ void Main::destroy()
 {
 	SCENE->destroy();
 	RENDER->destroy();
-	//GA::getGUI()->destroy();
-
-	// Cleanup
-	ImGui_ImplDX11_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
+	GA::getGUI()->destroy();
 
 	DestroyWindow(mHwnd);
 	//::UnregisterClassW(wc.lpszClassName, wc.hInstance);
