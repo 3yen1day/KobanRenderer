@@ -20,7 +20,7 @@ namespace Koban {
 	class Rendering:ModuleManager
 	{
 	public:
-		Rendering(HWND* pHWnd);
+		Rendering(HWND& pHWnd);
 		~Rendering();
 
 		void start() override;

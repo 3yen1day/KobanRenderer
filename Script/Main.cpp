@@ -130,7 +130,7 @@ LRESULT Main::MsgProc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 
 void Main::awake() {
 	//èâä˙âª
-	mpGlobalAccess = std::make_unique<Koban::GlobalAccess>(&mHwnd);
+	mpGlobalAccess = std::make_unique<Koban::GlobalAccess>(mHwnd);
 }
 
 void Main::start()
@@ -149,6 +149,7 @@ void Main::draw()
 {
 	RENDER->draw();
 	GA::getGUI()->draw();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 	HRESULT hr = RENDER->getSwapChain()->Present(1, 0); // Present with vsync
 }
 

@@ -8,7 +8,7 @@ namespace Koban {
 namespace Koban {
 	class GlobalAccess {
 	public:
-		GlobalAccess(HWND* pHWnd);
+		GlobalAccess(HWND& hwnd);
 
 		static Rendering* const getRender() {
 			return mpRender.get();

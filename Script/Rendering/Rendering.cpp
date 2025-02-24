@@ -16,7 +16,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 /// </summary>
 /// <param name="pHWnd">ウィンドウのハンドラ</param>
 namespace Koban {
-	Rendering::Rendering(HWND* pHWnd)
+	Rendering::Rendering(HWND& hwnd)
 	{
 		// デバイスとスワップチェーンの作成
 		DXGI_SWAP_CHAIN_DESC sd;
@@ -28,7 +28,7 @@ namespace Koban {
 		sd.BufferDesc.RefreshRate.Numerator = 60;
 		sd.BufferDesc.RefreshRate.Denominator = 1;
 		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		sd.OutputWindow = *pHWnd;
+		sd.OutputWindow = hwnd;
 		sd.SampleDesc.Count = 1;
 		sd.SampleDesc.Quality = 0;
 		sd.Windowed = TRUE;
