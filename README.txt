@@ -1,0 +1,1 @@
+FBX SDK 2020.3.7をインストールし、インストール先のフォルダ（例："C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7"）をFBXSDK_DIRとして環境変数に追加すること
