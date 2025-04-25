@@ -1,5 +1,6 @@
 #pragma once
 #include "../Core/Module.h"
+#include "Hierarchy.h"
 
 namespace Koban {
 	/// <summary>
@@ -17,5 +18,6 @@ namespace Koban {
 		void destroy() override;
 		
 	private:
+		Hierarchy* mHierarchy;
 	};
 }

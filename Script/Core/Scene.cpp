@@ -1,6 +1,7 @@
 #include "Scene.h"
 #include "GameObject.h"
 #include "SceneInitializer.h"
+#include "Transform.h"
 
 namespace Koban {
 #pragma region ModuleMethod
@@ -21,16 +22,16 @@ namespace Koban {
 		mGameObjectMap.emplace(_GameObjectHashMax, pGo);
 		UINT16 retVal = _GameObjectHashMax;
 		_GameObjectHashMax++;
+
+		pGo->createComponent<Transform>();
 		return pGo;
 	}
 
 	void Scene::destroyGameObject(GameObject& go) {
 		mGameObjectMap.erase(go.getID());
 	}
-#pragma endregion
 
-#pragma region UI—p
-	std::vector<GameObject*> Scene::getAllGameObjects() {
+	const std::vector<GameObject*> Scene::getAllGameObjects() {
 		std::vector<GameObject*> result;
 		for (auto it = mGameObjectMap.begin(); it != mGameObjectMap.end(); it++)
 		{

@@ -74,6 +74,8 @@ namespace Koban {
 
         //GameObjectを破棄
         void destroyGameObject(GameObject& go);
+
+        const std::vector<GameObject*> getAllGameObjects();
 #pragma endregion
 
 #pragma region Component
@@ -128,9 +130,6 @@ namespace Koban {
         };
 #pragma endregion
 
-#pragma region UI用
-        std::vector<GameObject*> getAllGameObjects();
-#pragma endregion
 	private:
 		// 型ごとのvectorを保持するコンテナ
 		std::unordered_map<std::type_index , std::vector<unique_ptr<Component>>> mComponentMap;

@@ -72,6 +72,17 @@ namespace Koban {
 		string getName() {
 			return mName;
 		}
+
+		template<DerivationOfComponent T>
+		T* const getComponent() {
+			for (int i = 0, length = mComponents.size(); i < length; i++)
+			{
+				T* cmp_p = dynamic_cast<T*>(mComponents[i]);
+				if (cmp_p != nullptr)
+					return cmp_p;
+			}
+			return nullptr;
+		}
 #pragma endregion
 
 	private:

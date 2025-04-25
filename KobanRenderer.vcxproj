@@ -33,6 +33,7 @@
     <ClCompile Include="Script\Core\Scene.cpp" />
     <ClCompile Include="Script\Core\SceneInitializer.cpp" />
     <ClCompile Include="Script\GUI\GUI.cpp" />
+    <ClCompile Include="Script\GUI\Hierarchy.cpp" />
     <ClCompile Include="Script\Main.cpp" />
     <ClCompile Include="Script\Rendering\Camera.cpp" />
     <ClCompile Include="Script\Rendering\FbxLoader.cpp" />
@@ -61,7 +62,9 @@
     <ClInclude Include="Script\Core\Module.h" />
     <ClInclude Include="Script\Core\Scene.h" />
     <ClInclude Include="Script\Core\SceneInitializer.h" />
+    <ClInclude Include="Script\Core\Transform.h" />
     <ClInclude Include="Script\GUI\GUI.h" />
+    <ClInclude Include="Script\GUI\Hierarchy.h" />
     <ClInclude Include="Script\Include\Macro.h" />
     <ClInclude Include="Script\Main.h" />
     <ClInclude Include="Script\Rendering\Camera.h" />

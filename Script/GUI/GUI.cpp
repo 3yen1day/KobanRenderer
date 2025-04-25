@@ -4,8 +4,11 @@
 #include "../../lib/imgui/imgui_impl_dx11.h"
 #include "../Rendering/Rendering.h"
 
+
 namespace Koban {
 	GUI::GUI(HWND& hwnd){
+		mHierarchy = new Hierarchy();
+
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
@@ -28,9 +31,9 @@ namespace Koban {
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
-		ImGui::Begin("Hello, world!");
-		ImGui::Text("This is some useful text.");
-		ImGui::End();
+
+		//ƒV[ƒ“‚ÌGameObject‚Ì•\¦
+		mHierarchy->draw();
 
 		// Rendering
 		ImGui::Render();
