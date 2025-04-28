@@ -70,11 +70,25 @@ namespace Koban {
 
 #pragma region GameObject
         //GameObject‚ğ¶¬
-        GameObject* const createGameObject(const string& name);
+        GameObject* const createGameObject(
+            const string& name,
+            D3DXVECTOR3 pos = D3DXVECTOR3(0, 0, 0),
+            D3DXQUATERNION rot = D3DXQUATERNION(0, 0, 0, 1),
+            D3DXVECTOR3 scale = D3DXVECTOR3(1, 1, 1));
 
         //GameObject‚ğ”jŠü
         void destroyGameObject(GameObject& go);
 
+        //GameObject‚Ìæ“¾
+        GameObject* const getGameObject(const UINT16 id) {
+            auto it = mGameObjectMap.find(id);
+            if (it != mGameObjectMap.end()) {
+                return it->second;
+            }
+            return nullptr;
+        }
+
+        //ƒV[ƒ“‚É‚ ‚é‚·‚×‚Ä‚ÌGameObject‚ğæ“¾
         const std::vector<GameObject*> getAllGameObjects();
 #pragma endregion
 

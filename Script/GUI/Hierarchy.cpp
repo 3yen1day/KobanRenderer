@@ -28,14 +28,9 @@ namespace Koban {
 
 		ImGui::Begin("Inspector");
 		if (selectedGamaObject != nullptr) {
-			//todo:コンポーネントが自動で表示されるようにする
-			//Transform
-			Transform* transform = selectedGamaObject->getComponent<Transform>();
-			if (ImGui::CollapsingHeader("Transform"))
-			{
-				ImGui::InputFloat3("Position", (float*)(transform->mPosition));
-				ImGui::InputFloat4("Rotation", (float*)(transform->mRotation));
-				ImGui::InputFloat3("Scale", (float*)(transform->mScale));
+			vector<Component*>  cmps = selectedGamaObject->getComponents();
+			for (Component* cmp : cmps) {
+				cmp->drawUI();
 			}
 		}
 		ImGui::End();

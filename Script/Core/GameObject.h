@@ -20,6 +20,7 @@ namespace Koban {
 			}
 
 			auto cmp_pt = SCENE->addComponent<T>();//シーンに追加する
+			cmp_pt->setgameObjectID(mID);//コンポーネントにIDをセット
 			mComponents.push_back(cmp_pt);//内部配列に追加
 			return cmp_pt;
 		};
@@ -41,29 +42,13 @@ namespace Koban {
 			return mIsUpdate;
 		}
 
-		void setIsUpdate(bool isUpdate) {
-			for (int i = 0, length = mComponents.size(); i < length; i++)
-			{
-				auto cmp_p = mComponents[i];
-				if (cmp_p != nullptr)
-					cmp_p->setIsUpdate(isUpdate);
-			}
-			mIsUpdate = isUpdate;
-		}
+		void setIsUpdate(bool isUpdate);
 
 		bool& getIsDraw() {
 			return mIsDraw;
 		}
 
-		void setIsDraw(bool isDraw) {
-			for (int i = 0, length = mComponents.size(); i < length; i++)
-			{
-				auto cmp_p = mComponents[i];
-				if (cmp_p != nullptr)
-					cmp_p->setIsDraw(isDraw);
-			}
-			mIsDraw = isDraw;
-		}
+		void setIsDraw(bool isDraw);
 
 		UINT16 getID(){
 			return mID;
@@ -72,7 +57,9 @@ namespace Koban {
 		string getName() {
 			return mName;
 		}
+#pragma endregion
 
+#pragma region 関数
 		template<DerivationOfComponent T>
 		T* const getComponent() {
 			for (int i = 0, length = mComponents.size(); i < length; i++)
@@ -82,6 +69,10 @@ namespace Koban {
 					return cmp_p;
 			}
 			return nullptr;
+		}
+
+		vector<Component*> const getComponents() {
+			return mComponents;
 		}
 #pragma endregion
 

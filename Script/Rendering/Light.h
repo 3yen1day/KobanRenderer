@@ -6,8 +6,7 @@ namespace Koban {
 	{
 	public:
 		Light():
-			mDirection(*new D3DXVECTOR4(1,1,0,1)),
-			mPosition(*new D3DXVECTOR4(2, 2, 0, 1))
+			mDirection(*new D3DXVECTOR3(0,1,0))
 		{};
 		~Light() {};
 
@@ -15,13 +14,17 @@ namespace Koban {
 		void update() override {};
 		void draw() override {};
 		void destroy() override {};
+		void drawUI() override {};
 
 		//Direction‚ðŽæ“¾
-		D3DXVECTOR4 getDirection() { return mDirection; }
-		D3DXVECTOR4 getPosition() { return mPosition; }
+		const D3DXVECTOR3& getDirection() 
+		{
+			D3DXVECTOR3 ret;
+			D3DXVec3Normalize(&ret, &mDirection);
+			return ret;
+		}
 
 	private:
-		D3DXVECTOR4 mDirection;
-		D3DXVECTOR4 mPosition;
+		D3DXVECTOR3 mDirection;
 	};
 }

@@ -13,6 +13,7 @@ namespace Koban {
 		void update() override;
 		void draw() override {};
 		void destroy() override {};
+		void drawUI() override {};
 
 		/// <summary>
 		/// ˆÊ’uÀ•Wæ“¾

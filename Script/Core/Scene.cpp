@@ -17,13 +17,18 @@ namespace Koban {
 #pragma endregion
 
 #pragma region GameObject
-	GameObject* const Scene::createGameObject(const string& name) {
+	GameObject* const Scene::createGameObject(
+		const string& name, D3DXVECTOR3 pos, D3DXQUATERNION rot, D3DXVECTOR3 scale) 
+	{
 		GameObject* pGo = new GameObject(_GameObjectHashMax, name);
 		mGameObjectMap.emplace(_GameObjectHashMax, pGo);
 		UINT16 retVal = _GameObjectHashMax;
 		_GameObjectHashMax++;
 
-		pGo->createComponent<Transform>();
+		Transform* transform = pGo->createComponent<Transform>();
+		transform->setPosition(pos);
+		transform->setRotation(rot);
+		transform->setScale(scale);
 		return pGo;
 	}
 

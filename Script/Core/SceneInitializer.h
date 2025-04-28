@@ -3,8 +3,8 @@ namespace Koban {
 	class SceneInitializer
 	{
 	public:
-		SceneInitializer();
-		~SceneInitializer();
+		SceneInitializer() {};
+		~SceneInitializer() {};
 		static void initializeScene();
 
 	private:

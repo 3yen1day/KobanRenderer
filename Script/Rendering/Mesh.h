@@ -13,6 +13,7 @@ namespace Koban {
 		void update() override {};
 		void draw() override ;
 		void destroy() override {};
+		void drawUI() override {};
 
 		//Simpleシェーダー用のコンスタントバッファーのアプリ側構造体 もちろんシェーダー内のコンスタントバッファーと一致している必要あり
 		struct CONSTANT_BUFFER_DEFAULT
@@ -31,7 +32,6 @@ namespace Koban {
 		};
 
 	private:
-		D3DXMATRIX getModelMatrix();
 		D3DXMATRIX getMVPMatrix(const D3DXMATRIX& modelMat);
 		CONSTANT_BUFFER_MATERIAL getMaterialVal();
 
