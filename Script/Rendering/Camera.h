@@ -48,7 +48,7 @@ namespace Koban {
 		};
 
 		/// <summary>
-		/// 視線ベクトル
+		/// 視線方向ベクトル
 		/// </summary>
 		/// <returns></returns>
 		D3DXVECTOR3 const& getEyeDir() {
@@ -56,10 +56,14 @@ namespace Koban {
 		}
 
 	private:
+		void updateTransform();
+
 		D3DXMATRIX mWorldMat;
 		D3DXMATRIX mViewMat;
 		D3DXMATRIX mProjMat;
 		D3DXVECTOR3 mPosition;
 		D3DXVECTOR3 mEyeVec;
+		float mPitch = 0;
+		float mYaw = 0;
 	};
 }

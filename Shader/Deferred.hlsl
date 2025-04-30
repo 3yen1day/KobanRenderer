@@ -13,7 +13,7 @@ cbuffer global_0:register(b0)
 	matrix g_mW;//ワールド行列
 	matrix g_mWVP; //ワールドから射影までの変換行列
 	float4 g_vLightDir;//ディレクショナルライトの方向
-	float4 g_vEye;//カメラ位置
+	float4 g_vEye;//視線ベクトル
 };
 
 cbuffer global_1:register(b1)

@@ -11,5 +11,6 @@ public:
 
 private:
 	HWND mHwnd;
+	HINSTANCE* mpHInstance;
 	std::unique_ptr<Koban::GlobalAccess> mpGlobalAccess;
 };

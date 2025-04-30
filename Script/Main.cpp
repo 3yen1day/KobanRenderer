@@ -8,6 +8,7 @@
 #include "Rendering/Rendering.h"
 #include "Core/Scene.h"
 #include "GUI/GUI.h"
+#include "Input/Input.h"
 
 //関数プロトタイプの宣言
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -88,6 +89,7 @@ HRESULT Main::InitWindow(HINSTANCE hInstance,
 	wc.lpszClassName = WindowName;
 	wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 	RegisterClassEx(&wc); //todo:wc解放しないといけないらしい
+	mpHInstance = &hInstance;
 
 	//ウィンドウの作成
 	mHwnd = CreateWindow(WindowName, WindowName, WS_OVERLAPPEDWINDOW,
@@ -130,7 +132,7 @@ LRESULT Main::MsgProc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 
 void Main::awake() {
 	//初期化
-	mpGlobalAccess = std::make_unique<Koban::GlobalAccess>(mHwnd);
+	mpGlobalAccess = std::make_unique<Koban::GlobalAccess>(mHwnd, *mpHInstance);
 }
 
 void Main::start()
@@ -142,6 +144,7 @@ void Main::start()
 
 void Main::update()
 {
+	GA::getInput()->update();
 	RENDER->update();
 }
 
