@@ -41,13 +41,16 @@ namespace Koban {
 			mScale = scale;
 		};
 
-		void setRotation(const D3DXQUATERNION& rotation) {
-			mRotation = rotation;
-		};
+		void setRotation(const D3DXQUATERNION& rotation);
+
+		D3DXQUATERNION DegreesToQuaternion(const D3DXVECTOR3& degree);
+
+		D3DXVECTOR3 QuaternionToDegree(const D3DXQUATERNION& q);
 
 	private:
 		D3DXVECTOR3 mPosition = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 mScale = { 1.0f, 1.0f, 1.0f };
 		D3DXQUATERNION mRotation = { 0.0f, 0.0f, 0.0f, 1.0f };
+		D3DXVECTOR3 mRotaionDegree = { 0.0f, 0.0f, 0.0f };
 	};
 }

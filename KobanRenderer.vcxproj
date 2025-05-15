@@ -40,6 +40,7 @@
     <ClCompile Include="Script\Rendering\Camera.cpp" />
     <ClCompile Include="Script\Rendering\FbxLoader.cpp" />
     <ClCompile Include="Script\Rendering\GBufferToBackBuffer.cpp" />
+    <ClCompile Include="Script\Rendering\Light.cpp" />
     <ClCompile Include="Script\Rendering\Mesh.cpp" />
     <ClCompile Include="Script\Rendering\Rendering.cpp" />
     <ClCompile Include="Script\Rendering\RTTManager.cpp" />
