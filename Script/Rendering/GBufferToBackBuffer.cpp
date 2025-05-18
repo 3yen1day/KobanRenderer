@@ -58,6 +58,11 @@ namespace Koban {
 		}
 	}
 
+	void GBufferToBackBuffer::update()
+	{
+		mRenderMode->update();
+	}
+
 	void GBufferToBackBuffer::draw() {
 		//シェーダーのセット
 		DEVICE_CONTEXT->VSSetShader(mpVertexShader, NULL, 0);

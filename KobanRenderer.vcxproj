@@ -43,6 +43,7 @@
     <ClCompile Include="Script\Rendering\Light.cpp" />
     <ClCompile Include="Script\Rendering\Mesh.cpp" />
     <ClCompile Include="Script\Rendering\Rendering.cpp" />
+    <ClCompile Include="Script\Rendering\RenderMode.cpp" />
     <ClCompile Include="Script\Rendering\RTTManager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -77,6 +78,7 @@
     <ClInclude Include="Script\Rendering\Light.h" />
     <ClInclude Include="Script\Rendering\Mesh.h" />
     <ClInclude Include="Script\Rendering\Rendering.h" />
+    <ClInclude Include="Script\Rendering\RenderMode.h" />
     <ClInclude Include="Script\Rendering\RTTManager.h" />
     <ClInclude Include="Script\Utillity\DebugUtil.h" />
     <ClInclude Include="Script\Utillity\RenderUtil.h" />

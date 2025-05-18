@@ -1,4 +1,5 @@
 #pragma once
+#include "RenderMode.h"
 
 /// <summary>
 /// GBufferの情報をBuckBufferにレンダリングする
@@ -10,8 +11,10 @@ namespace Koban {
 		GBufferToBackBuffer();
 		~GBufferToBackBuffer() {};
 		void start();
+		void update();
 		void draw();
 		void destroy();
+		void setRenderMode(RenderMode::MODE mode) { mRenderMode->setMode(mode); }
 
 	private:
 		//vertexBuffer用構造体
@@ -31,13 +34,15 @@ namespace Koban {
 			D3DXVECTOR4 eyePos;
 		};
 
-		//ConstantBuffer
 		//screen描画用頂点バッファ
 		ID3D11Buffer* mpVertexBuffer; //unique_ptrにするとデストラクトでのヒープの解放で例外
+		//ConstantBuffer
 		std::unique_ptr <ID3D11Buffer> mpConstantBuffer;
-
+		//Shader
 		ID3D11VertexShader* mpVertexShader = NULL;
 		ID3D11PixelShader* mpPixelShader = NULL;
+		//RenderingMode
+		RenderMode* mRenderMode = new RenderMode();
 
 		const std::wstring mShaderFileName = L"Deferred.hlsl";
 		const std::wstring mVSShaderName = L"VS_From_Tex";

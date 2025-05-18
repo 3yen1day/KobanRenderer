@@ -14,7 +14,7 @@ namespace Koban {
 		void update() override {};
 		void draw() override {};
 		void destroy() override {};
-		void drawUI() override ;
+		void drawUI() override;
 
 		//Direction‚ðŽæ“¾
 		const D3DXVECTOR3& getDirection() 

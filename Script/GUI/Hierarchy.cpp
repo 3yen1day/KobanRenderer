@@ -5,6 +5,8 @@
 #include "../Core/Scene.h"
 #include "../Core/GameObject.h"
 #include "../Core/Transform.h"
+#include "../Rendering/Rendering.h"
+#include "../Rendering/RenderMode.h"
 
 namespace Koban {
 	void Hierarchy::draw() {
@@ -26,6 +28,7 @@ namespace Koban {
 		}
 		ImGui::End();
 
+		//選択されたGameObjectのコンポーネントの表示
 		ImGui::Begin("Inspector");
 		if (selectedGamaObject != nullptr) {
 			vector<Component*>  cmps = selectedGamaObject->getComponents();
@@ -34,5 +37,17 @@ namespace Koban {
 			}
 		}
 		ImGui::End();
+
+		//RenderingModeの選択
+		ImGui::Begin("RenderingMode");
+		static const char* modeNames[] = {
+		"Standerd", "BaseColor", "Normal", "Depth", "Position"
+		};
+
+		int current = static_cast<int>(RENDER->getRenderMode());
+		if (ImGui::Combo("Render Mode", &current, modeNames, IM_ARRAYSIZE(modeNames)))
+		{
+			RENDER->setRenderMode(static_cast<RenderMode::MODE>(current));
+		}
 	}
 }
