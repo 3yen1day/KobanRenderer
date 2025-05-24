@@ -136,12 +136,6 @@ namespace Koban {
 		SAFE_RELEASE(mpBackBuffer_RTV);
 	}
 
-	void Rendering::resizeWindow(UINT width, UINT height) {
-		SAFE_RELEASE(mpBackBuffer_RTV);
-		mpSwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
-		createBackBuffer_RTV();
-	}
-
 	void Rendering::createBackBuffer_RTV() {
 		//バックバッファーテクスチャーを取得（既にあるので作成ではない）
 		ID3D11Texture2D* pBackBuffer_Tex;

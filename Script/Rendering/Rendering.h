@@ -27,7 +27,6 @@ namespace Koban {
 		void update() override;
 		void draw() override;
 		void destroy() override;
-		void resizeWindow(UINT width, UINT height);
 
 		ID3D11Device* getDevice()
 		{

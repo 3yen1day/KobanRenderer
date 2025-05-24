@@ -18,7 +18,6 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 //グローバル変数
 Main* g_pMain = NULL;
-UINT g_ResizeWidth = 0, g_ResizeHeight = 0;
 
 // Main code
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, INT)
@@ -41,13 +40,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, INT)
 				DispatchMessage(&msg);
 				if (msg.message == WM_QUIT)
 					break;
-			}
-
-			//ウィンドウサイズの変更（TODO：上手くいかないので、あとで直す）
-			if (g_ResizeWidth != 0 && g_ResizeHeight != 0)
-			{
-				RENDER->resizeWindow(g_ResizeWidth, g_ResizeHeight);
-				g_ResizeWidth = g_ResizeHeight = 0;
 			}
 
 			//更新
@@ -92,7 +84,8 @@ HRESULT Main::InitWindow(HINSTANCE hInstance,
 	mpHInstance = &hInstance;
 
 	//ウィンドウの作成
-	mHwnd = CreateWindow(WindowName, WindowName, WS_OVERLAPPEDWINDOW,
+	DWORD dwStyle = WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME & ~WS_MAXIMIZEBOX;
+	mHwnd = CreateWindow(WindowName, WindowName, dwStyle,
 		0, 0, iWidth, iHeight, 0, 0, hInstance, 0);
 	if (!mHwnd)
 	{
@@ -109,12 +102,6 @@ LRESULT Main::MsgProc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (iMsg)
 	{
-	case WM_SIZE:
-		if (wParam == SIZE_MINIMIZED)
-			return 0;
-		g_ResizeWidth = (UINT)LOWORD(lParam); // Queue resize
-		g_ResizeHeight = (UINT)HIWORD(lParam);
-		return 0;
 	case WM_KEYDOWN:
 		switch ((char)wParam)
 		{
