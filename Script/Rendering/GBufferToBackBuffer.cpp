@@ -91,9 +91,8 @@ namespace Koban
 		//Žg—p‚·‚éShader‚Ìì¬
 		RenderUtil::createShader(
 			DEVICE,
-			mRenderMode->getShaderFileName(),
-			mRenderMode->getVSShaderName(),
-			mRenderMode->getPSShaderName(),
+			mRenderMode->getShaderFileName_VS(),
+			mRenderMode->getShaderFileName_PS(),
 			&mpVertexShader,
 			&mpPixelShader
 		);

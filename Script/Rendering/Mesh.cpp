@@ -23,10 +23,9 @@ namespace Koban {
 		ID3DBlob* compiledShader = NULL;
 		RenderUtil::createShader(
 			DEVICE,
-			L"Shader/Deferred.hlsl",
+			L"Shader/VS_RenderToGBuffer.hlsl",
+			L"Shader/PS_RenderToGBuffer.hlsl",
 			layout,
-			L"VS_To_Tex",
-			L"PS_To_Tex",
 			&mpVertexLayout,
 			&mpVertexShader,
 			&mpPixelShader

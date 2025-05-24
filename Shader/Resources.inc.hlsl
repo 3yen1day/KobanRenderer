@@ -1,3 +1,6 @@
+#ifndef __RESOUECES_HLSL__
+#define __RESOUECES_HLSL__
+
 Texture2D g_tex : register(t0);
 Texture2D g_texColor : register(t1);
 Texture2D g_texNormal : register(t2);
@@ -36,3 +39,5 @@ struct PS_OUTPUT
     float4 vNormal : SV_Target1;
     float4 vPosition : SV_Target2;
 };
+
+#endif //__RESOUECES_HLSL__

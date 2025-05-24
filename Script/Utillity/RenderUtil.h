@@ -1,5 +1,6 @@
 #pragma once
 
+#define SHADER_NAME_DEFAULT "main"
 namespace Koban {
 	static class RenderUtil {
 	public:
@@ -16,9 +17,8 @@ namespace Koban {
 		/// <param name="ps"></param>
 		static void createShader(
 			ID3D11Device* device,
-			const std::wstring& fileName,
-			const std::wstring& vsName,
-			const std::wstring& psName,
+			const std::wstring& vsFileName,
+			const std::wstring& psFileName,
 			ID3D11VertexShader** vs,
 			ID3D11PixelShader** ps) 
 		{
@@ -29,10 +29,10 @@ namespace Koban {
 			ID3D10Blob* pErrors = upErrors.get();
 
 			//vertexShader
-			createVertexShader(device, fileName, vsName, vs, &pCompiledShader, &pErrors);
+			createVertexShader(device, vsFileName, vs, &pCompiledShader, &pErrors);
 
 			//pixcelShader
-			createPixcelShader(device, fileName, psName, ps, &pCompiledShader, &pErrors);
+			createPixcelShader(device, psFileName, ps, &pCompiledShader, &pErrors);
 		}
 
 		/// <summary>
@@ -48,10 +48,9 @@ namespace Koban {
 		/// <param name="ps"></param>
 		static void createShader(
 			ID3D11Device* device,
-			const std::wstring& fileName,
+			const std::wstring& vsFileName,
+			const std::wstring& psFileName,
 			const vector<D3D11_INPUT_ELEMENT_DESC>& vertLayout,
-			const std::wstring& vsName,
-			const std::wstring& psName,
 			ID3D11InputLayout** vl,
 			ID3D11VertexShader** vs,
 			ID3D11PixelShader** ps) 
@@ -63,7 +62,7 @@ namespace Koban {
 			ID3D10Blob* pErrors = upErrors.get();
 
 			//vertexShader
-			createVertexShader(device, fileName, vsName, vs, &pCompiledShader, &pErrors);
+			createVertexShader(device, vsFileName, vs, &pCompiledShader, &pErrors);
 
 			//頂点インプットレイアウトを作成
 			if (FAILED(device->CreateInputLayout(vertLayout.data(), vertLayout.size(), pCompiledShader->GetBufferPointer(), pCompiledShader->GetBufferSize(), vl)))
@@ -74,7 +73,7 @@ namespace Koban {
 			}
 
 			//pixcelShader
-			createPixcelShader(device, fileName, psName, ps, &pCompiledShader, &pErrors);
+			createPixcelShader(device, psFileName, ps, &pCompiledShader, &pErrors);
 		}
 
 		 /// <summary>
@@ -167,16 +166,15 @@ namespace Koban {
 		 static void createVertexShader(
 			 ID3D11Device* device,
 			 const std::wstring& fileName,
-			 const std::wstring& vsName,
 			 ID3D11VertexShader** vs,
 			 ID3D10Blob** pCompiledShader,
 			 ID3D10Blob** pErrors)
 		 {
 			 //vertexShader
-			 auto shaderName_s = StringUtil::wstr2str(vsName);
+			 auto shaderName_s = "main";
 
 			 //ブロブからvertexShader作成
-			 if (FAILED(D3DX11CompileFromFile(fileName.data(), NULL, NULL, shaderName_s->data(), "vs_5_0", 0, 0, NULL, pCompiledShader, pErrors, NULL)))
+			 if (FAILED(D3DX11CompileFromFile(fileName.data(), NULL, NULL, shaderName_s, "vs_5_0", 0, 0, NULL, pCompiledShader, pErrors, NULL)))
 			 {
 				 string info = "hlsl読み込み失敗";
 				 string error = (char*)(*pErrors)->GetBufferPointer();
@@ -202,16 +200,15 @@ namespace Koban {
 		 static void createPixcelShader(
 			 ID3D11Device* device,
 			 const std::wstring& fileName,
-			 const std::wstring& psName,
 			 ID3D11PixelShader** ps,
 			 ID3D10Blob** pCompiledShader,
 			 ID3D10Blob** pErrors)
 		 {
 			 //vertexShader
-			 auto shaderName_s = StringUtil::wstr2str(psName);
+			 auto shaderName_s = "main";
 
 			 //ブロブからpixcelShader作成
-			 if (FAILED(D3DX11CompileFromFile(fileName.data(), NULL, NULL, shaderName_s->data(), "ps_5_0", 0, 0, NULL, pCompiledShader, pErrors, NULL)))
+			 if (FAILED(D3DX11CompileFromFile(fileName.data(), NULL, NULL, shaderName_s, "ps_5_0", 0, 0, NULL, pCompiledShader, pErrors, NULL)))
 			 {
 				 string info = "hlsl読み込み失敗";
 				 string error = (char*)(*pErrors)->GetBufferPointer();
