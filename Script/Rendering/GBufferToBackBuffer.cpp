@@ -3,24 +3,14 @@
 #include "RTTManager.h"
 #include "FbxLoader.h"
 
-namespace Koban {
-	GBufferToBackBuffer::GBufferToBackBuffer() {
+namespace Koban
+{
+	GBufferToBackBuffer::GBufferToBackBuffer()
+	{
 	}
-	
-	void GBufferToBackBuffer::start() {
-		// ----------------------------------------
-		// Shader
-		// ----------------------------------------
-		//使用するShaderの作成
-		RenderUtil::createShader(
-			DEVICE,
-			L"Shader/Deferred.hlsl",
-			L"VS_From_Tex",
-			L"PS_From_Tex",
-			&mpVertexShader,
-			&mpPixelShader
-		);
 
+	void GBufferToBackBuffer::start()
+	{
 		// ----------------------------------------
 		// Buffer
 		// ----------------------------------------
@@ -40,7 +30,8 @@ namespace Koban {
 		bd.MiscFlags = 0;
 		D3D11_SUBRESOURCE_DATA sd;
 		sd.pSysMem = VertexData;
-		if (FAILED(DEVICE->CreateBuffer(&bd, &sd, &mpVertexBuffer))) {
+		if (FAILED(DEVICE->CreateBuffer(&bd, &sd, &mpVertexBuffer)))
+		{
 			return;
 		}
 
@@ -60,10 +51,15 @@ namespace Koban {
 
 	void GBufferToBackBuffer::update()
 	{
-		mRenderMode->update();
+		if (mRenderMode->update())
+		{
+			//レンダーモード=shaderが切り替わったので更新
+			createShader();
+		}
 	}
 
-	void GBufferToBackBuffer::draw() {
+	void GBufferToBackBuffer::draw()
+	{
 		//シェーダーのセット
 		DEVICE_CONTEXT->VSSetShader(mpVertexShader, NULL, 0);
 		DEVICE_CONTEXT->PSSetShader(mpPixelShader, NULL, 0);
@@ -84,8 +80,22 @@ namespace Koban {
 		DEVICE_CONTEXT->Draw(4, 0);
 	}
 
-	void GBufferToBackBuffer::destroy() {
+	void GBufferToBackBuffer::destroy()
+	{
 		SAFE_RELEASE(mpVertexShader);
 		SAFE_RELEASE(mpPixelShader);
+	}
+
+	void GBufferToBackBuffer::createShader()
+	{
+		//使用するShaderの作成
+		RenderUtil::createShader(
+			DEVICE,
+			mRenderMode->getShaderFileName(),
+			mRenderMode->getVSShaderName(),
+			mRenderMode->getPSShaderName(),
+			&mpVertexShader,
+			&mpPixelShader
+		);
 	}
 }

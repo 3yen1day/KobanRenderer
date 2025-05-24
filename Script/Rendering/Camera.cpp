@@ -32,16 +32,16 @@ namespace Koban {
 	}
 
 	void Camera::updateTransform() {
-		//右クリック中、マウスの移動でカメラを回転させる
-		Input* input = GA::getInput();
-		if (input->isMouseButtonDown(1)) {
-			float sensitivity = 0.005;
-			mYaw += GA::getInput()->getMouseDeltaX() * sensitivity;
-			mPitch += GA::getInput()->getMouseDeltaY() * sensitivity;
-			D3DXQUATERNION rot;
-			D3DXQuaternionRotationYawPitchRoll(&rot, mYaw, mPitch, 0);
-			//clampする
-			getTransform()->setRotation(rot);
-		}
+		////右クリック中、マウスの移動でカメラを回転させる
+		//Input* input = GA::getInput();
+		//if (input->isMouseButtonDown(1)) {
+		//	float sensitivity = 0.005;
+		//	mYaw += GA::getInput()->getMouseDeltaX() * sensitivity;
+		//	mPitch += GA::getInput()->getMouseDeltaY() * sensitivity;
+		//	D3DXQUATERNION rot;
+		//	D3DXQuaternionRotationYawPitchRoll(&rot, mYaw, mPitch, 0);
+		//	//clampする
+		//	getTransform()->setRotation(rot);
+		//}
 	}
 };

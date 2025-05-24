@@ -60,6 +60,7 @@
     <ClInclude Include="lib\imgui\imstb_rectpack.h" />
     <ClInclude Include="lib\imgui\imstb_textedit.h" />
     <ClInclude Include="lib\imgui\imstb_truetype.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Script\Core\Component.h" />
     <ClInclude Include="Script\Core\GameObject.h" />
     <ClInclude Include="Script\Core\GlobalAccess.h" />
@@ -87,6 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Deferred.hlsl" />
+    <FxCompile Include="Shader\Resources.inc.hlsl" />
     <FxCompile Include="Shader\Simple.hlsl" />
   </ItemGroup>
   <ItemGroup>
@@ -94,6 +96,9 @@
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="lib\imgui\imgui.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="KobanRenderer.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D79A3495-6C0F-46E6-BCD7-4465C6DE11C8}</ProjectGuid>

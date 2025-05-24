@@ -22,6 +22,10 @@ namespace Koban
 			mMode = mode;
 			mIsNeedInit = true;
 		};
+		MODE getMode()
+		{
+			return mMode;
+		};
 		const std::wstring& getShaderFileName()
 		{
 			return mShaderFileName;
@@ -38,10 +42,10 @@ namespace Koban
 	private:
 		void InitMode(MODE mode);
 
-		bool mIsNeedInit = false;
+		bool mIsNeedInit = true;
 		MODE mMode = MODE::STANDARD;
-		std::wstring mShaderFileName = NULL;
-		std::wstring mVSShaderName = NULL;
-		std::wstring mPSShaderName = NULL;
+		std::wstring mShaderFileName;
+		std::wstring mVSShaderName;
+		std::wstring mPSShaderName;
 	};
 }

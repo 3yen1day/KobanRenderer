@@ -7,6 +7,7 @@
 #include "../Core/Transform.h"
 #include "../Rendering/Rendering.h"
 #include "../Rendering/RenderMode.h"
+#include "../Rendering/GBufferToBackBuffer.h"
 
 namespace Koban {
 	void Hierarchy::draw() {
@@ -40,14 +41,16 @@ namespace Koban {
 
 		//RenderingMode‚Ì‘I‘ð
 		ImGui::Begin("RenderingMode");
-		static const char* modeNames[] = {
-		"Standerd", "BaseColor", "Normal", "Depth", "Position"
+		static const char* modeNames[] = 
+		{
+			"Standerd", "BaseColor", "Normal", "Depth", "Position"
 		};
 
-		int current = static_cast<int>(RENDER->getRenderMode());
+		int current = static_cast<int>(RENDER->getGBufferToBackBuffer()->getRenderMode());
 		if (ImGui::Combo("Render Mode", &current, modeNames, IM_ARRAYSIZE(modeNames)))
 		{
-			RENDER->setRenderMode(static_cast<RenderMode::MODE>(current));
+			RENDER->getGBufferToBackBuffer()->setRenderMode(static_cast<RenderMode::MODE>(current));
 		}
+		ImGui::End();
 	}
 }

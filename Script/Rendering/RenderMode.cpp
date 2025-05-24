@@ -31,7 +31,7 @@ namespace Koban
 				break;
 		}
 
-		mShaderFileName = L"Deferred.hlsl";
+		mShaderFileName = L"Shader/Deferred.hlsl";
 		mVSShaderName = L"VS_From_Tex";
 		mPSShaderName = L"PS_From_Tex";
 	}

@@ -14,7 +14,9 @@ namespace Koban {
 		void update();
 		void draw();
 		void destroy();
+
 		void setRenderMode(RenderMode::MODE mode) { mRenderMode->setMode(mode); }
+		RenderMode::MODE getRenderMode() { return mRenderMode->getMode(); }
 
 	private:
 		//vertexBuffer用構造体
@@ -34,6 +36,8 @@ namespace Koban {
 			D3DXVECTOR4 eyePos;
 		};
 
+		void createShader();
+
 		//screen描画用頂点バッファ
 		ID3D11Buffer* mpVertexBuffer; //unique_ptrにするとデストラクトでのヒープの解放で例外
 		//ConstantBuffer
@@ -43,9 +47,5 @@ namespace Koban {
 		ID3D11PixelShader* mpPixelShader = NULL;
 		//RenderingMode
 		RenderMode* mRenderMode = new RenderMode();
-
-		const std::wstring mShaderFileName = L"Deferred.hlsl";
-		const std::wstring mVSShaderName = L"VS_From_Tex";
-		const std::wstring mPSShaderName = L"PS_From_Tex";
 	};
 }

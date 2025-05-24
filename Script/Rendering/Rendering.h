@@ -61,6 +61,11 @@ namespace Koban {
 			return mpLight;
 		}
 
+		GBufferToBackBuffer* const getGBufferToBackBuffer()
+		{
+			return mpGBufferToBackBuffer.get();
+		}
+
 	private:
 		void createBackBuffer_RTV();
 

@@ -107,6 +107,7 @@ namespace Koban {
 		}
 
 		mpRTTManager->update();
+		mpGBufferToBackBuffer->update();
 	}
 
 	void Rendering::draw() {
