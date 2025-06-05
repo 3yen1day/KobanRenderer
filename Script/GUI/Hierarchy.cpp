@@ -43,7 +43,7 @@ namespace Koban {
 		ImGui::Begin("RenderingMode");
 		static const char* modeNames[] = 
 		{
-			"Standerd", "BaseColor", "Normal", "Depth", "Position"
+			"Standerd", "BaseColor", "Normal", "Depth", "UV", "Position"
 		};
 
 		int current = static_cast<int>(RENDER->getGBufferToBackBuffer()->getRenderMode());

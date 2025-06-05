@@ -115,7 +115,8 @@ namespace Koban {
 		SCENE->doDraw<Mesh>();
 
 		//レンダーターゲットを通常に戻す
-		DEVICE_CONTEXT->OMSetRenderTargets(1, &mpBackBuffer_RTV, mpRTTManager->getDepthStensilSRV());
+		DEVICE_CONTEXT->OMSetRenderTargets(1, &mpBackBuffer_RTV, nullptr);
+
 		//クリア
 		DEVICE_CONTEXT->ClearRenderTargetView(mpBackBuffer_RTV, ClearColor);
 

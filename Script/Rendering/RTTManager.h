@@ -8,6 +8,7 @@ namespace Koban {
 	public:
 		enum RTT_TYPE
 		{
+			DEPTH,
 			COLOR,
 			NORMAL,
 			POSITION
@@ -27,12 +28,16 @@ namespace Koban {
 		/// <returns></returns>
 		ID3D11ShaderResourceView* const getRTTSRV(RTT_TYPE type);
 
-		ID3D11DepthStencilView* const getDepthStensilSRV() { return mpDepthStencil_SRV; }
+		ID3D11DepthStencilView* const getDepthStensilView() { return mpDepthStencilView; }
 
 	private:
 		// RTT, RTV
 		ID3D11Texture2D* mpDepthStencil_Tex;
-		ID3D11DepthStencilView* mpDepthStencil_SRV;
+		ID3D11DepthStencilView* mpDepthStencilView;
+
+		ID3D11Texture2D* mpDepth_Tex;
+		ID3D11RenderTargetView* mpDepth_RTV;
+		ID3D11ShaderResourceView* mpDepth_SRV;
 
 		ID3D11Texture2D* mpColor_Tex;
 		ID3D11RenderTargetView* mpColor_RTV;

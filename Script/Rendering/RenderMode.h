@@ -10,6 +10,7 @@ namespace Koban
 			BASE_COLOR,
 			NORMAL,
 			DEPTH,
+			UV,
 			POSITION
 		};
 

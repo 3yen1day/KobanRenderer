@@ -64,12 +64,14 @@ namespace Koban
 		DEVICE_CONTEXT->VSSetShader(mpVertexShader, NULL, 0);
 		DEVICE_CONTEXT->PSSetShader(mpPixelShader, NULL, 0);
 		//テクスチャセット
+		auto depth = RENDER->getRTTManager()->getRTTSRV(Koban::RTTManager::DEPTH);
 		auto col = RENDER->getRTTManager()->getRTTSRV(Koban::RTTManager::COLOR);
 		auto normal = RENDER->getRTTManager()->getRTTSRV(Koban::RTTManager::NORMAL);
 		auto pos = RENDER->getRTTManager()->getRTTSRV(Koban::RTTManager::POSITION);
-		DEVICE_CONTEXT->PSSetShaderResources(1, 1, &col);
-		DEVICE_CONTEXT->PSSetShaderResources(2, 1, &normal);
-		DEVICE_CONTEXT->PSSetShaderResources(3, 1, &pos);
+		DEVICE_CONTEXT->PSSetShaderResources(1, 1, &depth);
+		DEVICE_CONTEXT->PSSetShaderResources(2, 1, &col);
+		DEVICE_CONTEXT->PSSetShaderResources(3, 1, &normal);
+		DEVICE_CONTEXT->PSSetShaderResources(4, 1, &pos);
 		//トポロジーのセット
 		DEVICE_CONTEXT->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 		//頂点バッファのセット
