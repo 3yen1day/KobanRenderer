@@ -34,6 +34,7 @@ namespace Koban
 				mShaderFileName_PS = L"Shader/PS_RenderUV.hlsl";
 				return;
 			case Koban::RenderMode::MODE::POSITION:
+				mShaderFileName_PS = L"Shader/PS_RenderWorldPos.hlsl";
 				break;
 
 			default:

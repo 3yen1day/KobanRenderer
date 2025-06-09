@@ -6,10 +6,6 @@
 #include "../Core/Transform.h"
 
 namespace Koban {
-	Mesh::Mesh()
-	{
-	}
-
 	void Mesh::start() {
 		//shader初期化
 		//頂点インプットレイアウトを定義	
@@ -36,22 +32,24 @@ namespace Koban {
 		RenderUtil::createConstantBuffer<CONSTANT_BUFFER_TRANSFORM>(DEVICE, &mpConstantBuffer_Transform);
 		RenderUtil::createConstantBuffer<CONSTANT_BUFFER_MATERIAL>(DEVICE, &mpConstantBuffer_Material);
 
-		//fbxのロード
-		if (!FbxLoader::Load("Resource/bunny.obj", &mFbxVertexInfo)) {
-			DebugUtil::error(L"ファイル読み込み失敗");
-		}
-
-		//バーテックスバッファ初期化
-		RenderUtil::createVertexBffer<FbxLoader::Vertex>(DEVICE, DEVICE_CONTEXT, mFbxVertexInfo.vertices, &mpVertexBuffer);
-
-		//インデックスバッファ初期化
-		RenderUtil::createIndexBuffer(DEVICE, DEVICE_CONTEXT, mFbxVertexInfo.indices, &mpIndexBuffer);
-
 		//テクスチャ用サンプラ作成
 		RenderUtil::createSamplerState(DEVICE, &mpSampleLinear);
 
 		////テクスチャ作成
 		//RenderLib::createTexture(DEVICE, L"Resource\\Chips_Cover.jpg", &mpTexture);
+	}
+
+	void Mesh::setMeshResourcePath(const string& resourcePath)
+	{
+		//fbxのロード
+		if (!FbxLoader::Load(resourcePath, &mFbxVertexInfo))
+		{
+			DebugUtil::error(L"ファイル読み込み失敗");
+		}
+		//バーテックスバッファ初期化
+		RenderUtil::createVertexBffer<FbxLoader::Vertex>(DEVICE, DEVICE_CONTEXT, mFbxVertexInfo.vertices, &mpVertexBuffer);
+		//インデックスバッファ初期化
+		RenderUtil::createIndexBuffer(DEVICE, DEVICE_CONTEXT, mFbxVertexInfo.indices, &mpIndexBuffer);
 	}
 
 	void Mesh::update()
@@ -76,6 +74,7 @@ namespace Koban {
 		CONSTANT_BUFFER_TRANSFORM cb_default;
 		if (SUCCEEDED(DEVICE_CONTEXT->Map(mpConstantBuffer_Transform, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData_default)))//pData_default.pDataにm_pConstantBufferのアドレス
 		{
+			//単位行列をセット
 			cb_default.mW = getTransform()->getWorldMatrix();
 			//MVP行列を渡す
 			cb_default.mWVP = getMVPMatrix(cb_default.mW);
@@ -128,10 +127,7 @@ namespace Koban {
 	D3DXMATRIX Mesh::getMVPMatrix(const D3DXMATRIX& modelMat) {
 		//ワールド、カメラ、射影行列を渡す
 		auto camera = RENDER->getCamera();
-		D3DXMATRIX m = modelMat * camera->getViewMat() * camera->getProjMat();
-		D3DXMatrixTranspose(&m, &m); //GPUの行列計算方法とDirectXのそれが異なるため転置する
-
-		return m;
+		return modelMat * camera->getViewMat() * camera->getProjMat();
 	}
 
 	/// <summary>

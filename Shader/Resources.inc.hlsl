@@ -17,8 +17,9 @@ cbuffer cGlobalInfo : register(b0)
 
 cbuffer cTransformInfo : register(b1)
 {
-    matrix g_mW; //ワールド行列
-    matrix g_mWVP; //ワールドから射影までの変換行列
+    //row_major：DirectXとメモリレイアウトが異なるので、行優先で読むように指定
+    row_major matrix g_mW; //ワールド行列
+    row_major matrix g_mWVP; //ワールドから射影までの変換行列
 };
 
 cbuffer cMaterialInfo : register(b2)

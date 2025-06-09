@@ -6,7 +6,7 @@ namespace Koban {
 	class Mesh : public Component
 	{
 	public:
-		Mesh();
+		Mesh() {};
 		~Mesh() {};
 
 		void start() override ;
@@ -14,6 +14,8 @@ namespace Koban {
 		void draw() override ;
 		void destroy() override {};
 		void drawUI() override {};
+
+		void setMeshResourcePath(const string& resourcePath);
 
 		//Simpleシェーダー用のコンスタントバッファーのアプリ側構造体 もちろんシェーダー内のコンスタントバッファーと一致している必要あり
 		struct CONSTANT_BUFFER_TRANSFORM
@@ -47,5 +49,6 @@ namespace Koban {
 		ID3D11Buffer* mpConstantBuffer_Material;
 
 		FbxLoader::VertexInfo mFbxVertexInfo; // fbxモデルから読み込んだ頂点情報
+		string mResourcePath; // リソースパス
 	};
 }

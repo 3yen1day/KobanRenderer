@@ -15,7 +15,6 @@ PS_OUTPUT main(VS_OUTPUT input)
     
 	//ワールド法線テクスチャーへ出力
     float3 vNormal = input.WorldNormal;
-    vNormal = vNormal * 0.5 + 0.5;
     Out.vNormal = normalize(float4(vNormal, 0));
 
 	//ワールド座標テクスチャーへ出力
