@@ -65,7 +65,16 @@ namespace Koban {
 			return mpGBufferToBackBuffer.get();
 		}
 
+		void setGlobalConstantBuffer();
+
 	private:
+		//ConstantBuffer（座標関係）用構造体
+		struct CONSTANT_BUFER_GLOBAL
+		{
+			D3DXVECTOR4 vLightDir;
+			D3DXVECTOR4 vEye;
+		};
+
 		void createBackBuffer_RTV();
 
 		//DX11系
@@ -81,6 +90,7 @@ namespace Koban {
 		Camera* mpMainCamera;
 		Light* mpLight;
 		Mesh* mpMesh;
+		ID3D11Buffer* mpConstantBuffer_Global;
 
 		const float ClearColor[4] = { 0.97, 0.71, 0, 1 };
 	};

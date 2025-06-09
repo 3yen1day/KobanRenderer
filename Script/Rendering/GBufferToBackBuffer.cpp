@@ -34,19 +34,6 @@ namespace Koban
 		{
 			return;
 		}
-
-		//コンスタントバッファー作成　
-		D3D11_BUFFER_DESC cb;
-		cb.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		cb.ByteWidth = sizeof(CBUFER_COORD);
-		cb.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		cb.MiscFlags = 0;
-		cb.Usage = D3D11_USAGE_DYNAMIC;
-		auto cb_p = mpConstantBuffer.get();
-		if (FAILED(DEVICE->CreateBuffer(&cb, NULL, &cb_p)))
-		{
-			return;
-		}
 	}
 
 	void GBufferToBackBuffer::update()
@@ -72,6 +59,8 @@ namespace Koban
 		DEVICE_CONTEXT->PSSetShaderResources(2, 1, &col);
 		DEVICE_CONTEXT->PSSetShaderResources(3, 1, &normal);
 		DEVICE_CONTEXT->PSSetShaderResources(4, 1, &pos);
+		//コンスタントバッファの登録
+		RENDER->setGlobalConstantBuffer();
 		//トポロジーのセット
 		DEVICE_CONTEXT->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 		//頂点バッファのセット

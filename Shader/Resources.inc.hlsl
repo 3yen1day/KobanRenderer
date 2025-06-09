@@ -9,15 +9,19 @@ Texture2D g_texPosition : register(t4); //ワールド座標
 
 SamplerState g_samLinear : register(s0);
 
-cbuffer global_0 : register(b0)
+cbuffer cGlobalInfo : register(b0)
 {
-    matrix g_mW; //ワールド行列
-    matrix g_mWVP; //ワールドから射影までの変換行列
     float4 g_vLightDir; //ディレクショナルライトの方向
     float4 g_vEye; //視線ベクトル
 };
 
-cbuffer global_1 : register(b1)
+cbuffer cTransformInfo : register(b1)
+{
+    matrix g_mW; //ワールド行列
+    matrix g_mWVP; //ワールドから射影までの変換行列
+};
+
+cbuffer cMaterialInfo : register(b2)
 {
     float4 g_Ambient = float4(0, 0, 0, 0); //アンビエント光
     float4 g_Diffuse = float4(1, 0, 0, 0); //拡散反射(色）

@@ -3,6 +3,7 @@
 float4 main(VS_OUTPUT input) : SV_Target
 {
 	//–@ü‚ğæ“¾‚µ‚Ä•\¦
-    float4 normal = g_texNormal.Sample(g_samLinear, input.UV);
-    return float4(normal.r, normal.g, normal.b, 1);
+    float3 normal = g_texNormal.Sample(g_samLinear, input.UV).xyz;
+    float NdotV = saturate(dot(normal, g_vEye.xyz));
+    return float4(NdotV, NdotV, NdotV, 1);
 }

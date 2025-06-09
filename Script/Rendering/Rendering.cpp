@@ -5,6 +5,7 @@
 #include "Mesh.h"
 #include "GBufferToBackBuffer.h"
 #include "../Core/Scene.h"
+#include "../Utillity/RenderUtil.h"
 #include <d3d11.h>
 #include <tchar.h>
 
@@ -71,9 +72,12 @@ namespace Koban {
 		mpBackBuffer_RTV = nullptr;
 		createBackBuffer_RTV();
 
-		//RTTを管理
+		//コンスタントバッファの作成
+		RenderUtil::createConstantBuffer<CONSTANT_BUFER_GLOBAL>(mpDevice, &mpConstantBuffer_Global);
+
+		//RTTを管理する
 		mpRTTManager = std::make_unique<RTTManager>();
-		//GBufferを元に描画
+		//GBufferを元した描画を管理する
 		mpGBufferToBackBuffer = std::make_unique<GBufferToBackBuffer>();
 	}
 
@@ -143,5 +147,30 @@ namespace Koban {
 		mpSwapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer_Tex));
 		mpDevice->CreateRenderTargetView(pBackBuffer_Tex, NULL, &mpBackBuffer_RTV);
 		SAFE_RELEASE(pBackBuffer_Tex);
+	}
+
+	/// <summary>
+	/// 全shader共通のコンスタントバッファをセット（shader登録後に必ず呼ぶ）
+	/// </summary>
+	void Rendering::setGlobalConstantBuffer()
+	{	
+		D3D11_MAPPED_SUBRESOURCE pData_default;
+		CONSTANT_BUFER_GLOBAL cb;
+		if (SUCCEEDED(DEVICE_CONTEXT->Map(mpConstantBuffer_Global, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData_default)))//pData_default.pDataにm_pConstantBufferのアドレス
+		{
+			//ライトの位置を渡す
+			auto lightDir = RENDER->getLight()->getDirection();
+			cb.vLightDir = D3DXVECTOR4(lightDir.x, lightDir.y, lightDir.z, 1);
+			//視点位置を渡す
+			cb.vEye = D3DXVECTOR4(RENDER->getCamera()->getEyeDir(), 0);
+			if (memcpy_s(pData_default.pData, sizeof(CONSTANT_BUFER_GLOBAL), (void*)(&cb), sizeof(cb)))
+			{
+				DebugUtil::error(L"memCopy時にエラー");
+			}
+			DEVICE_CONTEXT->Unmap(mpConstantBuffer_Global, 0);
+
+			DEVICE_CONTEXT->VSSetConstantBuffers(0, 1, &mpConstantBuffer_Global);
+			DEVICE_CONTEXT->PSSetConstantBuffers(0, 1, &mpConstantBuffer_Global);
+		}
 	}
 }
