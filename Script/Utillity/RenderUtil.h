@@ -4,16 +4,20 @@
 namespace Koban {
 	static class RenderUtil {
 	public:
+		//Simpleシェーダー用のコンスタントバッファーのアプリ側構造体 もちろんシェーダー内のコンスタントバッファーと一致している必要あり
+		struct CONSTANT_BUFFER_TRANSFORM
+		{
+			D3DXMATRIX mW;//ワールド行列
+			D3DXMATRIX mWVP;//ワールドから射影までの変換行列
+		};
+
 		/// <summary>
 		/// Shaderの生成
 		/// </summary>
 		/// <param name="device"></param>
-		/// <param name="fileName"></param>
-		/// <param name="vsName"></param>
-		/// <param name="vertLayout"></param>
-		/// <param name="psName"></param>
+		/// <param name="vsFileName"></param>
+		/// <param name="psFileName"></param>
 		/// <param name="vs"></param>
-		/// <param name="vl"></param>
 		/// <param name="ps"></param>
 		static void createShader(
 			ID3D11Device* device,

@@ -29,7 +29,7 @@ namespace Koban {
 		SAFE_RELEASE(compiledShader);
 
 		//コンスタントバッファ初期化
-		RenderUtil::createConstantBuffer<CONSTANT_BUFFER_TRANSFORM>(DEVICE, &mpConstantBuffer_Transform);
+		RenderUtil::createConstantBuffer<RenderUtil::CONSTANT_BUFFER_TRANSFORM>(DEVICE, &mpConstantBuffer_Transform);
 		RenderUtil::createConstantBuffer<CONSTANT_BUFFER_MATERIAL>(DEVICE, &mpConstantBuffer_Material);
 
 		//テクスチャ用サンプラ作成
@@ -71,14 +71,14 @@ namespace Koban {
 
 		//シェーダーのコンスタントバッファーに各種データを渡す	
 		D3D11_MAPPED_SUBRESOURCE pData_default;
-		CONSTANT_BUFFER_TRANSFORM cb_default;
+		RenderUtil::CONSTANT_BUFFER_TRANSFORM cb_default;
 		if (SUCCEEDED(DEVICE_CONTEXT->Map(mpConstantBuffer_Transform, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData_default)))//pData_default.pDataにm_pConstantBufferのアドレス
 		{
 			//単位行列をセット
 			cb_default.mW = getTransform()->getWorldMatrix();
 			//MVP行列を渡す
 			cb_default.mWVP = getMVPMatrix(cb_default.mW);
-			if (memcpy_s(pData_default.pData, sizeof(CONSTANT_BUFFER_TRANSFORM), (void*)(&cb_default), sizeof(cb_default))) {
+			if (memcpy_s(pData_default.pData, sizeof(RenderUtil::CONSTANT_BUFFER_TRANSFORM), (void*)(&cb_default), sizeof(cb_default))) {
 				DebugUtil::error(L"memCopy時にエラー");
 			}
 			DEVICE_CONTEXT->Unmap(mpConstantBuffer_Transform, 0);

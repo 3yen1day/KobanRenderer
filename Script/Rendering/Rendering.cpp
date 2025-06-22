@@ -4,6 +4,7 @@
 #include "Light.h"
 #include "Mesh.h"
 #include "GBufferToBackBuffer.h"
+#include "DebugDraw.h"
 #include "../Core/Scene.h"
 #include "../Utillity/RenderUtil.h"
 #include <d3d11.h>
@@ -79,6 +80,7 @@ namespace Koban {
 		mpRTTManager = std::make_unique<RTTManager>();
 		//GBufferを元した描画を管理する
 		mpGBufferToBackBuffer = std::make_unique<GBufferToBackBuffer>();
+		mpDebugDraw = std::make_unique<DebugDraw>();
 	}
 
 	Rendering::~Rendering() {};// = default; // デストラクタを非インライン化
@@ -87,6 +89,7 @@ namespace Koban {
 	{
 		mpRTTManager->start();
 		mpGBufferToBackBuffer->start();
+		mpDebugDraw->start();
 
 		SCENE->doStart<Mesh>();
 	}
@@ -105,10 +108,6 @@ namespace Koban {
 		}
 
 		SCENE->doUpdate<Mesh>();
-		std::vector<Mesh*> meshes = SCENE->findComponents<Mesh>();
-		if (!meshes.empty()) {
-			mpMesh = meshes[0];
-		}
 
 		mpRTTManager->update();
 		mpGBufferToBackBuffer->update();
@@ -126,13 +125,16 @@ namespace Koban {
 
 		//GBufferから描画
 		mpGBufferToBackBuffer->draw();
+		
+		//デバッグ表示
+		mpDebugDraw->draw();
 	}
 
 	void Rendering::destroy()
 	{
 		mpRTTManager->destroy();
-		//mpRender3DModel->
 		mpGBufferToBackBuffer->destroy();
+		mpDebugDraw->destroy();
 
 		//リソース所有権の破棄
 		SAFE_RELEASE(mpSwapChain);

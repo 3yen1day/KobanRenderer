@@ -38,10 +38,10 @@ namespace Koban {
 			mIsDraw = isDraw;
 		}
 
-	protected:
 		GameObject* const getGameObject();
 		Transform* const getTransform();
 
+	protected:
 		bool mIsUpdate = true;
 		bool mIsDraw = true;
 		UINT16 mGameObjectID = 0;

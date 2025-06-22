@@ -38,6 +38,7 @@
     <ClCompile Include="Script\Input\Input.cpp" />
     <ClCompile Include="Script\Main.cpp" />
     <ClCompile Include="Script\Rendering\Camera.cpp" />
+    <ClCompile Include="Script\Rendering\DebugDraw.cpp" />
     <ClCompile Include="Script\Rendering\FbxLoader.cpp" />
     <ClCompile Include="Script\Rendering\GBufferToBackBuffer.cpp" />
     <ClCompile Include="Script\Rendering\Light.cpp" />
@@ -74,6 +75,7 @@
     <ClInclude Include="Script\Input\Input.h" />
     <ClInclude Include="Script\Main.h" />
     <ClInclude Include="Script\Rendering\Camera.h" />
+    <ClInclude Include="Script\Rendering\DebugDraw.h" />
     <ClInclude Include="Script\Rendering\FbxLoader.h" />
     <ClInclude Include="Script\Rendering\GBufferToBackBuffer.h" />
     <ClInclude Include="Script\Rendering\Light.h" />
@@ -121,6 +123,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
+    <FxCompile Include="Shader\PS_Simple.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="Shader\VS_GBufferToBackBuffer.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
     </FxCompile>
@@ -139,6 +147,12 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shader\VS_Simple.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
     <Text Include="Shader\Resources.inc.hlsl">
       <FileType>Document</FileType>

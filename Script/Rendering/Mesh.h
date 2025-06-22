@@ -17,13 +17,6 @@ namespace Koban {
 
 		void setMeshResourcePath(const string& resourcePath);
 
-		//Simpleシェーダー用のコンスタントバッファーのアプリ側構造体 もちろんシェーダー内のコンスタントバッファーと一致している必要あり
-		struct CONSTANT_BUFFER_TRANSFORM
-		{
-			D3DXMATRIX mW;//ワールド行列
-			D3DXMATRIX mWVP;//ワールドから射影までの変換行列
-		};
-
 		struct CONSTANT_BUFFER_MATERIAL
 		{
 			D3DXVECTOR4 vAmbient;//アンビエント光

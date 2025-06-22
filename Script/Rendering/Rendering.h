@@ -11,6 +11,7 @@ namespace Koban {
 	class Light;
 	class Mesh;
 	class GBufferToBackBuffer;
+	class DebugDraw;
 }
 
 namespace Koban {
@@ -87,9 +88,10 @@ namespace Koban {
 		//インスタンス
 		std::unique_ptr<RTTManager> mpRTTManager;
 		std::unique_ptr<GBufferToBackBuffer> mpGBufferToBackBuffer;
+		std::unique_ptr<DebugDraw> mpDebugDraw;
 		Camera* mpMainCamera;
 		Light* mpLight;
-		Mesh* mpMesh;
+
 		ID3D11Buffer* mpConstantBuffer_Global;
 
 		const float ClearColor[4] = { 0.97, 0.71, 0, 1 };

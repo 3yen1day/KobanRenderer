@@ -12,7 +12,7 @@ namespace Koban
 		GameObject* gameObj = SCENE->createGameObject("Camera", D3DXVECTOR3(0, 0, -9));
 		gameObj->createComponent<Camera>();
 
-		gameObj = SCENE->createGameObject("Light");
+		gameObj = SCENE->createGameObject("Light", D3DXVECTOR3(0, 1, 0));
 		gameObj->createComponent<Light>();
 
 		/*D3DXQUATERNION rot;
