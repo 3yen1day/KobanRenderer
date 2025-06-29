@@ -1,6 +1,8 @@
 #ifndef __RESOUECES_HLSL__
 #define __RESOUECES_HLSL__
 
+#define PI 3.1416f
+
 Texture2D g_texDepthStencil : register(t0); //深度ステンシル
 Texture2D g_texDepth : register(t1); //深度
 Texture2D g_texColor : register(t2); //カラー
