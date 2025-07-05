@@ -15,14 +15,15 @@ namespace Koban
 
 	void RenderMode::InitMode(MODE mode)
 	{
-		mShaderFileName_VS = L"Shader/VS_GBufferToBackBuffer.hlsl";
-		mShaderFileName_PS = L"Shader/PS_GBufferToBackBuffer.hlsl";
+		mShaderFileName_VS = L"Shader/VS_RenderToBackBuffer.hlsl";
+		mShaderFileName_PS = L"Shader/PS_RenderToBackBuffer.hlsl";
 
 		switch (mode)
 		{
 			case Koban::RenderMode::MODE::STANDARD:
 				break;
 			case Koban::RenderMode::MODE::BASE_COLOR:
+				mShaderFileName_PS = L"Shader/PS_RenderBaseColor.hlsl";
 				break;
 			case Koban::RenderMode::MODE::NORMAL:
 				mShaderFileName_PS = L"Shader/PS_RenderNormal.hlsl";

@@ -68,7 +68,7 @@ namespace Koban
 	{
 		static float distanceSpeed = 0.1f;
 		Input* input = GA::getInput();
-		static float distance = 10.0f;
+		static float distance = 4.0f;
 
 		//WS‚Å’Ž‹“_•ûŒü‚ÉˆÚ“®
 		if(input->isKeyPressed(DIK_W))

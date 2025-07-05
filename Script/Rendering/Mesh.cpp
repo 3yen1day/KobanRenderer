@@ -141,7 +141,7 @@ namespace Koban {
 	/// <returns></returns>
 	Mesh::CONSTANT_BUFFER_MATERIAL Mesh::getMaterialVal() {
 		auto cBuffer = CONSTANT_BUFFER_MATERIAL();
-		cBuffer.vAmbient = D3DXVECTOR4(0.5f, 0, 0, 0);
+		cBuffer.vAmbient = D3DXVECTOR4(1.0f, 0, 0, 0);
 		cBuffer.vDiffuse = D3DXVECTOR4(1, 1, 1, 0);
 		cBuffer.vSpecular = D3DXVECTOR4(2, 2, 2, 0);
 		return cBuffer;

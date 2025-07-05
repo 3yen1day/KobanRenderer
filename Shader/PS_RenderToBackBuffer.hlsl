@@ -61,7 +61,7 @@ float3 directionalLight(float3 baseColor, float3 n, float3 l, float3 v, float ro
     //BRDFの合計
     float kd = 1-F;
     float3 brdf = kd * diffuseBRDF + specularBRDF; //拡散反射と鏡面反射の合計
-    
+    return float4(D,D,D,1);
     //ライトの色*Lambartの余弦則*BRDF
     float Li = lambert(n, l);
     return lightColor * Li * brdf;
@@ -71,7 +71,7 @@ float3 directionalLight(float3 baseColor, float3 n, float3 l, float3 v, float ro
 float4 main(VS_OUTPUT input) : SV_Target
 {
     //テクスチャーから情報を取り出す
-    float3 baseCol = g_Ambient.xyz;
+    float3 baseCol = g_texColor.Sample(g_samLinear, input.UV).xyz;
     float3 N = g_texNormal.Sample(g_samLinear, input.UV).xyz;
     float3 L = normalize(g_vLightDir.xyz);
     float3 pos = g_texPosition.Sample(g_samLinear, input.UV).xyz;

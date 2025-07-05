@@ -5,8 +5,8 @@ PS_OUTPUT main(VS_OUTPUT input)
 {
     PS_OUTPUT Out = (PS_OUTPUT) 0;
 
-	//TODO:カラーテクスチャーへ出力（頂点カラーを使うようになったら考える）
-    //Out.vColor = g_tex.Sample(g_samLinear, input.UV) + float4(0.01, 0.01, 0.01, 0);
+	//カラー
+    Out.vColor = g_Ambient;
 	
     //深度情報
     float4 depth = g_texDepthStencil.Sample(g_samLinear, input.UV);
