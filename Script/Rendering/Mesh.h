@@ -25,8 +25,9 @@ namespace Koban {
 		};
 
 	private:
-		D3DXMATRIX getMVPMatrix(const D3DXMATRIX& modelMat);
+		D3DXMATRIX getMVPMatrix();
 		CONSTANT_BUFFER_MATERIAL getMaterialVal();
+		void updateRot();
 
 		//ƒ‚ƒfƒ‹‚ÌŽí—Þ–ˆ
 		ID3D11InputLayout* mpVertexLayout;

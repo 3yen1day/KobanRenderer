@@ -54,6 +54,11 @@ namespace Koban {
 
 	void Mesh::update()
 	{
+		//updateRot();
+	}
+
+	void Mesh::updateRot()
+	{
 		D3DXQUATERNION rot;
 		D3DXVECTOR3 vec3(0, 1, 0);
 		static float angle = 0;
@@ -77,7 +82,7 @@ namespace Koban {
 			//単位行列をセット
 			cb_default.mW = getTransform()->getWorldMatrix();
 			//MVP行列を渡す
-			cb_default.mWVP = getMVPMatrix(cb_default.mW);
+			cb_default.mWVP = getMVPMatrix();
 			if (memcpy_s(pData_default.pData, sizeof(RenderUtil::CONSTANT_BUFFER_TRANSFORM), (void*)(&cb_default), sizeof(cb_default))) {
 				DebugUtil::error(L"memCopy時にエラー");
 			}
@@ -124,10 +129,10 @@ namespace Koban {
 	/// MVP行列を取得する
 	/// </summary>
 	/// <returns></returns>
-	D3DXMATRIX Mesh::getMVPMatrix(const D3DXMATRIX& modelMat) {
+	D3DXMATRIX Mesh::getMVPMatrix() {
 		//ワールド、カメラ、射影行列を渡す
 		auto camera = RENDER->getCamera();
-		return modelMat * camera->getViewMat() * camera->getProjMat();
+		return getTransform()->getWorldMatrix() * camera->getViewMat() * camera->getProjMat();
 	}
 
 	/// <summary>

@@ -55,15 +55,34 @@ namespace Koban {
 			return mEyeVec;
 		}
 
+		/// <summary>
+		/// MVP行列の取得
+		/// </summary>
+		/// <returns></returns>
+		D3DXMATRIX const& getVPMat()
+		{
+			return  mViewMat * mProjMat;
+		}
+
 	private:
 		void updateTransform();
+		/// <summary>
+		/// ローカル座標回転
+		/// </summary>
+		void updateTransform_Symple();
+		/// <summary>
+		/// 原点中心
+		/// </summary>
+		void updateTransform_Orbit();
 
 		D3DXMATRIX mWorldMat;
 		D3DXMATRIX mViewMat;
 		D3DXMATRIX mProjMat;
 		D3DXVECTOR3 mPosition;
 		D3DXVECTOR3 mEyeVec;
+		D3DXVECTOR3 mLookAt;
 		float mPitch = 0;
 		float mYaw = 0;
+		float mSensitivity = 0.005;
 	};
 }
