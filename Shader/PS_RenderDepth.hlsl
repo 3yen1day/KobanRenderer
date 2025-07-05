@@ -4,9 +4,6 @@
 float4 main(VS_OUTPUT input) : SV_Target
 {
 	//depth‚ðŽæ“¾‚µ‚Ä•\Ž¦
-    float4 depth = g_texDepth.Sample(g_samLinear, input.UV);
-    if (depth.r != 0)
-        return float4(1, 0, 0, 1);
-    return float4(0, 0, 0, 1);
-    // return float4(depth.r, depth.g, depth.b, 1);
+    float depth = g_GBufDepthStencil.Sample(g_samLinear, input.UV).r;
+    return float4(depth, depth, depth, 1);
 }

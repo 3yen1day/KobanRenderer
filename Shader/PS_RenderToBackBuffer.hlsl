@@ -70,11 +70,15 @@ float3 directionalLight(float3 baseColor, float3 n, float3 l, float3 v, float ro
 //テクスチャーを参照してレンダー　ピクセルシェーダー
 float4 main(VS_OUTPUT input) : SV_Target
 {
+    float stencil = g_GBufDepthStencil.Sample(g_samLinear, input.UV).g;
+    if (stencil == 0)
+        return BACK_GROUND_COLOR;
+    
     //テクスチャーから情報を取り出す
-    float3 baseCol = g_texColor.Sample(g_samLinear, input.UV).xyz;
-    float3 N = g_texNormal.Sample(g_samLinear, input.UV).xyz;
+    float3 baseCol = g_GBufColor.Sample(g_samLinear, input.UV).xyz;
+    float3 N = g_GBufNormal.Sample(g_samLinear, input.UV).xyz;
     float3 L = normalize(g_vLightDir.xyz);
-    float3 pos = g_texPosition.Sample(g_samLinear, input.UV).xyz;
+    float3 pos = g_GBufPosition.Sample(g_samLinear, input.UV).xyz;
     float3 V = normalize(pos - g_vEye.xyz);
     
     return float4(directionalLight(baseCol, N, L, V, 0.5, 0.8), 1);

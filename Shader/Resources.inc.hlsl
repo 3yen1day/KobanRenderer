@@ -2,12 +2,13 @@
 #define __RESOUECES_HLSL__
 
 #define PI 3.1416f
+#define BACK_GROUND_COLOR float4(0.97, 0.71, 0, 1)
 
 Texture2D g_texDepthStencil : register(t0); //深度ステンシル
-Texture2D g_texDepth : register(t1); //深度
-Texture2D g_texColor : register(t2); //カラー
-Texture2D g_texNormal : register(t3); //ノーマル
-Texture2D g_texPosition : register(t4); //ワールド座標
+Texture2D g_GBufDepthStencil : register(t1); //深度
+Texture2D g_GBufColor : register(t2); //カラー
+Texture2D g_GBufNormal : register(t3); //ノーマル
+Texture2D g_GBufPosition : register(t4); //ワールド座標
 
 SamplerState g_samLinear : register(s0);
 
@@ -43,10 +44,10 @@ struct VS_OUTPUT
 //ピクセルシェーダー出力
 struct PS_OUTPUT
 {
-    float4 vDepth : SV_Target0;
-    float4 vColor : SV_Target1;
-    float4 vNormal : SV_Target2;
-    float4 vPosition : SV_Target3;
+    float4 DepthStencil : SV_Target0;
+    float4 Color : SV_Target1;
+    float4 Normal : SV_Target2;
+    float4 Position : SV_Target3;
 };
 
 #endif //__RESOUECES_HLSL__
