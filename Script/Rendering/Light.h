@@ -6,7 +6,7 @@ namespace Koban {
 	{
 	public:
 		Light():
-			mDirection(*new D3DXVECTOR3(1,0,1))
+			mDirection(*new D3DXVECTOR3(1,1,1))
 		{};
 		~Light() {};
 

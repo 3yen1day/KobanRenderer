@@ -6,7 +6,7 @@ PS_OUTPUT main(VS_OUTPUT input)
     PS_OUTPUT Out = (PS_OUTPUT) 0;
 
 	//ƒJƒ‰[
-    Out.Color = g_Ambient;
+    Out.Color = g_Albedo;
 	
     //[“xî•ñ
     float depth = g_texDepthStencil.Sample(g_samLinear, input.UV).r;

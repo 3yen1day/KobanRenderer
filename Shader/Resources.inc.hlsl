@@ -9,6 +9,7 @@ Texture2D g_GBufDepthStencil : register(t1); //深度
 Texture2D g_GBufColor : register(t2); //カラー
 Texture2D g_GBufNormal : register(t3); //ノーマル
 Texture2D g_GBufPosition : register(t4); //ワールド座標
+Texture2D g_GBufShadowMap : register(t5); //シャドウマップ
 
 SamplerState g_samLinear : register(s0);
 
@@ -27,9 +28,9 @@ cbuffer cTransformInfo : register(b1)
 
 cbuffer cMaterialInfo : register(b2)
 {
-    float4 g_Ambient = float4(0, 0, 0, 0); //アンビエント光
-    float4 g_Diffuse = float4(1, 0, 0, 0); //拡散反射(色）
-    float4 g_Specular = float4(1, 1, 1, 1); //鏡面反射
+    float4 g_Albedo = float4(0, 0, 0, 0); //アルベド
+    float4 g_Roughness = float4(1, 0, 0, 0); //拡散反射(色）
+    float4 g_Metalic = float4(1, 1, 1, 1); //鏡面反射
 };
 
 //バーテックスバッファー出力

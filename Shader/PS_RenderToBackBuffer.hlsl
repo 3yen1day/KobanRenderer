@@ -81,5 +81,7 @@ float4 main(VS_OUTPUT input) : SV_Target
     float3 pos = g_GBufPosition.Sample(g_samLinear, input.UV).xyz;
     float3 V = normalize(pos - g_vEye.xyz);
     
-    return float4(directionalLight(baseCol, N, L, V, 0.5, 0.8), 1);
+    float4 diffuse = float4(baseCol * lambert(N, L), 1);
+    return diffuse;
+    //return float4(directionalLight(baseCol, N, L, V, 0.5, 0.8), 1);
 }
