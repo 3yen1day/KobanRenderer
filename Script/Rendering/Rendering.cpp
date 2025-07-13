@@ -5,6 +5,7 @@
 #include "Mesh.h"
 #include "GBufferToBackBuffer.h"
 #include "DebugDraw.h"
+#include "../Core/Transform.h"
 #include "../Core/Scene.h"
 #include "../Utillity/RenderUtil.h"
 #include <d3d11.h>
@@ -164,7 +165,7 @@ namespace Koban {
 			auto lightDir = RENDER->getLight()->getDirection();
 			cb.vLightDir = D3DXVECTOR4(lightDir.x, lightDir.y, lightDir.z, 1);
 			//視点位置を渡す
-			cb.vEye = D3DXVECTOR4(RENDER->getCamera()->getEyeDir(), 0);
+			cb.vEyePos = D3DXVECTOR4(RENDER->getCamera()->getPostion(), 0);
 			if (memcpy_s(pData_default.pData, sizeof(CONSTANT_BUFER_GLOBAL), (void*)(&cb), sizeof(cb)))
 			{
 				DebugUtil::error(L"memCopy時にエラー");

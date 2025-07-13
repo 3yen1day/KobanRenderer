@@ -61,7 +61,6 @@ float3 directionalLight(float3 baseColor, float3 n, float3 l, float3 v, float ro
     //BRDFの合計
     float kd = 1-F;
     float3 brdf = kd * diffuseBRDF + specularBRDF; //拡散反射と鏡面反射の合計
-    return float4(D,D,D,1);
     //ライトの色*Lambartの余弦則*BRDF
     float Li = lambert(n, l);
     return lightColor * Li * brdf;
@@ -79,7 +78,7 @@ float4 main(VS_OUTPUT input) : SV_Target
     float3 N = g_GBufNormal.Sample(g_samLinear, input.UV).xyz;
     float3 L = normalize(g_vLightDir.xyz);
     float3 pos = g_GBufPosition.Sample(g_samLinear, input.UV).xyz;
-    float3 V = normalize(pos - g_vEye.xyz);
+    float3 V = normalize(pos - g_vCameraPos.xyz);
     
     float4 diffuse = float4(baseCol * lambert(N, L), 1);
     return diffuse;

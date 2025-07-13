@@ -45,7 +45,7 @@ namespace Koban
 		//トポロジーのセット
 		DEVICE_CONTEXT->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 		//頂点バッファのセット
-		UINT stride = sizeof(D3DXVECTOR3);
+		UINT stride = sizeof(D3DXVECTOR4);
 		UINT offset = 0;
 		DEVICE_CONTEXT->IASetVertexBuffers(0, 1, &vertBuf, &stride, &offset);
 		//コンスタントバッファのセット
@@ -62,11 +62,11 @@ namespace Koban
 		D3DXVECTOR3 lightDir = RENDER->getLight()->getDirection();
 
 		//バーテックスバッファーを作成
-		D3DXVECTOR3 vertexData[] = { D3DXVECTOR3(0,0,0), lightDir};
+		D3DXVECTOR4 vertexData[] = { D3DXVECTOR4(0,0,0,1), D3DXVECTOR4(lightDir,1)};
 
 		D3D11_BUFFER_DESC bd;
 		bd.Usage = D3D11_USAGE_DEFAULT;
-		bd.ByteWidth = sizeof(D3DXVECTOR3) * 2;
+		bd.ByteWidth = sizeof(D3DXVECTOR4) * 2;
 		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		bd.CPUAccessFlags = 0;
 		bd.MiscFlags = 0;

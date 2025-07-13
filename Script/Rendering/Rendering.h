@@ -73,7 +73,7 @@ namespace Koban {
 		struct CONSTANT_BUFER_GLOBAL
 		{
 			D3DXVECTOR4 vLightDir;
-			D3DXVECTOR4 vEye;
+			D3DXVECTOR4 vEyePos;
 		};
 
 		void createBackBuffer_RTV();

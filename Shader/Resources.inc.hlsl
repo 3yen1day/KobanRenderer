@@ -15,8 +15,8 @@ SamplerState g_samLinear : register(s0);
 
 cbuffer cGlobalInfo : register(b0)
 {
-    float4 g_vLightDir; //ディレクショナルライトの方向
-    float4 g_vEye; //視線ベクトル
+    float4 g_vLightDir; //ライトの方向
+    float4 g_vCameraPos; //カメラの位置
 };
 
 cbuffer cTransformInfo : register(b1)
